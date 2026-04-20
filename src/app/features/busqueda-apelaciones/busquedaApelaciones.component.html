@@ -1,0 +1,451 @@
+
+<!-- BEGIN: MainHeader -->
+ <app-main-header></app-main-header>
+<!-- END: MainHeader -->
+
+<main class="max-h-max mx-auto px-4 py-8 flex flex-col gap-6 bg-bon-white">
+
+  <!-- BEGIN: PageTitle -->
+  <div class="mb-8 text-left">
+    <h2 class="text-3xl font-bold text-strong-coffee m-0">Búsqueda de Apelaciones</h2>
+    <p class="text-gray-500 mt-1 mb-0">Consulte el historial y estatus de apelaciones registradas en el sistema.</p>
+  </div>
+  <!-- END: PageTitle -->
+
+  <!--PANEL 1: OPCIONES DE BÚSQUEDA -->
+  <div class="bg-white border border-gray-200 rounded-lg overflow-hidden mb-4">
+
+    <!-- Panel header -->
+    <div
+  class="bg-forest px-5 py-3.5 flex items-center justify-between cursor-pointer select-none border-b border-forest/20"
+  (click)="toggleBusqueda()"
+>
+  <div class="flex items-center gap-2.5 text-white">
+    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+      />
+    </svg>
+    <h2 class="text-sm font-bold text-white uppercase tracking-wide m-0">
+      Opciones de Búsqueda
+    </h2>
+  </div>
+
+  <!-- Chevron con Tailwind -->
+  <svg
+    class="w-4.5 h-4.5 text-white transition-transform duration-200"
+    [class.rotate-180]="!busquedaOpen"
+    [class.rotate-0]="busquedaOpen"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      d="M5 15l7-7 7 7"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+    />
+  </svg>
+</div>
+
+    @if (busquedaOpen) {
+      <div class="p-8 flex flex-col gap-10">
+
+        <!-- DATOS DE APELACIÓN -->
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-bronze flex">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+              </svg>
+            </span>
+            <h3 class="font-bold text-bronze uppercase tracking-widest text-sm m-0">DATOS DE APELACIÓN</h3>
+          </div>
+          <hr class="mb-5 opacity-40 border-t-2 border-solid border-bronze" />
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="flex flex-col gap-1.5">
+              <label for="folioOficialia" class="text-xs font-bold text-gray-700">Folio Oficialía</label>
+              <input id="folioOficialia" type="text"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+                placeholder="Ej. 12345/2023"
+                [(ngModel)]="form.folioOficialia" name="folioOficialia" />
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label for="sala" class="text-xs font-bold text-gray-700">Sala</label>
+              <select id="sala"
+    class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+    [(ngModel)]="form.idSala" name="sala"
+    [disabled]="cargandoCatalogo">
+    <option value="">{{ cargandoCatalogo ? 'Cargando...' : 'Seleccione Sala' }}</option>
+    @for (item of catalogoSalas; track item.id) {
+      <option [value]="item.id">{{ item.descripcion }}</option>
+    }
+  </select>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label for="nomenclatura" class="text-xs font-bold text-gray-700">Nomenclatura</label>
+              <select id="nomenclatura"
+    class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+    [(ngModel)]="form.idNomenclatura" name="nomenclatura"
+    [disabled]="cargandoCatalogo">
+    <option value="">{{ cargandoCatalogo ? 'Cargando...' : 'Seleccione Nomenclatura' }}</option>
+    @for (item of catalogoNomenclaturas; track item.id) {
+      <option [value]="item.id">{{ item.descripcion }}</option>
+    }
+  </select>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label for="folioApelacion" class="text-xs font-bold text-gray-700">Folio Apelación</label>
+              <input id="folioApelacion" type="text"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+                placeholder="Número de folio"
+                [(ngModel)]="form.folioApelacion" name="folioApelacion" />
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label for="apelacion" class="text-xs font-bold text-gray-700">Apelación</label>
+          <select id="apelacion"
+    class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+    [(ngModel)]="form.idTipoApelacion" name="apelacion"
+    [disabled]="cargandoCatalogo">
+    <option value="">{{ cargandoCatalogo ? 'Cargando...' : 'Seleccione Tipo de Apelación' }}</option>
+    @for (item of catalogoTiposApelacion; track item.id) {
+      <option [value]="item.id">{{ item.descripcion }}</option>
+    }
+  </select>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label for="expCausa" class="text-xs font-bold text-gray-700">Exp/Causa</label>
+              <input id="expCausa" type="text"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+                placeholder="Expediente o Causa"
+                [(ngModel)]="form.expedienteCausa" name="expCausa" />
+            </div>
+
+            <div class="flex flex-col gap-1.5 md:col-span-2">
+              <label for="nombreParte" class="text-xs font-bold text-gray-700">Nombre Parte</label>
+              <input id="nombreParte" type="text"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+                placeholder="Nombre completo de la parte involucrada"
+                [(ngModel)]="form.nombreParte" name="nombreParte" />
+            </div>
+          </div>
+        </div>
+
+        <!-- FECHA DE RECEPCIÓN -->
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-bronze flex">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+              </svg>
+            </span>
+            <h3 class="font-bold text-bronze uppercase tracking-widest text-sm m-0">FECHA DE RECEPCIÓN</h3>
+          </div>
+          <hr class="mb-5 opacity-40 border-t-2 border-solid border-bronze" />
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="flex flex-col gap-1.5">
+              <label for="fechaInicial" class="text-xs font-bold text-gray-700">Fecha Inicial</label>
+              <input id="fechaInicial" type="date"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+                [(ngModel)]="form.fechaInicio" name="fechaInicial" />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="fechaFinal" class="text-xs font-bold text-gray-700">Fecha Final</label>
+              <input id="fechaFinal" type="date"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+                [(ngModel)]="form.fechaFin" name="fechaFinal" />
+            </div>
+          </div>
+        </div>
+
+      </div>
+    }
+  </div>
+      <!-- Acciones búsqueda -->
+<div class="bg-gray-50 px-8 py-4 flex justify-end gap-3">
+
+  <!-- Limpiar -->
+  <button type="button"
+    (click)="limpiar()"
+    class="px-5 py-2 text-sm font-semibold rounded-lg border border-gray-300
+           text-gray-600 hover:bg-gray-100 active:scale-95 transition-all">
+    Limpiar
+  </button>
+
+  <!-- Buscar -->
+  <button type="button"
+    (click)="onSearch()"
+    class="bg-forest text-white font-bold px-6 py-2 rounded-lg border-0 flex items-center gap-2 cursor-pointer shadow-sm hover:opacity-90">
+    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    </svg>
+    Buscar
+  </button>
+</div>
+
+  <!-- ══════════════════════════════════════════════════
+       PANEL 2: RESULTADOS DE BÚSQUEDA
+  ══════════════════════════════════════════════════ -->
+  <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+
+    <!-- Panel header -->
+    <div class="bg-forest px-5 py-3.5 flex items-center justify-between cursor-pointer select-none border-b border-forest/20"
+      (click)="toggleResultados()">
+      <div class="flex items-center gap-2.5 text-white">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Zm3.75 11.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+    </svg>
+        <h2 class="text-sm font-bold text-white uppercase tracking-wide m-0">Resultados de Búsqueda</h2>
+      </div>
+        <svg
+    class="w-4.5 h-4.5 text-white transition-transform duration-200"
+    [class.rotate-180]="!resultadosOpen"
+    [class.rotate-0]="resultadosOpen"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      d="M5 15l7-7 7 7"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+    />
+  </svg>
+    </div>
+
+    @if (resultadosOpen) {
+
+      <!-- Filtros aplicados -->
+
+        <div class="border-b border-gray-100">
+          <div class="flex items-center justify-between px-5 py-3.5 bg-[#fafafa]"
+            (click)="toggleFiltros()">
+            <div class="flex items-center gap-2 text-gray-700 text-sm font-medium">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"
+                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+              </svg>
+              <span>Filtros aplicados</span>
+            </div>
+          </div>
+
+            <div class="flex flex-wrap gap-2 px-5 py-3 pb-4">
+              @for (filtro of filtrosActivos; track $index) {
+                <span class="inline-flex items-center gap-1.5 bg-sand border border-bronze/25 text-strong-coffee text-[0.8125rem] font-medium px-2.5 py-1 rounded-full">
+                  {{ filtro.label }}
+                  <button type="button"
+                    class="bg-transparent border-0 cursor-pointer text-bronze text-base leading-none flex items-center transition hover:opacity-60 p-0"
+                    (click)="quitarFiltro($index)">×</button>
+                </span>
+              }
+            </div>
+        </div>
+
+
+      <!-- Tabla de resultados -->
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse text-left">
+          <thead>
+            <tr class="bg-sand">
+              <th class="px-5 py-3.5 text-xs font-bold text-black uppercase tracking-wide">Folio de Oficialía</th>
+              <th class="px-5 py-3.5 text-xs font-bold text-black uppercase tracking-wide">Folio de Apelación</th>
+              <th class="px-5 py-3.5 text-xs font-bold text-black uppercase tracking-wide">Folio de Apelación Anterior</th>
+              <th class="px-5 py-3.5 text-xs font-bold text-black uppercase tracking-wide">Trámite</th>
+              <th class="px-5 py-3.5 text-xs font-bold text-black uppercase tracking-wide">Sala</th>
+              <th class="px-5 py-3.5 text-xs font-bold text-black uppercase tracking-wide">Sala Anterior</th>
+              <th class="px-5 py-3.5 text-xs font-bold text-black uppercase tracking-wide">Apelación</th>
+              <th class="px-5 py-3.5 text-xs font-bold text-black uppercase tracking-wide">Tipo Apelación</th>
+
+
+
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of resultadosPagina; track $index) {
+
+              <!-- Fila principal -->
+              <tr class="border-b border-gray-100 cursor-pointer transition hover:bg-cream"
+                [class.bg-[#eef6f3]]="r === filaSeleccionada"
+                (click)="seleccionarFila(r)">
+                <td class="px-5 py-3.5 text-sm text-forest font-semibold">{{ r.folioOficialia }}</td>
+                <td class="px-5 py-3.5 text-sm text-forest font-semibold">{{ r.folioApelacion }}</td>
+                <td class="px-5 py-3.5 text-sm text-forest font-semibold">{{ r.expedienteCausa }}</td>
+                <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.tipoApelacion }}</td>
+                <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.sala }}</td>
+                <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.salaAnterior }}</td>
+              </tr>
+
+              <!-- Fila de detalle -->
+              @if (r === filaSeleccionada) {
+                <tr class="bg-[#f8faf9]">
+                  <td colspan="5" class="p-0">
+                    <div class="mx-4 my-3 border border-gray-200 rounded-md overflow-hidden bg-white">
+
+                      <!-- Tabs -->
+                      <div class="flex border-b border-gray-200 px-6">
+                        <button type="button"
+                          class="flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 -mb-px cursor-pointer bg-transparent border-x-0 border-t-0 transition"
+                          [class.text-forest]="tabDetalle === 'partes'"
+                          [class.font-bold]="tabDetalle === 'partes'"
+                          [class.border-b-bronze]="tabDetalle === 'partes'"
+                          [class.text-gray-500]="tabDetalle !== 'partes'"
+                          [class.border-b-transparent]="tabDetalle !== 'partes'"
+                          (click)="tabDetalle = 'partes'">
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"
+                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                          </svg>
+                          Partes
+                        </button>
+                        <button type="button"
+                          class="flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 -mb-px cursor-pointer bg-transparent border-x-0 border-t-0 transition"
+                          [class.text-forest]="tabDetalle === 'anexos'"
+                          [class.font-bold]="tabDetalle === 'anexos'"
+                          [class.border-b-bronze]="tabDetalle === 'anexos'"
+                          [class.text-gray-500]="tabDetalle !== 'anexos'"
+                          [class.border-b-transparent]="tabDetalle !== 'anexos'"
+                          (click)="tabDetalle = 'anexos'">
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                          </svg>
+                          Anexos
+                        </button>
+                      </div>
+
+                      <!-- Tab: Partes -->
+                      @if (tabDetalle === 'partes') {
+                        <table class="w-full border-collapse text-left">
+                          <thead>
+                            <tr class="bg-sand">
+                              <th class="px-4 py-2.5 text-xs font-bold text-strong-coffee uppercase tracking-wide">Parte</th>
+                              <th class="px-4 py-2.5 text-xs font-bold text-strong-coffee uppercase tracking-wide">Nombre</th>
+                              <th class="px-4 py-2.5 text-xs font-bold text-strong-coffee uppercase tracking-wide">Dirección</th>
+                              <th class="px-4 py-2.5 text-xs font-bold text-strong-coffee uppercase tracking-wide">Menor Edad</th>
+                              <th class="px-4 py-2.5 text-xs font-bold text-strong-coffee uppercase tracking-wide">Sexo</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (p of r.partes; track $index) {
+                              <tr class="border-b border-gray-100">
+                                <td class="px-4 py-2.5 text-sm font-bold text-gray-700">{{ p.tipo }}</td>
+                                <td class="px-4 py-2.5 text-sm text-gray-700">{{ p.nombre }}</td>
+                                <td class="px-4 py-2.5 text-sm text-gray-700">{{ p.sexo }}</td>
+                              </tr>
+                            } @empty {
+                              <tr>
+                                <td colspan="5" class="px-4 py-8 text-center text-gray-400 italic text-sm">Sin partes registradas.</td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      }
+
+                      <!-- Tab: Anexos -->
+                      @if (tabDetalle === 'anexos') {
+                        <table class="w-full border-collapse text-left">
+                          <thead>
+                            <tr class="bg-sand">
+                              <th class="px-4 py-2.5 text-xs font-bold text-strong-coffee uppercase tracking-wide">Cantidad</th>
+                              <th class="px-4 py-2.5 text-xs font-bold text-strong-coffee uppercase tracking-wide">Anexo</th>
+                              <th class="px-4 py-2.5 text-xs font-bold text-strong-coffee uppercase tracking-wide">Es Valor</th>
+                              <th class="px-4 py-2.5 text-xs font-bold text-strong-coffee uppercase tracking-wide">Monto</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (a of r.anexos; track $index) {
+                              <tr class="border-b border-gray-100">
+                                <td class="px-4 py-2.5 text-sm font-bold text-gray-700">{{ a.cantidad }}</td>
+                                <td class="px-4 py-2.5 text-sm text-gray-700">{{ a.tipo }}</td>
+                                <td class="px-4 py-2.5 text-sm text-gray-700">{{ a.esValor ? 'Sí' : 'No' }}</td>
+                                <td class="px-4 py-2.5 text-sm text-gray-700">{{ a.monto | number:'1.2-2' }}</td>
+                              </tr>
+                            } @empty {
+                              <tr>
+                                <td colspan="4" class="px-4 py-8 text-center text-gray-400 italic text-sm">Sin anexos registrados.</td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      }
+
+                    </div>
+                  </td>
+                </tr>
+              }
+
+            } @empty {
+              <tr>
+                <td colspan="5" class="px-5 py-8 text-center text-gray-400 italic">No se encontraron resultados.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación + contador -->
+      <div class="flex items-center justify-between px-5 py-3.5 border-t border-gray-100 bg-[#fafafa] flex-wrap gap-3">
+        <span class="text-[0.8125rem] text-gray-500">
+          Mostrando <strong>{{ paginaInicio }}-{{ paginaFin }}</strong> de <strong>{{ totalResultados }}</strong> resultados
+        </span>
+        <div class="flex items-center gap-1">
+          <button type="button"
+            class="min-w-8 h-8 px-2 border border-gray-200 rounded-md bg-white text-gray-700 text-[0.8125rem] cursor-pointer transition hover:bg-sage hover:border-sage-dark hover:text-forest disabled:opacity-40 disabled:cursor-not-allowed"
+            [disabled]="paginaActual === 1" (click)="irPagina(paginaActual - 1)">
+            Anterior
+          </button>
+          @for (p of paginas; track p) {
+            <button type="button"
+              class="min-w-8 h-8 px-2 border rounded-md text-[0.8125rem] cursor-pointer transition"
+              [class.bg-strong-coffee]="p === paginaActual"
+              [class.border-forest]="p === paginaActual"
+              [class.text-white]="p === paginaActual"
+              [class.font-bold]="p === paginaActual"
+              [class.bg-white]="p !== paginaActual"
+              [class.border-gray-200]="p !== paginaActual"
+              [class.text-gray-700]="p !== paginaActual"
+              (click)="irPagina(p)">
+              {{ p }}
+            </button>
+          }
+          <button type="button"
+            class="min-w-8 h-8 px-2 border border-gray-200 rounded-md bg-white text-gray-700 text-[0.8125rem] cursor-pointer transition hover:bg-sage hover:border-sage-dark hover:text-forest disabled:opacity-40 disabled:cursor-not-allowed"
+            [disabled]="paginaActual === totalPaginas" (click)="irPagina(paginaActual + 1)">
+            Siguiente
+          </button>
+        </div>
+      </div>
+
+      <!-- Botón Atrás -->
+    }
+
+    <div class="bg-gray-50 px-8 py-4 flex justify-end">
+        <button type="button"
+          class="bg-sage text-forest font-medium px-6 py-2 rounded-md border border-sage-dark/20 flex items-center gap-2 cursor-pointer transition hover:bg-sage-dark"
+          (click)="onBack()">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+              stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+          </svg>
+          Atrás
+        </button>
+      </div>
+  </div>
+
+</main>
+
