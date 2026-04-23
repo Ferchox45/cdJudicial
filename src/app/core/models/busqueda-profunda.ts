@@ -2,6 +2,8 @@ export interface ParteBusquedaResultado {
   tipo:   string;
   nombre: string;
   sexo:   string;
+  direccion: string;
+  menorEdad: boolean;
 }
 
 export interface AnexoDetalle {

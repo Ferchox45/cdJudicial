@@ -1,14 +1,6 @@
 <app-main-header></app-main-header>
 
-<main class="max-h-max mx-auto px-4 py-8 bg-gray-50">
-
-  <!-- Breadcrumb -->
-  <nav class="text-sm text-gray-500 mb-4">
-    <span>Inicio</span>
-    <span class="mx-1">›</span>
-    <span class="font-semibold text-gray-700">Captura de Apelación</span>
-  </nav>
-
+<main class="max-h-max mx-auto px-4 py-8 bg-cream">
   <!-- Título + fecha -->
   <div class="flex items-start justify-between mb-6">
     <h1 class="text-3xl font-bold text-strong-coffee m-0">Captura de Apelación</h1>
@@ -75,14 +67,16 @@
                 }
               </div>
 
-              <!-- Folio Oficialía -->
-              <div class="col-span-1">
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Folio Oficialía Tentativo</label>
-                <input type="text" formControlName="folioOficialia"
-                  class="w-full border border-gray-200 bg-gray-50 rounded-md px-3 py-2
-                         text-sm text-center font-bold text-gray-500 cursor-not-allowed"/>
+              <div class="flex flex-col gap-1.5">
+                <label for="foliten" class="text-xs font-bold text-gray-700">Folio Tentativo</label>
+                <input
+                  id="foliten"
+                  type="text"
+                  class="w-full border text-center border-gray-200 rounded-md px-3 py-2 text-sm text-gray-500 bg-gray-50 cursor-not-allowed"
+                  [value]="folioTentativo"
+                  readonly
+                />
               </div>
-
               <!-- Materia -->
               <div class="col-span-1">
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Materia <span class="text-red-500">*</span></label>
@@ -97,9 +91,10 @@
                 </select>
               </div>
 
-              <!-- Apelación / Recurso -->
+              <!-- Apelación / Recurso — oculto en Indígena -->
+              @if (!esIndigena) {
               <div class="col-span-1">
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Apelación / Recurso <span class="text-red-500">*</span></label>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Apelación<span class="text-red-500">*</span></label>
                 <select formControlName="apelacionId"
                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                          focus:outline-none focus:ring-1 focus:ring-emerald-500
@@ -110,8 +105,10 @@
                   }
                 </select>
               </div>
+              }
 
-              <!-- Tipo de Apelación -->
+              <!-- Tipo de Apelación — oculto en Indígena -->
+              @if (!esIndigena) {
               <div class="col-span-1">
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Tipo</label>
                 <select formControlName="tipoApelacionId"
@@ -124,24 +121,30 @@
                   }
                 </select>
               </div>
-
-              <!-- Fecha Auto -->
-              <div class="col-span-1">
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Fecha Auto</label>
-                <input type="date" formControlName="fechaAuto"
-                  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
-                         focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
-              </div>
-
-              <!-- Expediente / Causa -->
+              }              <!-- Expediente / Causa — oculto en Indígena -->
+              @if (!esIndigena) {
               <div class="col-span-1">
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Expediente / Causa</label>
                 <input type="text" formControlName="expedienteCausa"
                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                          focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
               </div>
-
-              <!-- Tipo de Escrito -->
+              }
+              <!-- Magistrado Ponente — visble para indigena y no indigena -->
+              <div class="col-span-1">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Magistrado Asignado<span class="text-red-500">*</span></label>
+                <select formControlName="magistradoId"
+                  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                         focus:outline-none focus:ring-1 focus:ring-emerald-500
+                         disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+                  <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+                  @for (item of magistrados; track item.id) {
+                    <option [ngValue]="item.id">{{ item.descripcion }}</option>
+                  }
+                </select>
+              </div>
+              <!-- Tipo de Escrito — oculto en Indígena -->
+              @if (!esIndigena) {
               <div class="col-span-1">
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Tipo de Escrito</label>
                 <select formControlName="tipoEscritoId"
@@ -154,16 +157,20 @@
                   }
                 </select>
               </div>
+              }
 
-              <!-- Folio Oficio -->
+              <!-- Folio Oficio — oculto en Indígena -->
+              @if (!esIndigena) {
               <div class="col-span-1">
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Folio Oficio</label>
                 <input type="text" formControlName="folioOficio" placeholder="Número de folio"
                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                          focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
               </div>
+              }
 
-              <!-- Juzgado de Origen -->
+              <!-- Juzgado de Origen — oculto en Indígena -->
+              @if (!esIndigena) {
               <div class="col-span-1">
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Juzgado de Origen <span class="text-red-500">*</span></label>
                 <select formControlName="juzgadoId"
@@ -176,25 +183,93 @@
                   }
                 </select>
               </div>
+              }
 
-              <!-- Expediente Acumulado -->
+              <!-- Expediente Acumulado — oculto en Indígena -->
+              @if (!esIndigena) {
               <div class="col-span-1">
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Expediente Acumulado</label>
                 <input type="text" formControlName="expedienteAcumulado"
                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                          focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
               </div>
+              }
+              <!-- ── CAMPOS EXCLUSIVOS INDÍGENA ── -->
+              @if (esIndigena) {
 
-              <!-- Fojas -->
+              <!-- Municipio -->
+              <div class="col-span-1">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Municipio <span class="text-red-500">*</span></label>
+                <select formControlName="municipioId"
+                  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                         focus:outline-none focus:ring-1 focus:ring-emerald-500
+                         disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+                  <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+                  @for (item of municipios; track item.id) {
+                    <option [ngValue]="item.id">{{ item.descripcion }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Localidad -->
+              <div class="col-span-1">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Localidad <span class="text-red-500">*</span></label>
+                <select formControlName="localidadId"
+                  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                         focus:outline-none focus:ring-1 focus:ring-emerald-500
+                         disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+                  <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+                  @for (item of localidades; track item.id) {
+                    <option [ngValue]="item.id">{{ item.descripcion }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Etnia -->
+              <div class="col-span-1">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Etnia <span class="text-red-500">*</span></label>
+                <select formControlName="etniaId"
+                  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                         focus:outline-none focus:ring-1 focus:ring-emerald-500
+                         disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+                  <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+                  @for (item of etnias; track item.id) {
+                    <option [ngValue]="item.id">{{ item.descripcion }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Asunto -->
+              <div class="col-span-3">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Asunto <span class="text-red-500">*</span></label>
+                <textarea rows="3" formControlName="asunto"
+                  placeholder="Describa el asunto..."
+                  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                         focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
+                </textarea>
+              </div>
+
+              <!-- Lugar de los Hechos -->
+              <div class="col-span-3">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Lugar de los Hechos <span class="text-red-500">*</span></label>
+                <textarea rows="3" formControlName="lugarHechos"
+                  placeholder="Indique el lugar donde ocurrieron los hechos..."
+                  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                         focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
+                </textarea>
+              </div>
+
+              }
+              @if (!esIndigena) {
+                 <!-- Fojas -->
               <div class="col-span-1">
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Fojas</label>
                 <input type="number" formControlName="fojas" placeholder="Cantidad"
                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                          focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
               </div>
-              <!-- Espacio -->
-              <div class="col-span-1"></div>
 
+              }
               <!-- ¿Es Reposición? -->
               <div class="col-span-3 flex items-center justify-start gap-2 pb-1">
                 <input type="checkbox" id="reposicion" formControlName="esReposicion" class="w-4 h-4 accent-emerald-700"/>
@@ -275,7 +350,7 @@
                       <td class="px-4 py-3 text-sm font-bold text-gray-800">{{ parte.tipoParte }}</td>
                       <td class="px-4 py-3 text-sm text-gray-400 italic">{{ parte.direccion || 'Domicilio conocido' }}</td>
                       <td class="px-4 py-3 text-center">
-                        <input type="checkbox" [checked]="parte.esMenor"
+                        <input type="checkbox" [checked]="parte.menorEdad"
                           (change)="toggleMenor(parte)" class="w-4 h-4 accent-emerald-700"/>
                       </td>
                       <td class="px-4 py-3 text-center">
@@ -407,7 +482,7 @@
                           @for (d of delitosFiltrados; track d.id) {
                             <tr class="border-b border-gray-100 hover:bg-gray-50 transition"
                               [class.bg-blue-50]="d.seleccionado">
-                              <td class="px-3 py-1.5 text-xs text-gray-700">{{ d.nombreDelito }}</td>
+                              <td class="px-3 py-1.5 text-xs text-gray-700">{{ d.delito}}</td>
                               <td class="px-3 py-1.5 text-center">
                                 <input type="checkbox"
                                   [checked]="d.seleccionado"
@@ -518,7 +593,7 @@
                               </svg>
                             </td>
                             <td class="px-4 py-2 text-sm text-gray-700">{{ rel.ofendido?.nombre ?? '—' }}</td>
-                            <td class="px-4 py-2 text-sm text-gray-700">{{ d.nombreDelito }}</td>
+                            <td class="px-4 py-2 text-sm text-gray-700">{{ d.delito.descripcion }}</td>
                             <td class="px-4 py-2 text-center">
                               <button type="button" (click)="eliminarDelitoDeRelacion(rel.id, d.id)"
                                 class="text-red-600 hover:text-red-800 bg-transparent border-0
@@ -584,7 +659,7 @@
       <p class="text-sm text-gray-500 mb-4" [innerHTML]="modalMensaje"></p>
       <div class="flex justify-end">
         <button (click)="cerrarModal()"
-          class="px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 active:scale-95 transition-all">
+          class="px-4 py-2 text-sm font-semibold rounded-lg bg-forest text-white hover:bg-forest active:scale-95 transition-all">
           Aceptar
         </button>
       </div>
@@ -601,17 +676,18 @@
       <form [formGroup]="parteForm" (ngSubmit)="guardarParte()" class="grid grid-cols-2 gap-4">
         <input formControlName="nombre" placeholder="Nombre completo"
           class="border px-3 py-2 rounded-md text-sm col-span-2"/>
-        <select formControlName="sexo" class="border px-3 py-2 rounded-md text-sm">
-          <option value="">Sexo</option>
-          <option value="Masculino">Masculino</option>
-          <option value="Femenino">Femenino</option>
-          <option value="Otro">Otro</option>
-        </select>
-        <select formControlName="tipoParte" class="border px-3 py-2 rounded-md text-sm">
-          <option value="">Tipo de parte</option>
-          <option value="Procesado">Procesado</option>
-          <option value="Ofendido">Ofendido</option>
-        </select>
+        <select formControlName="sexo" class="border px-3 py-2 rounded-md text-sm focus:ring-2 focus:ring-forest outline-none">
+  <option value="">Seleccione Sexo</option>
+  @for (s of sexos; track s.id) {
+    <option [value]="s.descripcion">{{ s.descripcion }}</option>
+  }
+</select>
+        <select formControlName="tipoParte" class="border px-3 py-2 rounded-md text-sm focus:ring-2 focus:ring-forest outline-none">
+        <option value="">Tipo de parte</option>
+        @for (tp of tiposPartes; track tp.id) {
+    <option [value]="tp.descripcion">{{ tp.descripcion }}</option>
+  }
+</select>
         <input formControlName="direccion" placeholder="Dirección"
           class="border px-3 py-2 rounded-md text-sm col-span-2"/>
         <label class="col-span-2 flex items-center gap-2 text-sm">
@@ -625,6 +701,49 @@
             class="px-4 py-2 bg-emerald-900 text-white rounded-md text-sm font-bold hover:bg-emerald-800">Guardar</button>
         </div>
       </form>
+    </div>
+  </div>
+}
+
+@if (mostrarModalAnexos()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity">
+
+    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md transform transition-all">
+
+      <h3 class="text-xl font-bold text-gray-800 mb-2">
+        ¡Apelación Registrada!
+      </h3>
+
+          <div class="text-gray-600 mb-6">
+              <p class="mb-3">
+                  El registro se ha guardado correctamente bajo el folio de oficialía:
+              </p>
+
+        <div class="bg-bronze border border-blue-100 rounded-md p-3 text-center mb-4">
+          <span class="text-2xl font-black text-forest tracking-wide">
+            {{ folioGuardado() }}
+          </span>
+        </div>
+
+        <p>¿Deseas adjuntar documentos o anexos a este expediente en este momento?</p>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-4">
+        <button
+          type="button"
+          (click)="terminarSinAnexos()"
+          class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400">
+          No, terminar captura
+        </button>
+
+        <button
+          type="button"
+          (click)="continuarConAnexos()"
+          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+          Sí, agregar anexos
+        </button>
+      </div>
+
     </div>
   </div>
 }

@@ -5,6 +5,7 @@ import { MainHeaderComponent } from '../../shared/components/header/header.compo
 import { ApelacionService } from '../../core/services/apelaciones.service';
 import { CatalogoItem } from '../../core/models';
 import { finalize } from 'rxjs/operators';
+import { ApelacionContextService } from '../captura-apelaciones/service/apelacion-context.service'; // Ajusta la ruta si es necesario
 
 export interface Anexo {
   idAnexo:   number;
@@ -25,6 +26,7 @@ export class AnexosComponent implements OnInit {
 
   private apelacionService = inject(ApelacionService);
   private cdr              = inject(ChangeDetectorRef);
+  private contextoService  = inject(ApelacionContextService);
   // ── Estado ─────────────────────────────────────────────────
   cargando = false;
   error: string | null = null;
@@ -37,8 +39,8 @@ export class AnexosComponent implements OnInit {
 
 
   // ── Datos ──────────────────────────────────────────────────
-  folioTramite = '0019/2026';
-  idApelacion  = 285113;
+  folioTramite: string | null = null;
+  idApelacion: number | null = null;
   tiposAnexo:  CatalogoItem[] = [];
   anexos:      Anexo[]        = [];
 
@@ -58,6 +60,16 @@ export class AnexosComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.idApelacion = this.contextoService.apelacionId();
+    this.folioTramite = this.contextoService.folioOficialia();
+    if (!this.idApelacion) {
+      this.mostrarModal('No hay una apelación activa en memoria. Por favor, inicie desde la captura.', 'error');
+      // Opcional: regresarlo a la pantalla anterior después de 3 segundos
+      setTimeout(() => this.onBack(), 3000);
+      return;
+    }
+
+    // 3. Si todo está bien, cargamos los catálogos
     this.cargarAnexos();
   }
 
@@ -136,11 +148,15 @@ cerrarModal(): void {
 
   // ── Guarda todos los anexos en el backend ──────────────────
 guardar(): void {
+
+  if (!this.idApelacion) {
+    this.mostrarModal('Error crítico: Se perdió el ID de la apelación.', 'error');
+    return;
+  }
   if (!this.anexos.length) {
     this.mostrarModal('Debes agregar al menos un anexo.', 'error');
     return;
   }
-
   const payload = {
     idApelacion: this.idApelacion,
     anexos: this.anexos.map(a => ({

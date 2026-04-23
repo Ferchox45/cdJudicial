@@ -1,228 +1,171 @@
-import { Resultado } from './../models/busqueda-profunda';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, of, timeout, catchError, tap, shareReplay } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { ApelacionBusqueda, CapturaApelacionCatalogos, CapturaAnexoCatalogos, NoseencontroBusqueda, CatalogoBusqueda} from '../models';
-const BASE_URL  = 'https://judicial-lpkf.onrender.com/api';
-const CACHE_KEY = 'catalogos_captura';
-const CACHE_KEY_ANEXO = 'catalogos_anexo';   // ← caché independiente
-const CACHE_TTL = 1000 * 60 * 30;
-const CACHE_KEY_BUSQUEDA = 'catalogos_busqueda';
+import { Observable, of, timeout, catchError, tap, shareReplay, map } from 'rxjs';
 
+import {
+  ApelacionBusqueda,
+  CapturaApelacionCatalogos,
+  CapturaAnexoCatalogos,
+  CatalogoBusqueda
+} from '../models';
+import { Resultado } from './../models/busqueda-profunda';
 
+const BASE_URL = 'https://judicial-lpkf.onrender.com/api';
+const CACHE_TTL = 1000 * 60 * 30; // 30 minutos
+
+// Centralizamos las llaves de caché para evitar errores tipográficos
+export const CACHE_KEYS = {
+  CAPTURA: 'catalogos_captura',
+  ANEXO: 'catalogos_anexo',
+  BUSQUEDA: 'catalogos_busqueda'
+};
 
 @Injectable({ providedIn: 'root' })
 export class ApelacionService {
   private http = inject(HttpClient);
 
-  // ── Caché en memoria ───────────────────────────────────────
-  private cache$:         Observable<CapturaApelacionCatalogos> | null = null;
-  private cacheAnexo$:    Observable<CapturaAnexoCatalogos>    | null = null;
-  private cacheBusqueda$: Observable<CatalogoBusqueda>         | null = null;
+  // ── 1. Gestor de Caché Centralizado ─────────────────────────
+  // En lugar de múltiples variables nulas, usamos un Map para manejar N cachés
+  private memCache = new Map<string, Observable<any>>();
 
   // ══════════════════════════════════════════════════════════
-  // CARGA DE CATÁLOGOS EN EL FORM DE CAPTURA DE APELACIONES
+  // OBTENCIÓN DE CATÁLOGOS (Usando helper de caché)
   // ══════════════════════════════════════════════════════════
+
   getCatalogoCaptura(): Observable<CapturaApelacionCatalogos> {
-  if (this.cache$) return this.cache$;
+    const httpCall$ = this.http.get<{ data: CapturaApelacionCatalogos }>(`${BASE_URL}/apelaciones/form-data`)
+      .pipe(map(res => res.data));
 
-  const cached = this.getFromStorage<CapturaApelacionCatalogos>(CACHE_KEY);
-  if (cached) {
-    console.log('Catálogos cargados desde caché');
-    this.cache$ = of(cached);
-    return this.cache$;
+    return this.manejarCache(CACHE_KEYS.CAPTURA, httpCall$);
   }
 
-  console.log('Cargando catálogos desde la API...');
-  this.cache$ = this.http
-    .get<{ data: CapturaApelacionCatalogos }>(`${BASE_URL}/apelaciones/form-data`)
-    .pipe(
-      timeout(60000),   // ← 60s para que Render despierte
-      map(res => ({
-        materias:         res.data.materias,
-        apelaciones:      res.data.apelaciones,
-        tiposApelaciones: res.data.tiposApelaciones,
-        tiposEscritos:    res.data.tiposEscritos,
-        juzgados:         res.data.juzgados,
-        municipios:       res.data.municipios,
-        localidades:      res.data.localidades,
-        delitos:          res.data.delitos,
-      })),
-      tap(data => {
-        console.log('Catálogos recibidos:', data);
-        this.saveToStorage(CACHE_KEY, data);
-      }),
+  getCatalogoAnexo(): Observable<CapturaAnexoCatalogos> {
+    const httpCall$ = this.http.get<{ data: { anexos: any[] } }>(`${BASE_URL}/apelaciones/anexos/form-data`)
+      .pipe(map(res => ({ anexo: res?.data?.anexos ?? [] })));
+
+    return this.manejarCache(CACHE_KEYS.ANEXO, httpCall$);
+  }
+
+  getCatalogoBusqueda(): Observable<CatalogoBusqueda> {
+    const httpCall$ = this.http.get<{ data: CatalogoBusqueda }>(`${BASE_URL}/search/filters`)
+      .pipe(map(res => res.data));
+
+    return this.manejarCache(CACHE_KEYS.BUSQUEDA, httpCall$);
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // INVALIDACIÓN DE CATÁLOGOS
+  // ══════════════════════════════════════════════════════════
+
+  invalidarCatalogos(): void        { this.invalidarCache(CACHE_KEYS.CAPTURA); }
+  invalidarAnexos(): void           { this.invalidarCache(CACHE_KEYS.ANEXO); }
+  invalidarCatalogoBusqueda(): void { this.invalidarCache(CACHE_KEYS.BUSQUEDA); }
+
+  // ══════════════════════════════════════════════════════════
+  // OPERACIONES CRUD Y BÚSQUEDAS
+  // ══════════════════════════════════════════════════════════
+
+  buscarPorFolio(folio: string): Observable<ApelacionBusqueda> {
+    const param = encodeURIComponent(folio.trim());
+    return this.http.get<{ data: ApelacionBusqueda }>(`${BASE_URL}/apelaciones/detail?folioOficialia=${param}`)
+      .pipe(
+        timeout(15000),
+        map(res => res.data)
+      );
+  }
+
+  buscarApelaciones(params: any): Observable<Resultado[]> {
+    // Limpieza elegante de parámetros nulos/vacíos
+    let httpParams = new HttpParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        httpParams = httpParams.set(key, String(value));
+      }
+    });
+
+    return this.http.get<{ data: Resultado[] }>(`${BASE_URL}/search`, { params: httpParams })
+      .pipe(map(res => res?.data ?? []));
+  }
+
+  guardarApelacion(payload: any): Observable<any> {
+    return this.http.post(`${BASE_URL}/apelaciones`, payload)
+      .pipe(timeout(15000));
+  }
+
+  guardarAnexos(payload: any): Observable<any> {
+    return this.http.post(`${BASE_URL}/apelaciones/anexos`, payload)
+      .pipe(timeout(15000));
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // HELPERS PRIVADOS DE CACHÉ
+  // ══════════════════════════════════════════════════════════
+
+  /**
+   * Helper centralizado que maneja la memoria, el sessionStorage y la petición HTTP
+   */
+  private manejarCache<T>(key: string, httpCall$: Observable<T>): Observable<T> {
+    // 1. Revisar caché en memoria
+    if (this.memCache.has(key)) {
+      return this.memCache.get(key)!;
+    }
+
+    // 2. Revisar caché en sessionStorage
+    const cachedData = this.getFromStorage<T>(key);
+    if (cachedData) {
+      const obs$ = of(cachedData);
+      this.memCache.set(key, obs$); // Subir a memoria para acceso rápido
+      return obs$;
+    }
+
+    // 3. Hacer la petición si no hay caché
+    const request$ = httpCall$.pipe(
+      timeout(60000),
+      tap(data => this.saveToStorage(key, data)),
       shareReplay(1),
       catchError(err => {
-        console.error('❌ Error cargando catálogos:', err);
-        this.cache$ = null;
+        this.memCache.delete(key); // Limpiar memoria si falla
         throw err;
       })
     );
 
-  return this.cache$;
-}
-
-  invalidarCatalogos(): void {
-    this.cache$ = null;
-    sessionStorage.removeItem(CACHE_KEY);
+    this.memCache.set(key, request$);
+    return request$;
   }
 
-  // ══════════════════════════════════════════════════════════
-  // CARGAR LISTAS DE ANEXOS
-  // ══════════════════════════════════════════════════════════
-getCatalogoAnexo(): Observable<CapturaAnexoCatalogos> {
-  // ...caché igual...
-
-this.cacheAnexo$ = this.http
-  .get<any>(`${BASE_URL}/apelaciones/anexos/form-data`)
-  .pipe(
-    timeout(60000),
-    tap(res => console.log('📥 Respuesta CRUDA anexos:', JSON.stringify(res, null, 2))),
-    map(res => {
-      const anexo = res?.data?.anexos ?? [];
-      console.log('📦 Anexos mapeados:', anexo);
-      return { anexo };
-    }),
-    tap(data => this.saveToStorage(CACHE_KEY_ANEXO, data)),
-    shareReplay(1),
-    catchError(err => { this.cacheAnexo$ = null; throw err; })
-  );
-
-  return this.cacheAnexo$;
-}
-
-  invalidarAnexos(): void {
-    this.cacheAnexo$ = null;
-    sessionStorage.removeItem(CACHE_KEY_ANEXO);
+  private invalidarCache(key: string): void {
+    this.memCache.delete(key);
+    sessionStorage.removeItem(key);
   }
 
-  // ══════════════════════════════════════════════════════════
-  // BÚSQUEDA RAPIDA
-  // ══════════════════════════════════════════════════════════
-buscarPorFolio(folio: string): Observable<ApelacionBusqueda> {
-    const param = encodeURIComponent(folio.trim());
-    return this.http
-      .get<{ data: ApelacionBusqueda }>(`${BASE_URL}/apelaciones/detail?folioOficialia=${param}`)
-      .pipe(
-        timeout(15000),
-        map(res => res.data),           // ← extrae .data
-        catchError(err => { throw err; })
-      );
-  }
-
-  folionoEncontrado(folio: string): Observable<NoseencontroBusqueda> {
-    const param = encodeURIComponent(folio.trim());
-    return this.http
-      .get<NoseencontroBusqueda>(`${BASE_URL}/apelaciones/detail?folioOficialia=${param}`)
-      .pipe(
-        timeout(15000),
-        catchError(err => { throw err; })
-      );
-  }
-
-  // ══════════════════════════════════════════════════════════
-  // STORAGE (genérico — reutilizable para cualquier caché)
-  // ══════════════════════════════════════════════════════════
   private saveToStorage<T>(key: string, data: T): void {
     try {
       sessionStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }));
-    } catch { }
+    } catch { console.warn('Error guardando en sessionStorage'); }
   }
 
   private getFromStorage<T>(key: string): T | null {
     try {
       const raw = sessionStorage.getItem(key);
       if (!raw) return null;
+
       const { data, timestamp } = JSON.parse(raw);
       if (Date.now() - timestamp > CACHE_TTL) {
         sessionStorage.removeItem(key);
         return null;
       }
       return data as T;
-    } catch { return null; }
-  }
-
-  guardarApelacion(payload: any) {
-    return this.http.post(`${BASE_URL}/apelaciones`, payload).pipe(
-      timeout(15000),
-      catchError(err => { throw err; })
-    );
-  }
-
-buscarApelaciones(params: any): Observable<Resultado[]> {
-  let httpParams = new HttpParams();
-
-  Object.keys(params).forEach(key => {
-    if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
-      httpParams = httpParams.set(key, params[key]);
+    } catch {
+      return null;
     }
-  });
-
-  return this.http
-    .get<any>(`${BASE_URL}/search`, { params: httpParams })  // ← /search
-    .pipe(
-      tap(res  => console.log('📥 Respuesta cruda búsqueda:', res)),
-      map(res  => res?.data ?? []),
-      catchError(err => {
-        console.error('❌ Error búsqueda - Status:', err.status);
-        console.error('Mensaje:', err.error);
-        console.error('URL:', err.url);
-        throw err;
-      })
-    );
-}
-
-getCatalogoBusqueda(): Observable<CatalogoBusqueda> {
-  if (this.cacheBusqueda$) return this.cacheBusqueda$;
-
-  const cached = this.getFromStorage<CatalogoBusqueda>(CACHE_KEY_BUSQUEDA);
-  if (cached) {
-    console.log('📦 Catálogo buscador desde caché');
-    this.cacheBusqueda$ = of(cached);
-    return this.cacheBusqueda$;
   }
 
-  this.cacheBusqueda$ = this.http
-    .get<any>(`${BASE_URL}/search/filters`)
-    .pipe(
-      timeout(60000),
-      map(res => ({                           // ← extrae res.data
-        salas:            res.data.salas,
-        nomenclaturas:    res.data.nomenclaturas,
-        tiposApelaciones: res.data.tiposApelaciones,
-      })),
-      tap(data => {
-        console.log('✅ Catálogo buscador mapeado:', data);
-        this.saveToStorage(CACHE_KEY_BUSQUEDA, data);
-      }),
-      shareReplay(1),
-      catchError(err => {
-        console.error('❌ Error catálogo buscador:', err);
-        this.cacheBusqueda$ = null;
-        throw err;
-      })
-    );
-
-  return this.cacheBusqueda$;
-}
-
-  invalidarCatalogoBusqueda(): void {
-    this.cacheBusqueda$ = null;
-    sessionStorage.removeItem(CACHE_KEY_BUSQUEDA);
+  getFolioTentativo(): Observable<string> {
+    return this.http.get<{ data: { folioTentativo: string } }>(`${BASE_URL}/apelaciones/form-data
+      `)
+      .pipe(map(res => res?.data?.folioTentativo ?? ''));
   }
 
-guardarAnexos(payload: any): Observable<any> {
-  return this.http.post(`${BASE_URL}/apelaciones/anexos`, payload).pipe(
-    timeout(15000),
-    tap(res => console.log('Anexos guardados:', res)),
-    catchError(err => {
-      console.error('❌ Error guardando anexos - Status:', err.status);
-      console.error('Mensaje:', err.error);
-      throw err;
-    })
-  );
-}
+
 
 }

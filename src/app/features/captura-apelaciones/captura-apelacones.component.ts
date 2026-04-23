@@ -1,21 +1,13 @@
 import { ActionSidebarComponent, SidebarAction } from "../../shared/components/Action-siderbar/action-siderbar.component";
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MainHeaderComponent } from "../../shared/components/header/header.component";
-import { CapturaApelacionCatalogos, CatalogoItem, ApelacionBusqueda, RelacionBusqueda, ParteBusqueda} from '../../core/models';
+import { CapturaApelacionCatalogos, CatalogoItem, ApelacionBusqueda, RelacionBusqueda, ParteBusqueda, DelitoBusqueda, Parte} from '../../core/models';
 import { ApelacionService } from "../../core/services/apelaciones.service";
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormControl } from "@angular/forms";
 import { Router } from '@angular/router';
+import { ApelacionContextService } from "./service/apelacion-context.service";
 
-export interface Parte {
-  id: number;
-  nombre:      string;
-  sexo:        string;
-  tipoParte:   string;  // 'Promovente', 'Procesado', etc.
-  direccion:   string;
-  esMenor:     boolean;
-  seleccionada: boolean;
-}
 
 @Component({
   selector: 'app-captura-apelacion',
@@ -29,6 +21,7 @@ export class CapturaApelacionesComponent implements OnInit {
   private apelacionService = inject(ApelacionService);
   private busquedaSvc     = inject(ApelacionService);
   private router = inject(Router);
+  private contextoService = inject(ApelacionContextService);
 
   // ── Estado de paneles ──────────────────────────────────────
   identificacionOpen  = true;
@@ -37,31 +30,37 @@ export class CapturaApelacionesComponent implements OnInit {
   relacionesOpen      = false;
   activeTab: 'partes' | 'relaciones' = 'partes';
   relacionesFinalesOpen = false;
-  delitosDisponibles: { id: number; nombreDelito: string; seleccionado: boolean }[] = [];
+  delitosDisponibles: { id: number; delito: string; seleccionado: boolean }[] = [];
   procesadoSeleccionado: Parte | null = null;
   ofendidoSeleccionado:  Parte | null = null;
   busquedaDelitoTexto = new FormControl('');
   private cdr = inject(ChangeDetectorRef);
+  folioGuardado = signal<string>('');
 
   // ── Catálogos ──────────────────────────────────────────────
+
   materias:         CatalogoItem[] = [];
   apelaciones:      CatalogoItem[] = [];
   tiposApelaciones: CatalogoItem[] = [];
   tiposEscritos:    CatalogoItem[] = [];
   juzgados:         CatalogoItem[] = [];
+  magistrados:      CatalogoItem[] = [];
   municipios:       CatalogoItem[] = [];
   localidades:      CatalogoItem[] = [];
+  etnias:           CatalogoItem[] = [];
   delitos:          CatalogoItem[] = [];
+  folioTentativo:   string = '';
+  tiposPartes:      CatalogoItem [] = [];
+  sexos:            CatalogoItem [] = [];
 
   // ── Estado UI ──────────────────────────────────────────────
   cargando = false;
   error: string | null = null;
   timeoutMsg = false;
   fechaActual: Date = new Date();
-private folioActual = 6;
-private anioActual  = new Date().getFullYear();
-tipoModal: 'success' | 'error' = 'error';
-
+  private anioActual  = new Date().getFullYear();
+  tipoModal: 'success' | 'error' = 'error';
+  mostrarModalAnexos = signal(false);
     // ── Estado búsqueda ────────────────────────────────────────
   buscando       = false;
   errorBusqueda: string | null = null;
@@ -79,15 +78,26 @@ tipoModal: 'success' | 'error' = 'error';
   relacionForm!: FormGroup;
   mostrarFormParte = false;
   mostrarFormRelacion = false;
-  delitosTemp: { id: string; nombreDelito: string }[] = [];
+  delitosTemp: { id: string; delito: string }[] = [];
   // ── Sidebar ────────────────────────────────────────────────
   sidebarActions: SidebarAction[] = [
     { id: 'nuevo',      label: 'Nuevo',      icon: 'nuevo',      primary: true },
     { id: 'guardar',    label: 'Guardar',    icon: 'guardar' },
     { id: 'buscar',     label: 'Buscar',     icon: 'buscar' },
     { id: 'anexo',      label: 'Anexo',      icon: 'anexo' },
-    { id: 'certificar', label: 'Certificar', icon: 'certificar' },
   ];
+
+  /** Deshabilita todos los botones del sidebar excepto "Nuevo" */
+  private bloquearSidebar(): void {
+    this.sidebarActions = this.sidebarActions.map(a =>
+      a.id === 'nuevo' ? a : { ...a, disabled: true }
+    );
+  }
+
+  /** Rehabilita todos los botones del sidebar */
+  private habilitarSidebar(): void {
+    this.sidebarActions = this.sidebarActions.map(a => ({ ...a, disabled: false }));
+  }
 
   ngOnInit(): void {
     this.buildForm();
@@ -95,8 +105,6 @@ tipoModal: 'success' | 'error' = 'error';
     setInterval(() => {
     this.fechaActual = new Date();
   }, 1000);
-    this.form.patchValue({
-    folioOficialia: this.generarFolio()});
 
   this.parteForm = this.fb.group({
   nombre: ['', Validators.required],
@@ -111,6 +119,11 @@ this.relacionForm = this.fb.group({
   ofendidoId: [null, Validators.required],
   delitos: ['']
 });
+
+  // ── Validadores dinámicos según materia ───────────────────
+  this.form.get('materiaId')!.valueChanges.subscribe(() => {
+    this.actualizarValidadoresPorMateria();
+  });
 }
 
   ngOnDestroy(): void {
@@ -120,22 +133,91 @@ this.relacionForm = this.fb.group({
   private buildForm(): void {
     this.form = this.fb.group({
       busquedaRapida:      [''],
-      folioOficialia:      [{ value: '', disabled: true }],
+      folioOficialia:      [''],
       materiaId:           [null, Validators.required],
-      apelacionId:         [null, Validators.required],
+      apelacionId:         [null],
       tipoApelacionId:     [null],
       fechaAuto:           [''],
       expedienteCausa:     [''],
       tipoEscritoId:       [null],
       folioOficio:         [''],
-      juzgadoId:           [null, Validators.required],
+      juzgadoId:           [null],
+      magistradoId:        [null, Validators.required],
       expedienteAcumulado: [''],
       fojas:               [null],
       municipioId:         [null],
       localidadId:         [null],
+      etniaId:             [null],
+      asunto:              [''],
+      lugarHechos:         [''],
       esReposicion:        [false],
       observaciones:       [''],
+      folioTentativo:      [{ value: this.folioTentativo, disabled: true }],
     });
+
+      this.parteForm = this.fb.group({
+      nombre: ['', Validators.required],
+      sexo: ['', Validators.required],
+      tipoParte: ['', Validators.required], // Si en el HTML usas "tipoParte", aquí debe decir "tipoParte"
+      direccion: [''],
+      esMenor: [false]
+});
+  }
+
+  /** Activa/desactiva los validators según si la materia es Indígena */
+  private actualizarValidadoresPorMateria(): void {
+    const indigena = this.esIndigena;
+
+    // Campos exclusivos de NO-indígena
+    const camposNormales = ['apelacionId', 'juzgadoId'];
+    // Campos exclusivos de indígena
+    const camposIndigena = ['municipioId', 'localidadId', 'etniaId', 'asunto', 'lugarHechos'];
+
+    camposNormales.forEach(campo => {
+      const ctrl = this.form.get(campo)!;
+      if (indigena) {
+        ctrl.clearValidators();
+        ctrl.setValue(null);
+      } else {
+        ctrl.setValidators(Validators.required);
+      }
+      ctrl.updateValueAndValidity({ emitEvent: false });
+    });
+
+    camposIndigena.forEach(campo => {
+      const ctrl = this.form.get(campo)!;
+      if (indigena) {
+        ctrl.setValidators(Validators.required);
+      } else {
+        ctrl.clearValidators();
+        ctrl.setValue(campo === 'asunto' || campo === 'lugarHechos' ? '' : null);
+      }
+      ctrl.updateValueAndValidity({ emitEvent: false });
+    });
+  }
+
+  /** Deshabilita los campos rellenados por búsqueda rápida para que no sean editables */
+  private bloquearCamposBusqueda(): void {
+    const campos = [
+      'materiaId', 'apelacionId', 'tipoApelacionId', 'tipoEscritoId',
+      'juzgadoId', 'municipioId', 'localidadId', 'magistradoId', 'etniaId',
+      'expedienteCausa', 'fechaAuto', 'fojas', 'expedienteAcumulado',
+      'folioOficio', 'esReposicion', 'observaciones', 'lugarHechos', 'asunto',
+    ];
+    campos.forEach(c => this.form.get(c)?.disable({ emitEvent: false }));
+    this.bloquearSidebar();
+  }
+
+  /** Rehabilita todos los campos al crear un registro nuevo */
+  private habilitarCamposBusqueda(): void {
+    const campos = [
+      'materiaId', 'apelacionId', 'tipoApelacionId', 'tipoEscritoId',
+      'juzgadoId', 'municipioId', 'localidadId', 'magistradoId', 'etniaId',
+      'expedienteCausa', 'fechaAuto', 'fojas', 'expedienteAcumulado',
+      'folioOficio', 'esReposicion', 'observaciones', 'lugarHechos', 'asunto',
+    ];
+    campos.forEach(c => this.form.get(c)?.enable({ emitEvent: false }));
+    this.habilitarSidebar();
   }
 
 cargarCatalogos(): void {
@@ -162,9 +244,14 @@ cargarCatalogos(): void {
       this.tiposApelaciones = data.tiposApelaciones;
       this.tiposEscritos    = data.tiposEscritos;
       this.juzgados         = data.juzgados;
+      this.magistrados      = data.magistrados;
       this.municipios       = data.municipios;
       this.localidades      = data.localidades;
+      this.etnias           = data.etnias ?? [];
       this.delitos          = data.delitos;
+      this.folioTentativo   =data.folioTentativo;
+      this.tiposPartes = data.tiposPartes || [];
+      this.sexos = data.sexos || [];
       this.cargarDelitos();
 
       this.cargando   = false;
@@ -189,8 +276,14 @@ cargarCatalogos(): void {
   });
 }
 
-private parseMenor(menorEdad: string): boolean {
-  return menorEdad?.trim() === '1';
+private parseMenor(menorEdad: any): boolean {
+  if (typeof menorEdad === 'boolean') {
+    return menorEdad; // Si ya es boolean, devuélvelo tal cual
+  }
+  if (typeof menorEdad === 'string') {
+    return menorEdad.trim() === '1'; // Si es string, haz tu lógica original
+  }
+  return false; // Por defecto
 }
 
 /** Normaliza sexo para mostrar en UI */
@@ -291,75 +384,104 @@ cerrarModal(): void {
 }
 
   // Mapea texto de la API → id del catálogo y llena el form
+// 1. CORRECCIÓN EN EL MAPEADO DE LA BÚSQUEDA RÁPIDA
 private cargarEnFormulario(d: ApelacionBusqueda): void {
+  console.log('DATOS DE LA BÚSQUEDA:', d);
   this.form.patchValue({
+    folioTentativo:   d.folioTentativo,
     expedienteCausa:  d.expedienteCausa,
     fojas:            d.fojas,
     esReposicion:     d.esReposicion,
-    fechaAuto: this.toDateInput(d.fechaAuto),
+    fechaAuto:        this.toDateInput(d.fechaAuto),
     observaciones:    d.observaciones   ?? '',
     materiaId:        d.materia?.id     ?? null,
     tipoApelacionId:  d.tipoApelacion?.id ?? null,
     tipoEscritoId:    d.tipoEscrito?.id  ?? null,
     juzgadoId:        d.juzgadoOrigen?.id ?? null,
+    magistradoId:     d.magistrado?.id ?? null,
+    etniaId:          d.etnia?.id   ?? null,
+    lugarHechos:      d.lugarHechos   ?? null,
+    asunto:           d.asunto        ?? null,
     municipioId:      d.municipio?.id   ?? null,
     localidadId:      d.localidad?.id   ?? null,
   });
 
-  const partesMap = new Map<string, Parte>();
+  this.bloquearCamposBusqueda();
 
+  const partesMap = new Map<number, Parte>();
+
+  // Procesar relaciones para extraer partes (Procesados y Ofendidos)
   d.relaciones?.forEach(rel => {
-    if (rel.procesado && !partesMap.has(rel.procesado.id)) {
-      partesMap.set(rel.procesado.id, {
+    if (rel.procesado && !partesMap.has(Number(rel.procesado.id))) {
+      partesMap.set(Number(rel.procesado.id), {
         id:           Number(rel.procesado.id),
         nombre:       rel.procesado.nombre,
         sexo:         this.formatSexo(rel.procesado.sexo),
         tipoParte:    this.formatTipoParte(rel.procesado.tipoParte),
         direccion:    rel.procesado.direccion === 'N/A' ? '' : rel.procesado.direccion,
-        esMenor:      this.parseMenor(rel.procesado.esMenor),
+        menorEdad:    this.parseMenor(rel.procesado.menorEdad),
         seleccionada: false,
       });
     }
 
-    if (rel.ofendido && !partesMap.has(rel.ofendido.id)) {
-      partesMap.set(rel.ofendido.id, {
+    if (rel.ofendido && !partesMap.has(Number(rel.ofendido.id))) {
+      partesMap.set(Number(rel.ofendido.id), {
         id:           Number(rel.ofendido.id),
         nombre:       rel.ofendido.nombre,
         sexo:         this.formatSexo(rel.ofendido.sexo),
         tipoParte:    this.formatTipoParte(rel.ofendido.tipoParte),
         direccion:    rel.ofendido.direccion === 'N/A' ? '' : rel.ofendido.direccion,
-        esMenor:      this.parseMenor(rel.ofendido.esMenor),
+        menorEdad:    this.parseMenor(rel.ofendido.menorEdad),
         seleccionada: false,
       });
     }
   });
 
-  this.partes     = Array.from(partesMap.values());
+  this.partes = Array.from(partesMap.values());
+
+  // CORRECCIÓN: Mapear delitos usando la descripción que ya viene en el JSON
   this.relaciones = (d.relaciones ?? []).map(rel => ({
     ...rel,
-    delitosRelacion: rel.delitosRelacion.map(delito => {
-      const encontrado = this.delitos.find(x => x.id === Number(delito.id));
+    id: rel.id.toString(),
+    delitosRelacion: rel.delitosRelacion.map(dr => {
+      // Intentar buscar en catálogo local, pero priorizar lo que viene del JSON
+      const encontradoLocal = this.delitos.find(x => Number(x.id) === Number(dr.delito?.id || dr.id));
 
       return {
-        id: delito.id,
-        nombreDelito: encontrado?.descripcion ?? 'Delito no encontrado'
-      };
+        id: Number(dr.id),
+        delito: {
+          id: Number(dr.delito?.id || dr.id),
+          descripcion: dr.delito?.descripcion || encontradoLocal?.descripcion || 'Delito no encontrado'
+        }
+      } as DelitoBusqueda;
     })
   }));
-// obtener ids
-const idsDelitosRelacion = new Set<number>();
 
-(d.relaciones ?? []).forEach(rel => {
-  rel.delitosRelacion.forEach(delito => {
-    idsDelitosRelacion.add(Number(delito.id));
+  // Sincronizar selección en el buscador lateral
+  const idsDelitosRelacion = new Set<number>();
+  this.relaciones.forEach(rel => {
+    rel.delitosRelacion.forEach(dr => idsDelitosRelacion.add(dr.delito.id));
   });
-});
 
-//normalizar delitos disponibles marcando los que están en la relación
-this.delitosDisponibles = this.delitosDisponibles.map(d => ({
-  ...d,
-  seleccionado: idsDelitosRelacion.has(d.id)
-}));
+  this.delitosDisponibles = this.delitosDisponibles.map(del => ({
+    ...del,
+    seleccionado: idsDelitosRelacion.has(del.id)
+  }));
+
+  this.cdr.detectChanges();
+}
+
+// 2. CORRECCIÓN EN EL FILTRADO DEL BUSCADOR
+relacionesFiltradas(): RelacionBusqueda[] {
+  const q = this.busquedaDelitoTexto.value?.trim().toLowerCase();
+  if (!q) return this.relaciones;
+
+  return this.relaciones.filter(rel =>
+    rel.delitosRelacion.some(d =>
+      // Acceder a la propiedad descripción del objeto anidado
+      d.delito?.descripcion?.toLowerCase().includes(q)
+    )
+  );
 }
 // Formatea "PROCESADO" → "Procesado", "OFENDIDO" → "Ofendido"
 formatTipoParte(tipo: string): string {
@@ -379,17 +501,20 @@ formatTipoParte(tipo: string): string {
 handleAction(id: string): void {
   switch (id) {
     case 'nuevo':
-      this.incrementarFolio();           // ← incrementa antes de reset
       const folio = this.form.get('folioOficialia')?.value;
+      this.habilitarCamposBusqueda();
       this.form.reset();
       this.partes    = [];
       this.relaciones = [];
       this.procesadoSeleccionado = null;
       this.ofendidoSeleccionado  = null;
       this.busquedaExitosa = false;
+      // Desmarcar todos los delitos del buscador y limpiar texto de búsqueda
+      this.delitosDisponibles = this.delitosDisponibles.map(d => ({ ...d, seleccionado: false }));
+      this.busquedaDelitoTexto.setValue('');
       // Restaura el folio ya incrementado (disabled no se resetea con reset())
       // pero por si acaso:
-      this.form.patchValue({ folioOficialia: this.generarFolio() });
+      this.form.patchValue({ folioOficialia: () => {} });
       break;
     case 'guardar':    this.onGuardar(); break;
     case 'buscar':     this.router.navigate(['/busquedaApelacion']); break;
@@ -397,21 +522,9 @@ handleAction(id: string): void {
     case 'certificar': break;
   }
 }
-// ── Buscador de delitos ────────────────────────────────────
-// Filtra las relaciones según el delito buscado
-relacionesFiltradas(): RelacionBusqueda[] {
-  const q = this.busquedaDelitoTexto.value?.trim().toLowerCase();
-  if (!q) return this.relaciones;
-
-  return this.relaciones.filter(rel =>
-    rel.delitosRelacion.some(d =>
-      d.nombreDelito.toLowerCase().includes(q)
-    )
-  );
-}
 
 toggleMenor(parte: Parte): void {
-  parte.esMenor = !parte.esMenor;
+  parte.menorEdad = !parte.menorEdad;
 }
 
 seleccionarParte(parte: Parte): void {
@@ -432,19 +545,31 @@ private onGuardar(): void {
   }
   const payload = this.buildPayload();
   // Opcional: verlo bonito
-  console.log('JSON formateado:', JSON.stringify(payload, null, 2));
-  console.log('Form raw:', this.form.getRawValue());
-
+/*   console.log('JSON formateado:', JSON.stringify(payload, null, 2));
+  console.log('Form raw:', this.form.getRawValue()); */
     this.apelacionService.guardarApelacion(payload).subscribe({
     next: (res: any) => {
-      this.guardando = false;
-      console.log('Apelación guardada:', res);
-      // éxito
-this.mostrarModal('Apelación guardada correctamente.', 'success');
+    this.guardando = false;
+    if(res.status==='success') {
+    const fol = res.data.folioOficialia;
+    this.folioGuardado.set(fol);
+    this.apelacionService.invalidarCatalogos();
+    this.contextoService.setContexto(res.data.id, fol);
+    this.mostrarModalAnexos.set(true);
+    }
+    this.apelacionService.getFolioTentativo().subscribe({
+      next: (folio) => {
+        this.folioTentativo = folio;
+        this.form.patchValue({ folioTentativo: folio });
+      },
+      error: (err) => {
+        console.error('Error al obtener nuevo folio tentativo:', err);
+      }
+    });
     },
     error: (err) => {
       this.guardando = false;
-      console.error('❌ Error al guardar - Status:', err.status);
+      console.error('Error al guardar - Status:', err.status);
       console.error('Mensaje:', err.error);
       const msg = err?.error?.message ?? 'Error al guardar la apelación. Intente de nuevo.';
       this.mostrarModal(msg, 'error');
@@ -470,7 +595,7 @@ this.mostrarModal('Apelación guardada correctamente.', 'success');
       idTipoParte: tipoParteId[parteLocal?.tipoParte ?? ''] ?? null,
       idSexo:     sexoId[parteLocal?.sexo ?? ''] ?? null,
       direccion:  parteLocal?.direccion || null,
-      esMenor:    parteLocal?.esMenor   ?? false,
+      menorEdad:    parteLocal?.menorEdad   ?? false,
       activo:     true,
     };
   };
@@ -485,17 +610,15 @@ this.mostrarModal('Apelación guardada correctamente.', 'success');
   }));
 
   return {
-  folioOficialia: raw.folioOficialia,
-  folioApelacion: "2026/0001",
+  folioOficialia: this.folioTentativo || 2113,
   idMateria: raw.materiaId,
+  idNomenclatura: 2,
   idTipoApelacion: raw.tipoApelacionId ?? null,
   idTipoEscrito: raw.tipoEscritoId ?? null,
   idJuzgado: raw.juzgadoId,
   idMunicipio: raw.municipioId ?? null,
   idLocalidad: raw.localidadId ?? null,
-  idEtnia: 2,
-  idSala: 2078,
-  idNomenclatura: 1,
+  idEtnia: raw.etniaId ?? null,
   fechaAuto: new Date().toISOString(),
   fechaHoraRecepcion: new Date().toISOString(),
   expedienteCausa: raw.expedienteCausa || null,
@@ -504,8 +627,9 @@ this.mostrarModal('Apelación guardada correctamente.', 'success');
   fojas: raw.fojas ?? null,
   Observaciones : raw.observaciones || null,
   fechaHoraIngresoJuz: new Date().toISOString(),
-  idMagistradoAsignado: 2,
-  lugarHechos:  null,
+  idMagistradoAsignado: raw.magistradoId,
+  asunto: raw.asunto || null,
+  lugarHechos:  raw.lugarHechos || null,
   esReposicion: raw.esReposicion ?? false,
   relaciones
   };
@@ -552,20 +676,36 @@ guardarRelacion(): void {
 
   const nuevaRelacion: RelacionBusqueda = {
     id: Date.now().toString(),
-    activo: true,
-    procesado: procesado
-      ? { id: procesado.id.toString(), nombre: procesado.nombre } as any
-      : null,
-    ofendido: ofendido
-      ? { id: ofendido.id.toString(), nombre: ofendido.nombre } as any
-      : null,
-    delitosRelacion: [...this.delitosTemp]
+    // Mapeamos el objeto completo para cumplir con la interfaz ParteBusqueda
+    procesado: procesado ? {
+      id: Number(procesado.id),
+      nombre: procesado.nombre,
+      direccion: procesado.direccion,
+      menorEdad: procesado.menorEdad,
+      sexo: procesado.sexo,
+      tipoParte: procesado.tipoParte
+    } : null,
+    ofendido: ofendido ? {
+      id: Number(ofendido.id),
+      nombre: ofendido.nombre,
+      direccion: ofendido.direccion,
+      menorEdad: ofendido.menorEdad,
+      sexo: ofendido.sexo,
+      tipoParte: ofendido.tipoParte
+    } : null,
+   delitosRelacion: this.delitosTemp.map(d => ({
+    id: Number(d.id),
+    delito: {
+      id: Number(d.id),
+      descripcion: (d as any).delito // El string que antes llamabas 'delito' ahora va en 'descripcion'
+    }
+  }))
   };
 
-  this.relaciones = [...this.relaciones, nuevaRelacion];;
+  this.relaciones = [...this.relaciones, nuevaRelacion];
 
   this.relacionForm.reset();
-  this.delitosTemp = [];          // ← limpiar después de guardar
+  this.delitosTemp = [];
   this.mostrarFormRelacion = false;
 }
 
@@ -578,24 +718,26 @@ agregarDelito(event: Event): void {
 
   this.delitosTemp.push({
     id: Date.now().toString(),
-    nombreDelito: value
+    delito: value
   });
 
   this.relacionForm.get('delitos')?.setValue('');
 }
 
-eliminarDelitoDeRelacion(relId: string, delitoId: string): void {
- this.relaciones = this.relaciones
-  .map(rel => {
-    if (rel.id === relId) {
-      return {
-        ...rel,
-        delitosRelacion: rel.delitosRelacion.filter(d => d.id !== delitoId)
-      };
-    }
-    return rel;
-  })
-  .filter(rel => rel.delitosRelacion.length > 0);
+eliminarDelitoDeRelacion(relId: string, delitoId: number | string): void {
+  this.relaciones = this.relaciones
+    .map(rel => {
+      if (rel.id === relId) {
+        return {
+          ...rel,
+          // Convertimos delitoId a Number para asegurar la comparación con d.id (que es number)
+          delitosRelacion: rel.delitosRelacion.filter(d => d.id !== Number(delitoId))
+        };
+      }
+      return rel;
+    })
+    // Si la relación se queda sin delitos, la eliminamos de la lista
+    .filter(rel => rel.delitosRelacion.length > 0);
 }
 
 cargarDelitos(): void {
@@ -603,7 +745,7 @@ cargarDelitos(): void {
   // Por ahora los inicializas vacíos o desde el catálogo
   this.delitosDisponibles = (this.delitos ?? []).map(d => ({
     id:            d.id,
-    nombreDelito:  d.descripcion,
+    delito:  d.descripcion,
     seleccionado:  false,
   }));
 }
@@ -612,11 +754,19 @@ get delitosFiltrados() {
   const q = this.busquedaDelitoTexto.value?.trim().toLowerCase() ?? '';
   if (!q) return this.delitosDisponibles;
   return this.delitosDisponibles.filter(d =>
-    d.nombreDelito.toLowerCase().includes(q)
+    d.delito.toLowerCase().includes(q)
   );
 }
 get procesados(): Parte[] { return this.partes.filter(p => p.tipoParte === 'Procesado'); }
 get ofendidos():  Parte[] { return this.partes.filter(p => p.tipoParte === 'Ofendido'); }
+
+/** Retorna true cuando la materia seleccionada es "Indígena" (case-insensitive) */
+get esIndigena(): boolean {
+  const id = this.form.get('materiaId')?.value;
+  if (!id) return false;
+  const materia = this.materias.find(m => m.id === id);
+  return materia?.descripcion?.trim().toLowerCase() === 'indígena';
+}
 // marcarTodos — usa detectChanges
 marcarTodosProcesados(): void {
   const lista = this.procesados;
@@ -642,40 +792,44 @@ seleccionarOfendido(parte: Parte): void {
 agregarRelacionDesdePanel(): void {
   if (!this.procesadoSeleccionado || !this.ofendidoSeleccionado) return;
 
-  const delitosSeleccionados = this.delitosDisponibles
+  const delitosSeleccionados: DelitoBusqueda[] = this.delitosDisponibles
     .filter(d => d.seleccionado)
-    .map(d => ({ id: d.id.toString(), nombreDelito: d.nombreDelito }));
+    .map(d => ({
+      id: Number(d.id),
+      delito: {
+        id: Number(d.id),
+        descripcion: d.delito // Asumiendo que d.delito es el string de la descripción
+      }
+    }));
 
   const nuevaRelacion: RelacionBusqueda = {
-    id:      Date.now().toString(),
-    activo:  true,
+    id: Date.now().toString(), // El ID de la relación sí es string en tu interfaz
     procesado: {
-      id:        this.procesadoSeleccionado.id.toString(),
-      nombre:    this.procesadoSeleccionado.nombre,
-      sexo:      this.procesadoSeleccionado.sexo,
+      id: Number(this.procesadoSeleccionado.id),
+      nombre: this.procesadoSeleccionado.nombre,
+      sexo: this.procesadoSeleccionado.sexo,
       tipoParte: this.procesadoSeleccionado.tipoParte,
       direccion: this.procesadoSeleccionado.direccion,
-      esMenor:   String(this.procesadoSeleccionado.esMenor),
+      menorEdad: this.procesadoSeleccionado.menorEdad,
     },
     ofendido: {
-      id:        this.ofendidoSeleccionado.id.toString(),
-      nombre:    this.ofendidoSeleccionado.nombre,
-      sexo:      this.ofendidoSeleccionado.sexo,
+      id: Number(this.ofendidoSeleccionado.id),
+      nombre: this.ofendidoSeleccionado.nombre,
+      sexo: this.ofendidoSeleccionado.sexo,
       tipoParte: this.ofendidoSeleccionado.tipoParte,
       direccion: this.ofendidoSeleccionado.direccion,
-      esMenor:   String(this.ofendidoSeleccionado.esMenor),
+      menorEdad: this.ofendidoSeleccionado.menorEdad,
     },
     delitosRelacion: delitosSeleccionados,
   };
 
-  this.relaciones = [...this.relaciones, nuevaRelacion];  // ← nuevo array
+  this.relaciones = [...this.relaciones, nuevaRelacion];
 
-  this.delitosDisponibles = this.delitosDisponibles.map(d =>
-    ({ ...d, seleccionado: false })
-  );
+  // Limpieza de estado
+  this.delitosDisponibles = this.delitosDisponibles.map(d => ({ ...d, seleccionado: false }));
   this.procesadoSeleccionado = null;
-  this.ofendidoSeleccionado  = null;
-  this.relacionesFinalesOpen = true;  // ← abre automáticamente la sección
+  this.ofendidoSeleccionado = null;
+  this.relacionesFinalesOpen = true;
   this.cdr.detectChanges();
 }
 
@@ -683,15 +837,28 @@ eliminarRelacion(id: string): void {
   this.relaciones = this.relaciones.filter(r => r.id !== id);
 }
 
-private generarFolio(): string {
-  const num = String(this.folioActual).padStart(4, '0');
-  return `${num}/${this.anioActual}`;
+private actualizarFolioTentativo(): void {
+  this.apelacionService.getFolioTentativo().subscribe({
+    next: (folio: string) => {
+      this.folioTentativo = folio;  // ← esto actualiza el [value] en el HTML
+      this.cdr.detectChanges();     // ← fuerza que Angular re-renderice
+    },
+    error: (err) => {
+      console.error('❌ No se pudo actualizar el folio tentativo:', err);
+    }
+  });
 }
 
-private incrementarFolio(): void {
-  this.folioActual++;
-  this.form.patchValue({ folioOficialia: this.generarFolio() });
-}
+continuarConAnexos() {
+    this.mostrarModalAnexos.set(false); // Cerramos modal por limpieza
+    this.router.navigate(['/anexos']);  // Ejecutamos el flujo anterior
+  }
 
-
+  terminarSinAnexos() {
+    this.mostrarModalAnexos.set(false);
+    this.contextoService.limpiarContexto(); // Limpiamos memoria
+    this.form.reset
+    // this.router.navigate(['/lista-apelaciones']);
+    console.log('Registro finalizado sin anexos.');
+  }
 }

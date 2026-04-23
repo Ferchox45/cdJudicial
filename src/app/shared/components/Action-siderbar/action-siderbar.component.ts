@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 export interface SidebarAction {
   id: string;
   label: string;
-  icon: 'nuevo' | 'guardar' | 'buscar' | 'anexo' | 'certificar';
+  icon: 'nuevo' | 'guardar' | 'buscar' | 'anexo';
   primary?: boolean;
   disabled?: boolean;
 }
@@ -21,7 +21,6 @@ export class ActionSidebarComponent {
     { id: 'guardar',    label: 'Guardar',    icon: 'guardar' },
     { id: 'buscar',     label: 'Buscar',     icon: 'buscar' },
     { id: 'anexo',      label: 'Anexo',      icon: 'anexo' },
-    { id: 'certificar', label: 'Certificar', icon: 'certificar' },
   ];
 
   @Output() actionClick = new EventEmitter<string>();

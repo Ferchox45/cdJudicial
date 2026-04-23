@@ -10,9 +10,14 @@ export interface CapturaApelacionCatalogos {
   tiposApelaciones: CatalogoItem[];
   tiposEscritos:    CatalogoItem[];
   juzgados:         CatalogoItem[];
+  magistrados:      CatalogoItem[];
   municipios:       CatalogoItem[];
   localidades:      CatalogoItem[];
+  etnias:           CatalogoItem[];
   delitos :         CatalogoItem[];
+  tiposPartes:      CatalogoItem[];
+  sexos:            CatalogoItem[];
+  folioTentativo:   string
 }
 
 export interface CapturaAnexoCatalogos {

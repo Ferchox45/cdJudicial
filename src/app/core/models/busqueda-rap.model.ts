@@ -1,45 +1,55 @@
 import { CatalogoItem } from "./catalogo.model";
 
+export interface Parte {
+  id:           number;
+  nombre:       string;
+  sexo:         string;
+  tipoParte:    string; // 'Promovente', 'Procesado', etc.
+  direccion:    string;
+  menorEdad:    boolean;
+  seleccionada: boolean;
+}
+
 export interface DelitoBusqueda {
-  id: string;
-  nombreDelito: string;
+  id: number;
+  delito: CatalogoItem;
 }
 
 export interface ParteBusqueda {
-  id:        string;
+  id:        number;
   nombre:    string;
   direccion: string;
-  esMenor:   string;   // viene como "1" | "0" desde la API
+  menorEdad: boolean;
   sexo:      string;
   tipoParte: string;
 }
 
 export interface RelacionBusqueda {
   id:              string;
-  activo:          boolean;
-  procesado:       ParteBusqueda | null;
   ofendido:        ParteBusqueda | null;
+  procesado:       ParteBusqueda | null;
   delitosRelacion: DelitoBusqueda[];
 }
 
 export interface ApelacionBusqueda {
   id:              number;
-  folioOficialia:  string;
+  folioTentativo:  string;
   folioApelacion:  string;
   expedienteCausa: string;
   fojas:           number;
   esReposicion:    boolean;
   fechaAuto:       string | null;
   observaciones:   string | null;
+  asunto:          string | null;
+  lugarHechos:     string | null;
   materia:         CatalogoItem | null;
   tipoApelacion:   CatalogoItem | null;
   tipoEscrito:     CatalogoItem | null;
   juzgadoOrigen:   CatalogoItem | null;
+  magistrado:      CatalogoItem | null;
   municipio:       CatalogoItem | null;
   localidad:       CatalogoItem | null;
+  etnia:           CatalogoItem | null;
   relaciones:      RelacionBusqueda[];
 }
 
-export interface NoseencontroBusqueda {
-  mensaje: string;
-}

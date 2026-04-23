@@ -1,15 +1,18 @@
 import { Component, DestroyRef, inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule }      from '@angular/common';
-import { FormsModule }       from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MainHeaderComponent } from '../../shared/components/header/header.component';
 import { ApelacionService }  from '../../core/services/apelaciones.service';
 import { CatalogoItem, CatalogoBusqueda } from '../../core/models/catalogo.model';
-import { Resultado, AnexoDetalle, FiltroChip, ParteBusquedaResultado, ParteDetalle,
-  SearchForm }         from '../../core/models/busqueda-profunda';
+import { Resultado, AnexoDetalle, FiltroChip, SearchForm } from '../../core/models/busqueda-profunda';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-
-
+interface ModalState {
+  show: boolean;
+  type: 'success' | 'error' | 'info';
+  title: string;
+  message: string;
+}
 @Component({
   selector:    'app-search',
   standalone:  true,
@@ -40,7 +43,7 @@ private cargarCatalogo(): void {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (cat: CatalogoBusqueda) => {
-          console.log('✅ Catálogo buscador en componente:', cat);
+          console.log('Catálogo buscador en componente:', cat);
           this.catalogoSalas          = cat.salas          ?? [];
           this.catalogoNomenclaturas  = cat.nomenclaturas  ?? [];
           this.catalogoTiposApelacion = cat.tiposApelaciones ?? [];
@@ -92,6 +95,24 @@ form: SearchForm = {
     this.filtrosActivos.splice(index, 1);
   }
 
+  modal: ModalState = {
+    show: false,
+    type: 'info',
+    title: '',
+    message: ''
+  };
+
+  // Método para abrir el modal
+  openModal(type: 'success' | 'error' | 'info', title: string, message: string) {
+    this.modal = { show: true, type, title, message };
+    this.cdr.detectChanges();
+  }
+
+  // Método para cerrar el modal
+  closeModal() {
+    this.modal.show = false;
+  }
+
   // ── Resultados ───────────────────────────────────────────
   todosResultados: Resultado[] = [];
   totalResultados = 0;
@@ -133,35 +154,36 @@ form: SearchForm = {
     }
   }
 onSearch(): void {
-  const tieneCriterio = Object.values(this.form).some(v => v?.toString().trim() !== '');
-  if (!tieneCriterio) {
-    alert('Debes ingresar al menos un criterio de búsqueda.');
-    return;
-  }
-
-  this.buscando     = true;
-  this.errorBusqueda = null;
+const tieneCriterio = Object.values(this.form).some(v => v?.toString().trim() !== '');
+    if (!tieneCriterio) {
+      this.openModal('info', 'Criterios requeridos', 'Debes ingresar al menos un criterio de búsqueda.');
+      return;
+    }
+    this.buscando = true;
+    this.errorBusqueda = null;
 
   this.apelacionService.buscarApelaciones(this.form).subscribe({
     next: (resultados: Resultado[]) => {
-      console.log('✅ Resultados:', resultados);
+      console.log('Resultados:', resultados);
       this.buscando        = false;
       this.todosResultados = resultados;
       this.totalResultados = resultados.length;
       this.paginaActual    = 1;
       this.filaSeleccionada = null;
       this.resultadosOpen  = true;
-      this.cdr.detectChanges();
 
       if (resultados.length === 0) {
-        alert('No se encontraron registros con los criterios ingresados.');
-      }
-    },
+          this.openModal('info', 'Sin resultados', 'No se encontraron registros con los criterios ingresados.');
+        } else {
+          // Opcional: mostrar éxito al encontrar registros
+          this.mensajeExito = `Se encontraron ${resultados.length} registros.`;
+        }
+        this.cdr.detectChanges();
+      },
     error: (err) => {
-      console.error('❌ Error búsqueda:', err.status, err.error);
-      this.buscando      = false;
-      this.errorBusqueda = 'Ocurrió un error al realizar la búsqueda.';
-      this.cdr.detectChanges();
+      this.buscando = false;
+        this.openModal('error', 'Error de búsqueda', 'Ocurrió un error al intentar conectar con el servidor.');
+        this.cdr.detectChanges();
     }
   });
 }
@@ -186,5 +208,7 @@ limpiar(): void {
   this.paginaActual     = 1;
 }
 
-  onBack(): void { console.log('Atrás'); }
+    onBack(): void {
+    window.history.back();
+  }
 }
