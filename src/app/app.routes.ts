@@ -9,19 +9,19 @@ export const routes: Routes = [
 
 {
   path: 'capturaApelacion',
-  loadComponent: () => import('./features/captura-apelaciones/captura-apelacones.component')
+  loadComponent: () => import('./features/Apelaciones/captura-apelaciones/captura-apelacones.component')
   .then(m => m.CapturaApelacionesComponent)
 },
 
 {
   path: 'busquedaApelacion',
-  loadComponent: () => import('./features/busqueda-apelaciones/busquedaApelaciones.component')
+  loadComponent: () => import('./features/Apelaciones/busqueda-apelaciones/busquedaApelaciones.component')
   .then(m => m.SearchComponent)
 },
 
 {
   path: 'anexos',
-  loadComponent: () => import('./features/anexos/anexos.component')
+  loadComponent: () => import('./features/Apelaciones/anexos/anexos.component')
   .then(m => m.AnexosComponent)
 }
 

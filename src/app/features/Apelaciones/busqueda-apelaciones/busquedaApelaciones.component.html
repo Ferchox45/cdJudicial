@@ -1,6 +1,6 @@
 
 <app-main-header></app-main-header>
-<main class="max-h-max mx-auto px-4 py-8 flex flex-col gap-6 bg-bon-white">
+<main class="max-h-max mx-auto px-4 py-8 flex flex-col gap-6 bg-cream">
 
   <div class="mb-8 text-left">
     <h2 class="text-3xl font-bold text-strong-coffee m-0">Búsqueda de Apelaciones</h2>
@@ -148,11 +148,13 @@
 
   <div class="bg-gray-50 px-8 py-4 flex justify-end gap-3 rounded-lg border border-gray-200">
     <button type="button"
-      (click)="limpiar()"
-      class="px-5 py-2 text-sm font-semibold rounded-lg border border-gray-300
-             text-gray-600 hover:bg-gray-100 active:scale-95 transition-all">
-      Limpiar
-    </button>
+    (click)="limpiar()"
+    class="bg-sage text-forest font-medium px-5 py-2 rounded-md border border-sage-dark/20 flex items-center gap-2 cursor-pointer transition hover:bg-sage-dark">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+  <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/>
+</svg>
+    <span>Limpiar</span>
+  </button>
     <button type="button"
       (click)="onSearch()"
       class="bg-forest text-white font-bold px-6 py-2 rounded-lg border-0 flex items-center gap-2 cursor-pointer shadow-sm hover:opacity-90">
@@ -281,22 +283,22 @@
                       </div>
 
                       @if (tabDetalle === 'partes') {
-                        <div class="overflow-x-auto rounded-xl border border-gray-200 m-4">
-                          <table class="w-full border-collapse text-left">
+                        <div class="flex justify-center w-full overflow-x-auto">
+                          <table class="w-full border-collapse text-center">
                             <thead>
                               <tr class="bg-sand border-b border-gray-200">
-                                <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider">Parte</th>
-                                <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider">Nombre Completo</th>
-                                <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider">Dirección</th>
-                                <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider text-center">Es Menor</th>
-                                <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider text-center">Sexo</th>
+                                <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider">Parte</th>
+                                <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider">Nombre Completo</th>
+                                <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider">Dirección</th>
+                                <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider text-center">Es Menor</th>
+                                <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider text-center">Sexo</th>
                               </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100 bg-white">
                               @for (p of r.partes; track $index) {
                                 <tr class="hover:bg-gray-50/80 transition-colors">
                                   <td class="px-6 py-4">
-                                    <span class="text-sm font-semibold text-gray-900 leading-tight">{{ p.tipo }}</span>
+                                    <span class="text-sm font-semibold text-gray-900 leading-tight">{{ p.tipoParte }}</span>
                                   </td>
                                   <td class="px-6 py-4 text-sm text-gray-600 font-medium">
                                     {{ p.nombre }}
@@ -340,8 +342,8 @@
                       }
 
                       @if (tabDetalle === 'anexos') {
-                        <div class="overflow-x-auto rounded-xl border border-gray-200 m-4">
-                          <table class="w-full border-collapse text-left">
+                        <div class="flex justify-center w-full overflow-x-auto">
+                          <table class="w-full border-collapse text-center">
                             <thead>
                               <tr class="bg-sand border-b border-gray-200">
                                 <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wide">Cantidad</th>
@@ -351,25 +353,26 @@
                               </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100 bg-white">
-                              @for (a of r.anexos; track $index) {
-                                <tr class="hover:bg-gray-50/80 transition-colors">
-                                  <td class="px-6 py-4 text-sm font-bold text-gray-700">{{ a.cantidad }}</td>
-                                  <td class="px-6 py-4 text-sm text-gray-700">{{ a.tipo }}</td>
-                                  <td class="px-6 py-4 text-sm text-center">
-                                    @if (a.esValor) {
-                                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">SÍ</span>
-                                    } @else {
-                                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">NO</span>
-                                    }
-                                  </td>
-                                  <td class="px-6 py-4 text-sm text-gray-700 text-right">{{ a.monto | number:'1.2-2' }}</td>
-                                </tr>
-                              } @empty {
-                                <tr>
-                                  <td colspan="4" class="px-6 py-12 text-center text-gray-400 italic text-sm">Sin anexos registrados.</td>
-                                </tr>
-                              }
-                            </tbody>
+  @for (a of r.anexos; track $index) {
+    <tr class="hover:bg-gray-50/80 transition-colors">
+      <td class="px-6 py-4 text-sm font-bold text-gray-700">{{a.cantidad}}</td>
+
+      <td class="px-6 py-4 text-sm text-gray-700">{{ a.descripcion }}</td>
+      <td class="px-6 py-4 text-sm text-center">
+        @if (a.esValor) {
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">SÍ</span>
+        } @else {
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">NO</span>
+        }
+      </td>
+      <td class="px-6 py-4 text-sm text-gray-700 text-right">{{ a.monto | number:'1.2-2' }}</td>
+    </tr>
+  } @empty {
+    <tr>
+      <td colspan="4" class="px-6 py-12 text-center text-gray-400 italic text-sm">Sin anexos registrados.</td>
+    </tr>
+  }
+</tbody>
                           </table>
                         </div>
                       }

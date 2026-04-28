@@ -1,5 +1,5 @@
 export interface ParteBusquedaResultado {
-  tipo:   string;
+  tipoParte:   string;
   nombre: string;
   sexo:   string;
   direccion: string;
@@ -7,8 +7,9 @@ export interface ParteBusquedaResultado {
 }
 
 export interface AnexoDetalle {
+  id: number
   cantidad: number;
-  tipo:     string;
+  descripcion: string;
   esValor:  boolean;
   monto:    number;
 }
@@ -51,15 +52,6 @@ export interface SearchForm {
   fechaInicio:     string;
   fechaFin:        string;
 }
-
-export interface ParteDetalle {
-  tipoParte: string;   // ← era 'parte'
-  nombre:    string;
-  direccion: string;
-  menorEdad: boolean;
-  sexo:      string;
-}
-
 
 export interface FiltroChip {
   label: string;

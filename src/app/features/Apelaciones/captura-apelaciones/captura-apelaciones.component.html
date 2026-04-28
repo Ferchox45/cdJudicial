@@ -1,0 +1,134 @@
+<app-main-header></app-main-header>
+
+<main class="max-h-max mx-auto px-4 py-8 bg-cream">
+
+  <!-- Título + fecha -->
+  <div class="flex items-start justify-between mb-6">
+    <h1 class="text-3xl font-bold text-strong-coffee m-0">Captura de Apelación</h1>
+    <div class="text-right text-sm">
+      <p class="text-emerald-700 font-semibold m-0">Fecha y Hora de Captura</p>
+      <p class="font-bold text-gray-800 m-0">{{ fechaActual | date:'dd/MM/yyyy | HH:mm' }}</p>
+    </div>
+  </div>
+
+  <div class="flex gap-6">
+    <div class="flex-1 flex flex-col gap-6 min-w-0">
+
+      <!-- Panel identificación -->
+      <app-panel-identificacion
+        [form]="form"
+        [folioTentativo]="cat.folioTentativo"
+        [cargando]="cat.cargando"
+        [buscando]="bus.buscando"
+        [busquedaExitosa]="bus.busquedaExitosa"
+        [esIndigena]="esIndigena"
+        [abierto]="identificacionOpen"
+        [materias]="cat.materias"
+        [apelaciones]="cat.apelaciones"
+        [tiposApelaciones]="cat.tiposApelaciones"
+        [tiposEscritos]="cat.tiposEscritos"
+        [juzgados]="cat.juzgados"
+        [magistrados]="cat.magistrados"
+        [municipios]="cat.municipios"
+        [localidades]="cat.localidades"
+        [etnias]="cat.etnias"
+        (toggleEvt)="identificacionOpen = !identificacionOpen"
+        (buscarEvt)="bus.buscar(form, delitosDisponibles)"
+      />
+
+      <!-- Panel partes/relaciones -->
+      <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+
+        <!-- Header colapsable -->
+        <div class="bg-forest px-5 py-3.5 flex items-center justify-between cursor-pointer select-none"
+          (click)="partesOpen = !partesOpen">
+          <div class="flex items-center gap-2.5 text-white">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            </svg>
+            <h2 class="text-sm font-bold uppercase tracking-wide m-0">Partes Intervinientes en el Expediente</h2>
+          </div>
+          <svg class="w-4 h-4 text-white transition-transform duration-200" [class.rotate-180]="!partesOpen"
+            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          </svg>
+        </div>
+
+        @if (partesOpen) {
+          <!-- Tabs -->
+          <div class="flex border-b border-gray-200">
+            <button class="px-6 py-3 text-sm font-semibold transition-colors"
+              [class.text-emerald-800]="activeTab === 'partes'" [class.border-b-2]="activeTab === 'partes'"
+              [class.border-emerald-800]="activeTab === 'partes'" [class.text-gray-500]="activeTab !== 'partes'"
+              (click)="activeTab = 'partes'">Partes</button>
+            <button class="px-6 py-3 text-sm font-semibold transition-colors"
+              [class.text-emerald-800]="activeTab === 'relaciones'" [class.border-b-2]="activeTab === 'relaciones'"
+              [class.border-emerald-800]="activeTab === 'relaciones'" [class.text-gray-500]="activeTab !== 'relaciones'"
+              (click)="activeTab = 'relaciones'">Relaciones</button>
+          </div>
+
+          @if (activeTab === 'partes') {
+            <app-panel-partes
+              [partes]="partes"
+              [parteForm]="parteForm"
+              [mostrarFormParte]="mostrarFormParte"
+              [sexos]="cat.sexos"
+              [tiposPartes]="cat.tiposPartes"
+              [bloquearBtn]="bus.bloquearBtn"
+              (toggleMenorEvt)="$event.menorEdad = !$event.menorEdad"
+              (seleccionarEvt)="$event.seleccionada = !$event.seleccionada"
+              (agregarParteEvt)="agregarParte()"
+              (guardarParteEvt)="guardarParte()"
+              (cancelarParteEvt)="mostrarFormParte = false; parteForm.reset()"
+            />
+          }
+
+          @if (activeTab === 'relaciones') {
+            <app-panel-relaciones
+              [procesados]="procesados"
+              [ofendidos]="ofendidos"
+              [relaciones]="relaciones"
+              [delitosFiltrados]="delitosFiltrados"
+              [busquedaDelitoTexto]="busquedaDelitoTexto"
+              [procesadoSeleccionado]="procesadoSeleccionado"
+              [ofendidoSeleccionado]="ofendidoSeleccionado"
+              [datosGeneralesOpen]="datosGeneralesOpen"
+              [relacionesFinalesOpen]="relacionesFinalesOpen"
+              [bloquearSeccion]="bus.bloquearSeccion"
+              [bloquearBtn]="bus.bloquearBtn"
+              (seleccionarProcesadoEvt)="seleccionarProcesado($event)"
+              (seleccionarOfendidoEvt)="seleccionarOfendido($event)"
+              (marcarTodosProcesadosEvt)="procesadoSeleccionado = procesados[0]"
+              (marcarTodosOfendidosEvt)="ofendidoSeleccionado = ofendidos[0]"
+              (agregarRelacionEvt)="agregarRelacionDesdePanel()"
+              (eliminarDelitoRelacionEvt)="eliminarDelitoDeRelacion($event)"
+              (toggleDelitoEvt)="toggleDelito($event)"
+              (toggleDatosGeneralesEvt)="datosGeneralesOpen = !datosGeneralesOpen"
+              (toggleRelacionesFinalesEvt)="relacionesFinalesOpen = !relacionesFinalesOpen"
+            />
+          }
+        }
+      </div>
+
+    </div>
+
+    <!-- Sidebar -->
+    <app-action-sidebar [actions]="sidebarActions" (actionClick)="handleAction($event)"/>
+  </div>
+</main>
+
+<!-- Modales -->
+<app-modal-aviso
+  [visible]="modalVisible"
+  [mensaje]="modalMensaje"
+  [tipo]="modalTipo"
+  (cerrar)="modalVisible = false"
+/>
+
+<app-modal-anexos
+  [visible]="mostrarModalAnexos()"
+  [folio]="folioGuardado()"
+  (continuar)="grd.continuarConAnexos(mostrarModalAnexos)"
+  (terminar)="grd.terminarSinAnexos(mostrarModalAnexos, form)"
+/>

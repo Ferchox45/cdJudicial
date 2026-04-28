@@ -1,11 +1,11 @@
 import { Component, OnInit, inject,  ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MainHeaderComponent } from '../../shared/components/header/header.component';
-import { ApelacionService } from '../../core/services/apelaciones.service';
-import { CatalogoItem } from '../../core/models';
+import { MainHeaderComponent } from '../../../shared/components/header/header.component';
+import { ApelacionService } from '../../../core/services/apelaciones.service';
+import { CatalogoItem } from '../../../core/models';
 import { finalize } from 'rxjs/operators';
-import { ApelacionContextService } from '../captura-apelaciones/service/apelacion-context.service'; // Ajusta la ruta si es necesario
+import { ApelacionContextService } from '../../../core/services/apelacion-context.service'; // Ajusta la ruta si es necesario
 
 export interface Anexo {
   idAnexo:   number;

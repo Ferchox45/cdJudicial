@@ -8,6 +8,7 @@ export interface Parte {
   direccion:    string;
   menorEdad:    boolean;
   seleccionada: boolean;
+  roleOrigin?: 'procesado' | 'ofendido';
 }
 
 export interface DelitoBusqueda {

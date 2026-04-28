@@ -1,10 +1,10 @@
 import { Component, DestroyRef, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MainHeaderComponent } from '../../shared/components/header/header.component';
-import { ApelacionService }  from '../../core/services/apelaciones.service';
-import { CatalogoItem, CatalogoBusqueda } from '../../core/models/catalogo.model';
-import { Resultado, AnexoDetalle, FiltroChip, SearchForm } from '../../core/models/busqueda-profunda';
+import { MainHeaderComponent } from '../../../shared/components/header/header.component';
+import { ApelacionService } from '../../../core/services/apelaciones.service';
+import { CatalogoBusqueda, CatalogoItem } from '../../../core/models';
+import { Resultado, AnexoDetalle, FiltroChip, SearchForm } from '../../../core/models/busqueda-profunda';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface ModalState {

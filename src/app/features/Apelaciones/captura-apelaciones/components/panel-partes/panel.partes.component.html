@@ -1,0 +1,116 @@
+<!-- ══ TAB: PARTES ══ -->
+<div class="overflow-x-auto">
+  <table class="w-full text-left border-collapse">
+    <thead>
+      <tr class="border-b border-gray-200 bg-gray-50">
+        <th class="px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-gray-500">Nombre Completo</th>
+        <th class="px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-gray-500">Sexo</th>
+        <th class="px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-gray-500">Parte</th>
+        <th class="px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-gray-500">Dirección</th>
+        <th class="px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-gray-500 text-center">Menor</th>
+        <th class="px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-gray-500 text-center">Selección</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (parte of partes; track parte.id) {
+        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-gray-800">{{ parte.nombre }}</td>
+          <td class="px-4 py-3 text-sm text-gray-600">{{ parte.sexo }}</td>
+          <td class="px-4 py-3 text-sm font-bold text-gray-800">{{ parte.tipoParte }}</td>
+          <td class="px-4 py-3 text-sm text-gray-400 italic">{{ parte.direccion || 'Domicilio conocido' }}</td>
+          <td class="px-4 py-3 text-center">
+            <input type="checkbox"
+              [checked]="parte.menorEdad"
+              (change)="toggleMenorEvt.emit(parte)"
+              class="w-4 h-4 accent-emerald-700"/>
+          </td>
+          <td class="px-4 py-3 text-center">
+            <button type="button" (click)="seleccionarEvt.emit(parte)"
+              class="w-6 h-6 rounded-full border-2 mx-auto flex items-center justify-center transition-colors"
+              [class.bg-emerald-900]="parte.seleccionada"
+              [class.border-emerald-900]="parte.seleccionada"
+              [class.border-gray-300]="!parte.seleccionada">
+              @if (parte.seleccionada) {
+                <svg width="12" height="12" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              }
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="6" class="px-4 py-8 text-center text-sm text-gray-400 italic">
+            No hay partes registradas.
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<!-- Botón Agregar Parte -->
+<div class="flex justify-end px-4 py-3 border-t border-gray-100">
+  <button type="button"
+    (click)="agregarParteEvt.emit()"
+    [disabled]="!bloquearBtn"
+    class="flex items-center gap-2 bg-emerald-900 text-white px-4 py-2
+           rounded-md text-sm font-bold hover:bg-emerald-800 active:scale-95 transition-all
+           disabled:opacity-40 disabled:cursor-not-allowed">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+      <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+      <line x1="19" y1="8" x2="19" y2="14"/>
+      <line x1="22" y1="11" x2="16" y2="11"/>
+    </svg>
+    Agregar Parte
+  </button>
+</div>
+
+<!-- ── MODAL AGREGAR PARTE ── -->
+@if (mostrarFormParte) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+      (click)="cancelarParteEvt.emit()"></div>
+    <div class="relative z-10 w-full max-w-lg bg-white rounded-xl shadow-xl p-6">
+      <h2 class="text-lg font-bold mb-4">Agregar Parte</h2>
+      <form [formGroup]="parteForm"
+            (ngSubmit)="guardarParteEvt.emit()"
+            class="grid grid-cols-2 gap-4">
+        <input formControlName="nombre"
+               placeholder="Nombre completo"
+               class="border px-3 py-2 rounded-md text-sm col-span-2"/>
+        <select formControlName="sexo"
+          class="border px-3 py-2 rounded-md text-sm focus:ring-2 focus:ring-forest outline-none">
+          <option value="">Seleccione Sexo</option>
+          @for (s of sexos; track s.id) {
+            <option [value]="s.descripcion">{{ s.descripcion }}</option>
+          }
+        </select>
+        <select formControlName="tipoParte"
+          class="border px-3 py-2 rounded-md text-sm focus:ring-2 focus:ring-forest outline-none">
+          <option value="">Tipo de parte</option>
+          @for (tp of tiposPartes; track tp.id) {
+            <option [value]="tp.descripcion">{{ tp.descripcion }}</option>
+          }
+        </select>
+        <input formControlName="direccion" placeholder="Dirección"
+          class="border px-3 py-2 rounded-md text-sm col-span-2"/>
+        <label class="col-span-2 flex items-center gap-2 text-sm">
+          <input type="checkbox" formControlName="esMenor" class="accent-emerald-700"/>
+          Es menor de edad
+        </label>
+        <div class="col-span-2 flex justify-end gap-2">
+          <button type="button" (click)="cancelarParteEvt.emit()"
+            class="px-4 py-2 border rounded-md text-sm text-gray-600 hover:bg-gray-50">
+            Cancelar
+          </button>
+          <button type="submit"
+            class="px-4 py-2 bg-emerald-900 text-white rounded-md text-sm font-bold hover:bg-emerald-800">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
