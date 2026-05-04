@@ -68,7 +68,6 @@ export class AnexosComponent implements OnInit {
       setTimeout(() => this.onBack(), 3000);
       return;
     }
-
     // 3. Si todo está bien, cargamos los catálogos
     this.cargarAnexos();
   }
@@ -112,7 +111,7 @@ cerrarModal(): void {
   onTipoChange(id: number): void {
     const found = this.tiposAnexo.find(t => t.id === Number(id));
     this.nuevoAnexo.tipo = found?.descripcion ?? '';
-    console.log('🔘 Tipo seleccionado:', found);
+    console.log('Tipo seleccionado:', found);
 
     // Si no es OTRO, limpia el campo libre
     if (!this.esOtro) this.nuevoAnexo.otroAnexo = '';
@@ -121,7 +120,7 @@ cerrarModal(): void {
   // ── Agrega anexo a la lista ────────────────────────────────
   agregarAnexo(): void {
     if (!this.nuevoAnexo.idAnexo) {
-      console.warn('Selecciona un tipo de anexo antes de agregar.');
+    this.mostrarModal('Debes seleccionar un tipo de Anexo', 'error');
       return;
     }
 

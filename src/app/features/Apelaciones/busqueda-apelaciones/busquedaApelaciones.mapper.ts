@@ -1,0 +1,47 @@
+import { SearchForm } from '../../../core/models/busqueda-profunda';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DTOs  (lo que espera el backend)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface BusquedaDTO {
+  folioOficialia?:  string;
+  folioApelacion?:  string;
+  expedienteCausa?: string;
+  nombreParte?:     string;
+  idSala?:          number;
+  idNomenclatura?:  number;
+  idTipoApelacion?: number;
+  fechaInicio?:     string;
+  fechaFin?:        string;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mapper
+// ─────────────────────────────────────────────────────────────────────────────
+
+export class BusquedaApelacionesMapper {
+
+  /** Convierte el formulario de UI al DTO que espera el backend.
+   *  Omite los campos vacíos para no enviar filtros nulos. */
+  static toDTO(form: SearchForm): BusquedaDTO {
+    const dto: BusquedaDTO = {};
+
+    if (form.folioOficialia?.trim())  dto.folioOficialia  = form.folioOficialia.trim();
+    if (form.folioApelacion?.trim())  dto.folioApelacion  = form.folioApelacion.trim();
+    if (form.expedienteCausa?.trim()) dto.expedienteCausa = form.expedienteCausa.trim();
+    if (form.nombreParte?.trim())     dto.nombreParte     = form.nombreParte.trim();
+    if (form.idSala)                  dto.idSala          = Number(form.idSala);
+    if (form.idNomenclatura)          dto.idNomenclatura  = Number(form.idNomenclatura);
+    if (form.idTipoApelacion)         dto.idTipoApelacion = Number(form.idTipoApelacion);
+    if (form.fechaInicio)             dto.fechaInicio     = form.fechaInicio;
+    if (form.fechaFin)                dto.fechaFin        = form.fechaFin;
+
+    return dto;
+  }
+
+  /** Verifica si el formulario tiene al menos un criterio de búsqueda. */
+  static tieneCriterios(form: SearchForm): boolean {
+    return Object.values(form).some(v => v?.toString().trim() !== '');
+  }
+}

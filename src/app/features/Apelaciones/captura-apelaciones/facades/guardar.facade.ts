@@ -20,9 +20,8 @@ export class GuardarFacade {
   onTerminar?: () => void;   // <-- nuevo: limpia estado del padre
   onError?:    (msg: string) => void;
 
-  guardar(
+guardar(
     form: FormGroup,
-    folioTentativo: string,
     relaciones: RelacionBusqueda[],
     partes: Parte[],
     sexos: CatalogoItem[],
@@ -30,12 +29,8 @@ export class GuardarFacade {
     folioGuardado: WritableSignal<string>,
     onModalInvalido: () => void
   ): void {
-    if (form.invalid) {
-      form.markAllAsTouched();
-      onModalInvalido();
-      return;
-    }
 
+    // 1. Primero construimos y mostramos el JSON con lo que sea que tenga el form
     const payload = buildPayload(
       form.getRawValue(),
       relaciones,
@@ -44,6 +39,15 @@ export class GuardarFacade {
       tiposPartes
     );
     console.log('JSON formateado:', JSON.stringify(payload, null, 2));
+
+    // 2. Despues validamos. Si es inválido, detenemos el flujo para que NO se envíe al servidor
+    if (form.invalid) {
+      form.markAllAsTouched();
+      onModalInvalido();
+      return;
+    }
+
+    // 3. Si todo está bien, mandamos la petición al servidor
     this.guardando = true;
     this.apelacionService.guardarApelacion(payload).subscribe({
       next: (res: any) => {

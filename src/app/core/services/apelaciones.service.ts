@@ -8,7 +8,7 @@ import {
   CapturaAnexoCatalogos,
   CatalogoBusqueda
 } from '../models';
-import { Resultado } from './../models/busqueda-profunda';
+
 
 const BASE_URL = 'https://judicial-lpkf.onrender.com/api';
 const CACHE_TTL = 1000 * 60 * 30; // 30 minutos
@@ -74,18 +74,7 @@ export class ApelacionService {
       );
   }
 
-  buscarApelaciones(params: any): Observable<Resultado[]> {
-    // Limpieza elegante de parámetros nulos/vacíos
-    let httpParams = new HttpParams();
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== null && value !== undefined && value !== '') {
-        httpParams = httpParams.set(key, String(value));
-      }
-    });
 
-    return this.http.get<{ data: Resultado[] }>(`${BASE_URL}/search`, { params: httpParams })
-      .pipe(map(res => res?.data ?? []));
-  }
 
   guardarApelacion(payload: any): Observable<any> {
     return this.http.post(`${BASE_URL}/apelaciones`, payload)

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 export interface SidebarAction {
   id: string;
   label: string;
-  icon: 'nuevo' | 'guardar' | 'buscar' | 'anexo';
+  icon: 'nuevo' | 'guardar' | 'buscar' | 'anexo'| 'exportar' | 'limpiar';
   primary?: boolean;
   disabled?: boolean;
 }
@@ -28,4 +28,9 @@ export class ActionSidebarComponent {
   onClick(id: string) {
     this.actionClick.emit(id);
   }
+
+  isIcon(action: SidebarAction, icon: string): boolean {
+  return action.icon === icon;
+}
+
 }

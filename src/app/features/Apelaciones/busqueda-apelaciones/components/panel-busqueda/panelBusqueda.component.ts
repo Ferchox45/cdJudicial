@@ -1,0 +1,29 @@
+import { Component, inject, output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CatalogosFacade } from '../../facades/catalogos.facade';
+import { BusquedaFacade } from '../../facades/busqueda.facade';
+import { SearchForm } from '../../../../../core/models/busqueda-profunda';
+
+@Component({
+  selector:    'app-panel-busqueda',
+  standalone:  true,
+  imports:     [CommonModule, FormsModule],
+  templateUrl: './panelBusqueda.component.html',
+})
+export class PanelBusquedaComponent {
+
+  readonly catalogos = inject(CatalogosFacade);
+  readonly busqueda  = inject(BusquedaFacade);
+
+  // Expone una copia mutable local del form para que ngModel funcione
+  // y emite hacia arriba cuando cambia
+  get form(): SearchForm { return this.busqueda.form(); }
+
+  updateForm(field: keyof SearchForm, value: string): void {
+    this.busqueda.form.update(f => ({ ...f, [field]: value }));
+  }
+
+  abierto = true;
+  toggle(): void { this.abierto = !this.abierto; }
+}

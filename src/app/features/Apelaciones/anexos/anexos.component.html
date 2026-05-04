@@ -3,20 +3,20 @@
 <!-- BEGIN: MainHeader -->
 <app-main-header></app-main-header>
 <!-- END: MainHeader -->
-<main class="max-h-max mx-auto px-6 py-6 flex flex-col gap-6 bg-bon-white">
+<main class="max-h-max mx-auto px-4 md:px-6 py-4 md:py-6 flex flex-col gap-6 bg-bon-white">
 
   <!-- BEGIN: FolioSection -->
-  <section class="flex justify-end">
-    <div class="bg-sand/25 border border-bronze/50 px-6 py-4 rounded-lg shadow-sm flex items-center gap-4">
-      <span class="text-bronze font-bold tracking-tight">FOLIO DEL TRÁMITE:</span>
-      <span class="text-forest font-black text-xl">{{ folioTramite }}</span>
+  <section class="flex justify-center md:justify-end">
+    <div class="bg-sand/25 border border-bronze/50 px-4 md:px-6 py-3 md:py-4 rounded-lg shadow-sm flex items-center gap-2 md:gap-4 w-full md:w-auto justify-center">
+      <span class="text-bronze font-bold tracking-tight text-sm md:text-base">FOLIO DEL TRÁMITE:</span>
+      <span class="text-forest font-black text-lg md:text-xl">{{ folioTramite }}</span>
     </div>
   </section>
   <!-- END: FolioSection -->
 
   <!-- BEGIN: AddAttachmentForm -->
   <section class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-    <div class="p-6">
+    <div class="p-4 md:p-6">
       <!-- Header -->
       <div class="flex items-center gap-2 mb-6">
         <div class="bg-forest text-white rounded-full p-1 flex">
@@ -28,39 +28,39 @@
       </div>
 
       <!-- Grid de campos -->
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
+      <!-- En móvil es 1 columna, en escritorio son 12 -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6 items-end">
 
         <!-- Tipo Anexo -->
-<div class="md:col-span-4 flex flex-col gap-1">
-  <label for="tipoAnexo" class="block text-xs font-bold text-gray-600">Anexo</label>
+        <div class="md:col-span-4 flex flex-col gap-1">
+          <label for="tipoAnexo" class="block text-xs font-bold text-gray-600">Anexo</label>
+          <select
+            id="tipoAnexo"
+            [attr.disabled]="cargando ? true : null"
+            class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
+                   transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest
+                   disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait"
+            [(ngModel)]="nuevoAnexo.idAnexo"
+            (ngModelChange)="onTipoChange($event)"
+            name="tipoAnexo"
+          >
+            <option [value]="0" disabled>--Selecciona--</option>
+            @for (tipo of tiposAnexo; track tipo.id) {
+              <option [value]="tipo.id">{{ tipo.descripcion }}</option>
+            }
+          </select>
 
-<select
-  id="tipoAnexo"
-  [attr.disabled]="cargando ? true : null"
-  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white
-         transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest
-         disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait"
-  [(ngModel)]="nuevoAnexo.idAnexo"
-  (ngModelChange)="onTipoChange($event)"
-  name="tipoAnexo"
->
-  <option [value]="0" disabled>--Selecciona--</option>
-  @for (tipo of tiposAnexo; track tipo.id) {
-    <option [value]="tipo.id">{{ tipo.descripcion }}</option>
-  }
-</select>
+          @if (error && !cargando) {
+            <p class="text-xs text-red-500 mt-1">
+              {{ error }}
+              <button type="button" (click)="recargar()"
+                      class="font-bold underline hover:no-underline ml-1">
+                Reintentar
+              </button>
+            </p>
+          }
+        </div>
 
-  @if (error && !cargando) {
-    <p class="text-xs text-red-500 mt-1">
-      {{ error }}
-      <button type="button" (click)="recargar()"
-              class="font-bold underline hover:no-underline ml-1">
-        Reintentar
-      </button>
-    </p>
-  }
-
-</div>
         <!-- Cantidad -->
         <div class="md:col-span-2 flex flex-col gap-1">
           <label for="cantidad" class="block text-xs font-bold text-gray-600">Cantidad</label>
@@ -68,7 +68,7 @@
             id="cantidad"
             type="number"
             min="1"
-            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+            class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
             [(ngModel)]="nuevoAnexo.cantidad"
             name="cantidad"
           />
@@ -76,16 +76,17 @@
 
         <!-- Monto Toggle & Field -->
         <div class="md:col-span-4">
-          <div class="flex items-center gap-4">
+          <!-- En móvil apilamos el checkbox y el input, en escritorio los ponemos lado a lado -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 mt-2 md:mt-0">
             <div class="flex items-center gap-2">
-              <input id="monto-check" type="checkbox" [(ngModel)]="nuevoAnexo.tieneMonto" name="tieneMonto" />
-              <label for="monto-check" class="text-sm font-bold text-gray-700">Monto</label>
+              <input id="monto-check" type="checkbox" [(ngModel)]="nuevoAnexo.tieneMonto" name="tieneMonto" class="w-4 h-4 accent-forest" />
+              <label for="monto-check" class="text-sm font-bold text-gray-700 whitespace-nowrap">Monto</label>
             </div>
-            <div class="flex-1 relative">
+            <div class="flex-1 relative w-full">
               <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">$</span>
               <input
                 type="text"
-                class="w-full border border-gray-300 rounded-md pl-7 pr-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest disabled:bg-gray-50 disabled:text-gray-400"
+                class="w-full border border-gray-300 rounded-md pl-7 pr-3 py-3 md:py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest disabled:bg-gray-50 disabled:text-gray-400"
                 placeholder="0.00"
                 [disabled]="!nuevoAnexo.tieneMonto"
                 [(ngModel)]="nuevoAnexo.monto"
@@ -96,9 +97,9 @@
         </div>
 
         <!-- Agregar Button -->
-        <div class="md:col-span-2">
+        <div class="md:col-span-2 mt-2 md:mt-0">
           <button type="button"
-            class="bg-forest text-white font-bold px-4 py-2 rounded-lg border-0 flex items-center justify-center gap-2 w-full cursor-pointer shadow-sm transition hover:opacity-90"
+            class="bg-forest text-white font-bold px-4 py-3 md:py-2 rounded-lg border-0 flex items-center justify-center gap-2 w-full cursor-pointer shadow-sm transition hover:opacity-90"
             (click)="agregarAnexo()">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
@@ -114,9 +115,12 @@
 
   <!-- BEGIN: AttachmentsTable -->
   <section class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-    <div class="overflow-x-auto">
+    <!-- Fondo gris en móvil para destacar las tarjetas, fondo blanco en escritorio -->
+    <div class="overflow-x-auto bg-gray-50/50 md:bg-transparent p-2 md:p-0">
       <table class="w-full text-left border-collapse">
-        <thead>
+
+        <!-- Ocultamos el thead en móvil -->
+        <thead class="hidden md:table-header-group">
           <tr class="bg-sand border-b border-sand">
             <th class="px-6 py-4 text-xs font-bold text-black uppercase tracking-wide">Cantidad</th>
             <th class="px-6 py-4 text-xs font-bold text-black uppercase tracking-wide">Anexo</th>
@@ -125,77 +129,105 @@
             <th class="px-6 py-4 text-xs font-bold text-black uppercase tracking-wide text-center">Acciones</th>
           </tr>
         </thead>
-        <tbody>
+
+        <tbody class="block md:table-row-group">
           @for (anexo of anexos; track $index) {
-            <tr class="border-b border-gray-100 transition hover:bg-cream">
-              <td class="px-6 py-4 text-sm font-bold text-gray-700">{{ anexo.cantidad }}</td>
-              <td class="px-6 py-4 text-sm text-gray-600">{{ anexo.tipo }}</td>
-              <td class="px-6 py-4 text-sm text-gray-600">{{ anexo.esValor ? 'Sí' : 'No' }}</td>
-              <td class="px-6 py-4 text-sm text-gray-600">${{ anexo.monto | number:'1.2-2' }}</td>
-              <td class="px-6 py-4 text-center">
+
+            <!-- Transformamos el tr en tarjeta para móvil -->
+            <tr class="block md:table-row bg-white border border-gray-200 md:border-b md:border-x-0 md:border-t-0 rounded-lg md:rounded-none transition hover:bg-cream mb-4 md:mb-0 shadow-sm md:shadow-none">
+
+              <td class="flex justify-between items-center md:table-cell px-4 md:px-6 py-3 md:py-4 text-sm font-bold md:font-normal text-gray-800 md:text-gray-700 border-b border-gray-100 md:border-none">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden">Cantidad:</span>
+                <span>{{ anexo.cantidad }}</span>
+              </td>
+
+              <td class="flex justify-between items-center md:table-cell px-4 md:px-6 py-3 md:py-4 text-sm text-gray-600 border-b border-gray-100 md:border-none">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden">Anexo:</span>
+                <span class="text-right">{{ anexo.tipo }}</span>
+              </td>
+
+              <td class="flex justify-between items-center md:table-cell px-4 md:px-6 py-3 md:py-4 text-sm text-gray-600 border-b border-gray-100 md:border-none">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden">Es Valor:</span>
+                <span>{{ anexo.esValor ? 'Sí' : 'No' }}</span>
+              </td>
+
+              <td class="flex justify-between items-center md:table-cell px-4 md:px-6 py-3 md:py-4 text-sm font-semibold md:font-normal text-gray-700 md:text-gray-600 border-b border-gray-100 md:border-none">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden">Monto:</span>
+                <span>${{ anexo.monto | number:'1.2-2' }}</span>
+              </td>
+
+              <!-- Botón Eliminar con fondo rojizo en móvil para destacarlo -->
+              <td class="flex justify-center items-center md:table-cell px-4 md:px-6 py-3 md:py-4 text-center bg-red-50/30 md:bg-transparent rounded-b-lg md:rounded-none">
                 <button type="button"
-                  class="flex items-center justify-center gap-1.5 text-red-600 bg-transparent border-0 cursor-pointer w-full transition hover:text-red-700"
+                  class="flex items-center justify-center gap-1.5 text-red-600 border border-red-200 md:border-0 bg-white md:bg-transparent px-4 py-2 md:p-0 rounded md:rounded-none cursor-pointer w-full md:w-auto mx-auto transition hover:text-red-700 hover:bg-red-50 md:hover:bg-transparent shadow-sm md:shadow-none"
                   (click)="eliminarAnexo($index)" title="Eliminar anexo">
-                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <svg class="h-4 w-4 md:h-5 md:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                       stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
                   </svg>
-                  <span class="text-sm font-medium">Eliminar</span>
+                  <span class="text-sm font-bold md:font-medium">Eliminar</span>
                 </button>
               </td>
             </tr>
+
           } @empty {
-            <tr>
-              <td colspan="5" class="px-6 py-8 text-center text-gray-400 italic">No hay anexos registrados.</td>
+            <tr class="block md:table-row">
+              <td colspan="5" class="block md:table-cell px-4 md:px-6 py-8 text-center text-sm text-gray-400 italic bg-white rounded-lg md:rounded-none border border-gray-200 md:border-0">
+                No hay anexos registrados.
+              </td>
             </tr>
           }
         </tbody>
       </table>
     </div>
-<div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
 
-  <p class="text-xs text-gray-500 italic m-0">
-    Mostrando {{ anexos.length }} {{ anexos.length === 1 ? 'anexo registrado' : 'anexos registrados' }}
-  </p>
+    <!-- Footer de la tabla responsivo -->
+    <div class="px-4 md:px-6 py-4 bg-gray-50 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
 
-  <!-- 🔥 CONTENEDOR DE BOTONES -->
-  <div class="flex items-center gap-3">
+      <p class="text-xs text-gray-500 italic m-0 text-center md:text-left">
+        Mostrando {{ anexos.length }} {{ anexos.length === 1 ? 'anexo registrado' : 'anexos registrados' }}
+      </p>
 
-    <button type="button"
-      class="bg-sage text-forest font-medium px-6 py-2 rounded-md border border-sage-dark/20 flex items-center gap-2 cursor-pointer transition hover:bg-sage-dark"
-      (click)="onBack()">
-      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
-          stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
-      </svg>
-      Atrás
-    </button>
+      <!-- Botones se apilan (col-reverse) en móvil: Guardar arriba, Atrás abajo -->
+      <div class="flex flex-col-reverse md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto">
 
-<button type="button"
-  class="bg-forest text-white font-bold px-6 py-2 rounded-md border-0 flex items-center gap-2 cursor-pointer shadow-sm transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-  [disabled]="guardando"
-  (click)="guardar()">
-    Guardar Anexos
-</button>
-  </div>
-</div>
+        <button type="button"
+          class="bg-sage text-forest font-bold md:font-medium px-6 py-3 md:py-2 rounded-md border border-sage-dark/20 flex items-center justify-center gap-2 cursor-pointer transition hover:bg-sage-dark w-full md:w-auto"
+          (click)="onBack()">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+              stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+          </svg>
+          Atrás
+        </button>
+
+        <button type="button"
+          class="bg-forest text-white font-bold px-6 py-3 md:py-2 rounded-md border-0 flex items-center justify-center gap-2 cursor-pointer shadow-sm transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
+          [disabled]="guardando"
+          (click)="guardar()">
+            Guardar Anexos
+        </button>
+      </div>
+    </div>
   </section>
   <!-- END: AttachmentsTable -->
 </main>
+
 <!-- ── MODAL AVISO ── -->
-<div *ngIf="modalVisible" class="fixed inset-0 z-50  flex items-center justify-center">
+<div *ngIf="modalVisible" class="fixed inset-0 z-50 flex items-center justify-center p-4">
 
   <!-- Fondo oscuro -->
   <div class="absolute inset-0 bg-black/50" (click)="cerrarModal()"></div>
 
   <!-- Contenido -->
-  <div class="relative z-10 w-full max-w-md mx-4 bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+  <!-- Se agregó max-h para evitar desbordes en pantallas muy pequeñas -->
+  <div class="relative z-10 w-full max-w-md mx-auto bg-white rounded-lg shadow-lg border border-gray-200 p-5 md:p-6 max-h-[90vh] overflow-y-auto">
 
     <!-- Header -->
     <div class="flex items-center gap-3 mb-4">
 
       <!-- Icono -->
-      <div class="flex items-center justify-center w-10 h-10 rounded-full"
+      <div class="flex items-center justify-center w-10 h-10 rounded-full shrink-0"
         [ngClass]="{
           'bg-red-100': tipoModal === 'error',
           'bg-green-100': tipoModal === 'success'
@@ -215,18 +247,19 @@
 
       </div>
 
-      <h2 class="text-lg font-semibold text-gray-800">Aviso</h2>
+      <h2 class="text-lg font-semibold text-gray-800 m-0">Aviso</h2>
     </div>
 
     <!-- Mensaje -->
-    <p class="text-sm text-gray-600 mb-4">
+    <p class="text-sm text-gray-600 mb-6">
       {{ modalMensaje }}
     </p>
 
     <!-- Botón -->
     <div class="flex justify-end">
+      <!-- Botón full-width en móvil -->
       <button (click)="cerrarModal()"
-        class="px-4 py-2 text-sm font-semibold rounded bg-blue-600 text-white hover:bg-blue-700">
+        class="w-full md:w-auto px-6 py-3 md:py-2 text-sm font-semibold rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors">
         Aceptar
       </button>
     </div>

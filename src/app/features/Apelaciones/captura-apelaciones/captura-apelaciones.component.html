@@ -1,17 +1,22 @@
 <app-main-header></app-main-header>
 
-<main class="max-h-max mx-auto px-4 py-8 bg-cream">
+<main class="flex-1 w-full flex flex-col gap-6 pb-24 md:pb-0 bg-cream">
 
   <!-- Título + fecha -->
-  <div class="flex items-start justify-between mb-6">
-    <h1 class="text-3xl font-bold text-strong-coffee m-0">Captura de Apelación</h1>
-    <div class="text-right text-sm">
-      <p class="text-emerald-700 font-semibold m-0">Fecha y Hora de Captura</p>
-      <p class="font-bold text-gray-800 m-0">{{ fechaActual | date:'dd/MM/yyyy | HH:mm' }}</p>
-    </div>
+<div class="w-full px-4 md:px-8 flex flex-col items-center md:flex-row md:items-start md:justify-between gap-2 mb-6">
+
+  <h1 class="text-2xl md:text-3xl font-bold text-strong-coffee m-0 text-center md:text-left">
+    Captura de Apelación
+  </h1>
+
+  <div class="flex flex-col items-center md:items-end text-sm mt-2 md:mt-0">
+    <p class="text-strong-coffee opacity-80 font-semibold m-0">Fecha y Hora de Captura</p>
+    <p class="font-bold text-emerald-800 m-0">{{ fechaActual | date:'dd/MM/yyyy | HH:mm' }}</p>
   </div>
 
-  <div class="flex gap-6">
+</div>
+
+  <div class="flex flex-col md:flex-row items-start max-w-350 mx-auto gap-4">
     <div class="flex-1 flex flex-col gap-6 min-w-0">
 
       <!-- Panel identificación -->
@@ -114,18 +119,13 @@
     </div>
 
     <!-- Sidebar -->
+     <aside class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 md:w-auto md:bg-transparent md:border-none md:shadow-none md:shrink-0 md:sticky md:top-8">
     <app-action-sidebar [actions]="sidebarActions" (actionClick)="handleAction($event)"/>
+     </aside>
   </div>
 </main>
 
 <!-- Modales -->
-<app-modal-aviso
-  [visible]="modalVisible"
-  [mensaje]="modalMensaje"
-  [tipo]="modalTipo"
-  (cerrar)="modalVisible = false"
-/>
-
 <app-modal-anexos
   [visible]="mostrarModalAnexos()"
   [folio]="folioGuardado()"

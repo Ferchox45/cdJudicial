@@ -1,3 +1,4 @@
+
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
@@ -6,13 +7,14 @@ import { MainHeaderComponent } from '../../../shared/components/header/header.co
 import { PanelIdentificacionComponent } from './components/panel-formulario/panel-formulario.component';
 import { PanelPartesComponent } from './components/panel-partes/panel-partes.component';
 import { PanelRelacionesComponent } from './components/panel-relaciones/panel-relaciones.component';
-import { ModalAvisoComponent } from './components/modal-aviso/modal-aviso.component';
 import { ModalAnexosComponent } from './components/modal-anexo/modal-anexo.component';
 import { Parte, RelacionBusqueda } from '../../../core/models';
-import { CatalogosFacade } from './facades/catalogos.facade';
+import { CatalogosFacade,} from './facades/catalogos.facade';
+import { GuardarFacade} from './facades/guardar.facade';
 import { BusquedaFacade } from './facades/busqueda.facade';
-import { GuardarFacade } from './facades/guardar.facade';
+import { Router } from '@angular/router';
 import { DelitoDisponible, buildNuevaParte, buildNuevaRelacion } from './captura-apelaciones.mapper';
+import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
 
 @Component({
   selector: 'app-captura-apelacion',
@@ -22,7 +24,7 @@ import { DelitoDisponible, buildNuevaParte, buildNuevaRelacion } from './captura
     CommonModule, ReactiveFormsModule,
     ActionSidebarComponent, MainHeaderComponent,
     PanelIdentificacionComponent, PanelPartesComponent, PanelRelacionesComponent,
-    ModalAvisoComponent, ModalAnexosComponent,
+    ModalAnexosComponent,
   ],
   templateUrl: './captura-apelaciones.component.html',
 })
@@ -32,8 +34,10 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   cat = inject(CatalogosFacade);
   bus = inject(BusquedaFacade);
   grd = inject(GuardarFacade);
+  private router = inject(Router);
   private fb  = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
+  private modal = inject(ModalService);
 
   // ── UI ─────────────────────────────────────────────────────
   identificacionOpen = true;
@@ -44,9 +48,6 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   fechaActual = new Date();
 
   // ── Modales ────────────────────────────────────────────────
-  modalVisible = false;
-  modalMensaje = '';
-  modalTipo: 'success' | 'error' = 'error';
   mostrarModalAnexos = signal(false);
   folioGuardado      = signal('');
 
@@ -100,32 +101,33 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void { clearInterval(this.intervalId); }
 
   // ── Callbacks de facades ───────────────────────────────────
-  private wireCallbacks(): void {
-    this.cat.onDelitosLisros = (d) => { this.delitosDisponibles = d; this.cdr.detectChanges(); };
-    this.cat.onError         = (m) => this.abrirModal(m, 'error');
+private wireCallbacks(): void {
+  this.cat.onDelitosLisros = (d) => { this.delitosDisponibles = d; this.cdr.detectChanges(); };
+  this.cat.onError = (m) => this.modal.error('Error', m);
 
-    this.bus.onExito = ({ partes, relaciones, delitosDisponibles }) => {
-      this.partes = partes; this.relaciones = relaciones; this.delitosDisponibles = delitosDisponibles;
-      this.cdr.detectChanges();
-    };
-    this.bus.onError = (m) => this.abrirModal(m, 'error');
-    this.bus.onNuevo = () => this.limpiarEstadoCaptura();
+  this.bus.onExito = ({ partes, relaciones, delitosDisponibles }) => {
+    this.partes = partes; this.relaciones = relaciones; this.delitosDisponibles = delitosDisponibles;
+    this.cdr.detectChanges();
+  };
+  this.bus.onError = (m) => this.modal.error('Error', m);
+  this.bus.onNuevo = () => this.limpiarEstadoCaptura();
 
-    this.grd.onExito    = () => { this.mostrarModalAnexos.set(true); this.cat.actualizarFolioTentativo(this.form); };
-    this.grd.onTerminar = () => this.limpiarEstadoCaptura();
-    this.grd.onError = (m) => this.abrirModal(m, 'error');
-  }
+  this.grd.onExito    = () => { this.mostrarModalAnexos.set(true); this.cat.actualizarFolioTentativo(this.form); };
+  this.grd.onTerminar = () => this.limpiarEstadoCaptura();
+  this.grd.onError    = (m) => this.modal.error('Error', m);
+}
 
   // ── Formulario ─────────────────────────────────────────────
   private buildForm(): void {
     this.form = this.fb.group({
       busquedaRapida: [''], folioOficialia: [''],
       materiaId:           [null, Validators.required],
-      magistradoId:        [null, Validators.required],
+      magistradoId:        [null],
       apelacionId:         [null], tipoApelacionId:     [null], tipoEscritoId:       [null],
       juzgadoId:           [null], municipioId:         [null], localidadId:         [null],
       etniaId:             [null], expedienteCausa:     [''],   expedienteAcumulado: [''],
       fechaAuto:           [''],   folioOficio:         [''],   fojas:               [null],
+      etnia:               [''],
       asunto:              [''],   lugarHechos:         [''],
       esReposicion:        [false], observaciones:      [''],
       folioTentativo:      [{ value: '', disabled: true }],
@@ -141,10 +143,11 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
     const actions: Record<string, () => void> = {
       nuevo:   () => { this.bus.resetNuevo(this.form); this.form.reset(); },
       guardar: () => this.grd.guardar(
-        this.form, this.cat.folioTentativo, this.relaciones, this.partes,
+        this.form, this.relaciones, this.partes,
         this.cat.sexos, this.cat.tiposPartes, this.folioGuardado,
-        () => this.abrirModal('Por favor, complete los campos obligatorios.', 'error')
+        () => this.modal.info('Advertencia', 'Por favor, complete los campos obligatorios.')
       ),
+      buscar: () => this.router.navigate(['/busquedaApelacion']),
     };
     actions[id]?.();
   }
@@ -186,12 +189,6 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
 
   seleccionarProcesado(p: Parte): void { this.procesadoSeleccionado = this.procesadoSeleccionado?.id === p.id ? null : p; this.cdr.detectChanges(); }
   seleccionarOfendido(p: Parte):  void { this.ofendidoSeleccionado  = this.ofendidoSeleccionado?.id  === p.id ? null : p; this.cdr.detectChanges(); }
-
-  // ── Modal ──────────────────────────────────────────────────
-  abrirModal(mensaje: string, tipo: 'success' | 'error'): void {
-    this.modalMensaje = mensaje; this.modalVisible = true; this.modalTipo = tipo;
-    this.cdr.detectChanges();
-  }
 
   // ── Limpieza de estado post-guardado / nuevo ───────────────
   private limpiarEstadoCaptura(): void {

@@ -9,20 +9,26 @@ export const routes: Routes = [
 
 {
   path: 'capturaApelacion',
-  loadComponent: () => import('./features/Apelaciones/captura-apelaciones/captura-apelacones.component')
+  loadComponent: () => import('./features/apelaciones/captura-apelaciones/captura-apelacones.component')
   .then(m => m.CapturaApelacionesComponent)
 },
 
 {
   path: 'busquedaApelacion',
-  loadComponent: () => import('./features/Apelaciones/busqueda-apelaciones/busquedaApelaciones.component')
-  .then(m => m.SearchComponent)
+  loadComponent: () => import('./features/apelaciones/busqueda-apelaciones/busquedaApelaciones.component')
+  .then(m => m.BusquedaApelacionesComponent)
 },
 
 {
   path: 'anexos',
-  loadComponent: () => import('./features/Apelaciones/anexos/anexos.component')
+  loadComponent: () => import('./features/apelaciones/anexos/anexos.component')
   .then(m => m.AnexosComponent)
+},
+
+{
+  path: 'buscadorHistorico',
+  loadComponent: () => import('./features/buscadores/buscador-historico/buscadorHistorico.component')
+  .then(m => m.BuscadorHistoricoComponent)
 }
 
 ];

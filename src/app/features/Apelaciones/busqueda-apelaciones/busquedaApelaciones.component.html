@@ -1,513 +1,69 @@
+<!-- padre.html — layout principal corregido -->
+<!--
+  PROBLEMA RESUELTO:
+  El sidebar con md:sticky desaparecía en DevTools porque el inspector de Chrome
+  agrega overflow:hidden al contenedor, lo que rompe position:sticky.
+
+  SOLUCIÓN: Usar `height: fit-content` en el aside y asegurar que ningún ancestro
+  tenga overflow:hidden. El aside ahora también usa `self-start` para no estirarse.
+-->
 
 <app-main-header></app-main-header>
-<main class="max-h-max mx-auto px-4 py-8 flex flex-col gap-6 bg-cream">
 
-  <div class="mb-8 text-left">
+<div class="w-full min-h-screen bg-cream px-4 py-8">
+
+  <!-- Encabezado de página -->
+  <div class="mb-8 text-left max-w-350 mx-auto">
     <h2 class="text-3xl font-bold text-strong-coffee m-0">Búsqueda de Apelaciones</h2>
     <p class="text-gray-500 mt-1 mb-0">Consulte el historial y estatus de apelaciones registradas en el sistema.</p>
   </div>
-  <div class="bg-white border border-gray-200 rounded-lg overflow-hidden mb-4">
 
-    <div
-      class="bg-forest px-5 py-3.5 flex items-center justify-between cursor-pointer select-none border-b border-forest/20"
-      (click)="toggleBusqueda()">
-      <div class="flex items-center gap-2.5 text-white">
-        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-        </svg>
-        <h2 class="text-sm font-bold text-white uppercase tracking-wide m-0">Opciones de Búsqueda</h2>
-      </div>
-      <svg class="w-4 h-4 text-white transition-transform duration-200"
-        [class.rotate-180]="!busquedaOpen"
-        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-      </svg>
-    </div>
+  <!--
+    LAYOUT PRINCIPAL
+    ─────────────────────────────────────────────────────────────────────────
+    • Móvil  → columna única, sidebar fijo pegado al fondo (fixed bottom-0)
+    • Desktop → fila: contenido a la izquierda, sidebar sticky a la derecha
 
-    @if (busquedaOpen) {
-      <div class="p-8 flex flex-col gap-10">
+    CLAVE STICKY:
+      - El flex container NO debe tener overflow:hidden/auto/scroll.
+      - El aside usa `self-start` para no estirarse al alto del flex.
+      - `sticky top-8` funcionará siempre que el scroll sea del <body>/<html>.
+  -->
+  <div class="flex flex-col md:flex-row md:items-start max-w-350 mx-auto gap-4">
 
-        <div>
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-bronze flex">
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-              </svg>
-            </span>
-            <h3 class="font-bold text-bronze uppercase tracking-widest text-sm m-0">DATOS DE APELACIÓN</h3>
-          </div>
-          <hr class="mb-5 opacity-40 border-t-2 border-solid border-bronze"/>
+    <!-- Contenido principal -->
+    <main class="flex-1 w-full min-w-0 flex flex-col gap-6
+                 pb-24 md:pb-0">
+      <app-panel-busqueda/>
+      <app-panel-resultados/>
+    </main>
 
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="flex flex-col gap-1.5">
-              <label for="folioOficialia" class="text-xs font-bold text-gray-700">Folio Oficialía</label>
-              <input id="folioOficialia" type="text"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-                placeholder="Ej. 12345/2023"
-                [(ngModel)]="form.folioOficialia" name="folioOficialia"/>
-            </div>
+    <!--
+      SIDEBAR
+      ──────────────────────────────────────────────────────────────────────
+      MÓVIL  : fixed bottom-0, ancho 100%, barra superior con sombra
+      DESKTOP: sticky top-8, shrink-0, altura automática (self-start)
 
-            <div class="flex flex-col gap-1.5">
-              <label for="sala" class="text-xs font-bold text-gray-700">Sala</label>
-              <select id="sala"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-                [(ngModel)]="form.idSala" name="sala"
-                [disabled]="cargandoCatalogo">
-                <option value="">{{ cargandoCatalogo ? 'Cargando...' : 'Seleccione Sala' }}</option>
-                @for (item of catalogoSalas; track item.id) {
-                  <option [value]="item.id">{{ item.descripcion }}</option>
-                }
-              </select>
-            </div>
+      ¡IMPORTANTE! No pongas overflow:hidden en este elemento ni en sus padres.
+      Si DevTools coloca overflow en el body/html, el sticky se rompe SÓLO en
+      el inspector — en producción sigue funcionando. Para evitarlo en ambos
+      ambientes se añade `self-start` que hace que el aside no crezca al alto
+      del flex y permite que sticky calcule bien su posición.
+    -->
+    <aside
+      class="
+        fixed bottom-0 left-0 w-full z-50
+        bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.08)]
 
-            <div class="flex flex-col gap-1.5">
-              <label for="nomenclatura" class="text-xs font-bold text-gray-700">Nomenclatura</label>
-              <select id="nomenclatura"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-                [(ngModel)]="form.idNomenclatura" name="nomenclatura"
-                [disabled]="cargandoCatalogo">
-                <option value="">{{ cargandoCatalogo ? 'Cargando...' : 'Seleccione Nomenclatura' }}</option>
-                @for (item of catalogoNomenclaturas; track item.id) {
-                  <option [value]="item.id">{{ item.descripcion }}</option>
-                }
-              </select>
-            </div>
+        md:bottom-auto md:left-auto md:w-auto md:z-auto
+        md:bg-transparent md:border-none md:shadow-none
+        md:sticky md:top-8
+        md:self-start md:shrink-0
+      ">
+      <app-action-sidebar
+        [actions]="sidebarActions"
+        (actionClick)="onAction($event)"/>
+    </aside>
 
-            <div class="flex flex-col gap-1.5">
-              <label for="folioApelacion" class="text-xs font-bold text-gray-700">Folio Apelación</label>
-              <input id="folioApelacion" type="text"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-                placeholder="Número de folio"
-                [(ngModel)]="form.folioApelacion" name="folioApelacion"/>
-            </div>
-
-            <div class="flex flex-col gap-1.5">
-              <label for="apelacion" class="text-xs font-bold text-gray-700">Apelación</label>
-              <select id="apelacion"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-                [(ngModel)]="form.idTipoApelacion" name="apelacion"
-                [disabled]="cargandoCatalogo">
-                <option value="">{{ cargandoCatalogo ? 'Cargando...' : 'Seleccione Tipo de Apelación' }}</option>
-                @for (item of catalogoTiposApelacion; track item.id) {
-                  <option [value]="item.id">{{ item.descripcion }}</option>
-                }
-              </select>
-            </div>
-
-            <div class="flex flex-col gap-1.5">
-              <label for="expCausa" class="text-xs font-bold text-gray-700">Exp/Causa</label>
-              <input id="expCausa" type="text"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-                placeholder="Expediente o Causa"
-                [(ngModel)]="form.expedienteCausa" name="expCausa"/>
-            </div>
-
-            <div class="flex flex-col gap-1.5 md:col-span-2">
-              <label for="nombreParte" class="text-xs font-bold text-gray-700">Nombre Parte</label>
-              <input id="nombreParte" type="text"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-                placeholder="Nombre completo de la parte involucrada"
-                [(ngModel)]="form.nombreParte" name="nombreParte"/>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-bronze flex">
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-              </svg>
-            </span>
-            <h3 class="font-bold text-bronze uppercase tracking-widest text-sm m-0">FECHA DE RECEPCIÓN</h3>
-          </div>
-          <hr class="mb-5 opacity-40 border-t-2 border-solid border-bronze"/>
-
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="flex flex-col gap-1.5">
-              <label for="fechaInicial" class="text-xs font-bold text-gray-700">Fecha Inicial</label>
-              <input id="fechaInicial" type="date"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-                [(ngModel)]="form.fechaInicio" name="fechaInicial"/>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <label for="fechaFinal" class="text-xs font-bold text-gray-700">Fecha Final</label>
-              <input id="fechaFinal" type="date"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-                [(ngModel)]="form.fechaFin" name="fechaFinal"/>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    }
   </div>
-
-  <div class="bg-gray-50 px-8 py-4 flex justify-end gap-3 rounded-lg border border-gray-200">
-    <button type="button"
-    (click)="limpiar()"
-    class="bg-sage text-forest font-medium px-5 py-2 rounded-md border border-sage-dark/20 flex items-center gap-2 cursor-pointer transition hover:bg-sage-dark">
-<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-  <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/>
-</svg>
-    <span>Limpiar</span>
-  </button>
-    <button type="button"
-      (click)="onSearch()"
-      class="bg-forest text-white font-bold px-6 py-2 rounded-lg border-0 flex items-center gap-2 cursor-pointer shadow-sm hover:opacity-90">
-      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-      </svg>
-      Buscar
-    </button>
-  </div>
-
-  <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
-
-    <div class="bg-forest px-5 py-3.5 flex items-center justify-between cursor-pointer select-none border-b border-forest/20"
-      (click)="toggleResultados()">
-      <div class="flex items-center gap-2.5 text-white">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Zm3.75 11.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/>
-        </svg>
-        <h2 class="text-sm font-bold text-white uppercase tracking-wide m-0">Resultados de Búsqueda</h2>
-      </div>
-      <svg class="w-4 h-4 text-white transition-transform duration-200"
-        [class.rotate-180]="!resultadosOpen"
-        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-      </svg>
-    </div>
-
-    @if (resultadosOpen) {
-
-      <div class="border-b border-gray-100">
-        <div class="flex items-center gap-2 px-5 py-3 bg-[#fafafa]">
-          <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"
-              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-          </svg>
-          <span class="text-gray-700 text-sm font-medium">Filtros aplicados</span>
-        </div>
-        <div class="flex flex-wrap gap-2 px-5 pb-4 pt-1 min-h-10">
-          @for (filtro of filtrosActivos; track $index) {
-            <span class="inline-flex items-center gap-1.5 bg-sand border border-bronze/25 text-strong-coffee text-[0.8125rem] font-medium px-2.5 py-1 rounded-full">
-              {{ filtro.label }}
-              <button type="button"
-                class="bg-transparent border-0 cursor-pointer text-bronze text-base leading-none flex items-center transition hover:opacity-60 p-0"
-                (click)="quitarFiltro($index)">×</button>
-            </span>
-          }
-          @if (filtrosActivos.length === 0) {
-            <span class="text-xs text-gray-400 italic self-center">Sin filtros activos</span>
-          }
-        </div>
-      </div>
-
-      <div class="flex justify-center w-full overflow-x-auto">
-        <table class="w-full border-collapse text-center">
-          <thead>
-            <tr class="bg-sand border-b border-gray-200">
-              <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio Oficialía</th>
-              <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio Apelación</th>
-              <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Exp / Causa</th>
-              <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Tipo Apelación</th>
-              <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Sala</th>
-              <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Sala Anterior</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (r of resultadosPagina; track $index) {
-              <tr class="border-b border-gray-100 cursor-pointer transition-colors hover:bg-cream"
-                  [class.bg-[#eef6f3]]="r === filaSeleccionada"
-                  (click)="seleccionarFila(r)">
-
-                <td class="px-5 py-3.5 text-sm text-forest font-semibold whitespace-nowrap leading-6">
-                  {{ r.folioOficialia }}
-                </td>
-                <td class="px-5 py-3.5 text-sm text-forest font-semibold whitespace-nowrap">
-                  {{ r.folioApelacion }}
-                </td>
-                <td class="px-5 py-3.5 text-sm text-gray-700 whitespace-nowrap font-medium">
-                  {{ r.expedienteCausa }}
-                </td>
-                <td class="px-5 py-3.5 text-sm text-gray-700">
-                  {{ r.tipoApelacion }}
-                </td>
-                <td class="px-5 py-3.5 text-sm text-gray-700">
-                  {{ r.sala }}
-                </td>
-                <td class="px-5 py-3.5 text-sm text-gray-700">
-                  {{ r.salaAnterior }}
-                </td>
-              </tr>
-
-              @if (r === filaSeleccionada) {
-                <tr class="bg-[#f8faf9]">
-                  <td colspan="6" class="p-0">
-                    <div class="mx-4 my-3 border border-gray-200 rounded-md overflow-hidden bg-white">
-
-                      <div class="flex border-b border-gray-200 px-6">
-                        <button type="button"
-                          class="flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 -mb-px cursor-pointer bg-transparent border-x-0 border-t-0 transition"
-                          [class.text-forest]="tabDetalle === 'partes'"
-                          [class.font-bold]="tabDetalle === 'partes'"
-                          [class.border-b-bronze]="tabDetalle === 'partes'"
-                          [class.text-gray-500]="tabDetalle !== 'partes'"
-                          [class.border-b-transparent]="tabDetalle !== 'partes'"
-                          (click)="tabDetalle = 'partes'">
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"
-                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                          </svg>
-                          Partes
-                        </button>
-                        <button type="button"
-                          class="flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 -mb-px cursor-pointer bg-transparent border-x-0 border-t-0 transition"
-                          [class.text-forest]="tabDetalle === 'anexos'"
-                          [class.font-bold]="tabDetalle === 'anexos'"
-                          [class.border-b-bronze]="tabDetalle === 'anexos'"
-                          [class.text-gray-500]="tabDetalle !== 'anexos'"
-                          [class.border-b-transparent]="tabDetalle !== 'anexos'"
-                          (click)="tabDetalle = 'anexos'">
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                          </svg>
-                          Anexos
-                        </button>
-                      </div>
-
-                      @if (tabDetalle === 'partes') {
-                        <div class="flex justify-center w-full overflow-x-auto">
-                          <table class="w-full border-collapse text-center">
-                            <thead>
-                              <tr class="bg-sand border-b border-gray-200">
-                                <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider">Parte</th>
-                                <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider">Nombre Completo</th>
-                                <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider">Dirección</th>
-                                <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider text-center">Es Menor</th>
-                                <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider text-center">Sexo</th>
-                              </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100 bg-white">
-                              @for (p of r.partes; track $index) {
-                                <tr class="hover:bg-gray-50/80 transition-colors">
-                                  <td class="px-6 py-4">
-                                    <span class="text-sm font-semibold text-gray-900 leading-tight">{{ p.tipoParte }}</span>
-                                  </td>
-                                  <td class="px-6 py-4 text-sm text-gray-600 font-medium">
-                                    {{ p.nombre }}
-                                  </td>
-                                  <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                                    {{ p.direccion }}
-                                  </td>
-                                  <td class="px-6 py-4 text-center">
-                                    @if (p.menorEdad) {
-                                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
-                                        <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-amber-500"></span>
-                                        SI
-                                      </span>
-                                    } @else {
-                                      <span class="inline-block px-3 py-1 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600 uppercase">NO</span>
-                                    }
-                                  </td>
-                                  <td class="px-6 py-4 text-center">
-                                    <span class="inline-block px-3 py-1 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600 uppercase">
-                                      {{ p.sexo }}
-                                    </span>
-                                  </td>
-                                </tr>
-                              } @empty {
-                                <tr>
-                                  <td colspan="5" class="px-6 py-12 text-center">
-                                    <div class="flex flex-col items-center justify-center">
-                                      <span class="text-gray-300 mb-2">
-                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                        </svg>
-                                      </span>
-                                      <p class="text-gray-400 italic text-sm">No hay partes registradas en este expediente.</p>
-                                    </div>
-                                  </td>
-                                </tr>
-                              }
-                            </tbody>
-                          </table>
-                        </div>
-                      }
-
-                      @if (tabDetalle === 'anexos') {
-                        <div class="flex justify-center w-full overflow-x-auto">
-                          <table class="w-full border-collapse text-center">
-                            <thead>
-                              <tr class="bg-sand border-b border-gray-200">
-                                <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wide">Cantidad</th>
-                                <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wide">Anexo</th>
-                                <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wide text-center">Es Valor</th>
-                                <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wide text-right">Monto</th>
-                              </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100 bg-white">
-  @for (a of r.anexos; track $index) {
-    <tr class="hover:bg-gray-50/80 transition-colors">
-      <td class="px-6 py-4 text-sm font-bold text-gray-700">{{a.cantidad}}</td>
-
-      <td class="px-6 py-4 text-sm text-gray-700">{{ a.descripcion }}</td>
-      <td class="px-6 py-4 text-sm text-center">
-        @if (a.esValor) {
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">SÍ</span>
-        } @else {
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">NO</span>
-        }
-      </td>
-      <td class="px-6 py-4 text-sm text-gray-700 text-right">{{ a.monto | number:'1.2-2' }}</td>
-    </tr>
-  } @empty {
-    <tr>
-      <td colspan="4" class="px-6 py-12 text-center text-gray-400 italic text-sm">Sin anexos registrados.</td>
-    </tr>
-  }
-</tbody>
-                          </table>
-                        </div>
-                      }
-
-                    </div>
-                  </td>
-                </tr>
-              }
-
-            } @empty {
-              <tr>
-                <td colspan="6" class="px-5 py-8 text-center text-gray-400 italic">No se encontraron resultados.</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-
-      <div class="flex items-center justify-between px-5 py-3.5 border-t border-gray-100 bg-[#fafafa] flex-wrap gap-3">
-        <span class="text-[0.8125rem] text-gray-500">
-          Mostrando <strong>{{ paginaInicio }}-{{ paginaFin }}</strong> de <strong>{{ totalResultados }}</strong> resultados
-        </span>
-        <div class="flex items-center gap-1">
-          <button type="button"
-            class="min-w-8 h-8 px-2 border border-gray-200 rounded-md bg-white text-gray-700 text-[0.8125rem] cursor-pointer transition hover:bg-sage hover:border-sage-dark hover:text-forest disabled:opacity-40 disabled:cursor-not-allowed"
-            [disabled]="paginaActual === 1" (click)="irPagina(paginaActual - 1)">
-            Anterior
-          </button>
-          @for (p of paginas; track p) {
-            <button type="button"
-              class="min-w-8 h-8 px-2 border rounded-md text-[0.8125rem] cursor-pointer transition"
-              [class.bg-strong-coffee]="p === paginaActual"
-              [class.border-forest]="p === paginaActual"
-              [class.text-white]="p === paginaActual"
-              [class.font-bold]="p === paginaActual"
-              [class.bg-white]="p !== paginaActual"
-              [class.border-gray-200]="p !== paginaActual"
-              [class.text-gray-700]="p !== paginaActual"
-              (click)="irPagina(p)">
-              {{ p }}
-            </button>
-          }
-          <button type="button"
-            class="min-w-8 h-8 px-2 border border-gray-200 rounded-md bg-white text-gray-700 text-[0.8125rem] cursor-pointer transition hover:bg-sage hover:border-sage-dark hover:text-forest disabled:opacity-40 disabled:cursor-not-allowed"
-            [disabled]="paginaActual === totalPaginas" (click)="irPagina(paginaActual + 1)">
-            Siguiente
-          </button>
-        </div>
-      </div>
-
-    }
-
-    <div class="bg-gray-50 px-8 py-4 flex justify-end border-t border-gray-100">
-      <button type="button"
-        class="bg-sage text-forest font-medium px-6 py-2 rounded-md border border-sage-dark/20 flex items-center gap-2 cursor-pointer transition hover:bg-sage-dark"
-        (click)="onBack()">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
-            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-        </svg>
-        Atrás
-      </button>
-    </div>
-  </div>
-
-</main>
-
-@if (modal.show) {
-  <div class="fixed inset-0 z-9999 flex items-center justify-center">
-
-    <!-- Overlay -->
-    <div
-      class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
-      (click)="closeModal()">
-    </div>
-
-    <!-- Modal -->
-    <div class="relative w-full max-w-md mx-4 transform transition-all duration-300 scale-100 opacity-100">
-
-      <div class="bg-white rounded-2xl shadow-2xl p-6 border border-gray-200">
-
-        <div class="flex flex-col items-center text-center">
-
-          <!-- Icono -->
-          <div
-            class="flex h-16 w-16 items-center justify-center rounded-full mb-4"
-            [ngClass]="{
-              'bg-blue-100 text-forest': modal.type === 'info',
-              'bg-red-100 text-red-600': modal.type === 'error',
-              'bg-green-100 text-green-600': modal.type === 'success'
-            }">
-
-            @if (modal.type === 'info') {
-              <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            } @else if (modal.type === 'error') {
-              <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 9v3.75m0 3.75h.008M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            } @else {
-              <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M5 13l4 4L19 7" />
-              </svg>
-            }
-          </div>
-
-          <!-- Título -->
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">
-            {{ modal.title }}
-          </h3>
-
-          <!-- Mensaje -->
-          <p class="text-sm text-gray-500 mb-6">
-            {{ modal.message }}
-          </p>
-
-          <!-- Botón -->
-          <button
-            (click)="closeModal()"
-            class="w-full rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200"
-            [ngClass]="{
-              'bg-forest hover:bg-forest': modal.type === 'info',
-              'bg-red-600 hover:bg-red-700': modal.type === 'error',
-              'bg-green-600 hover:bg-green-700': modal.type === 'success'
-            }">
-            Entendido
-          </button>
-
-        </div>
-      </div>
-
-    </div>
-  </div>
-}
+</div>

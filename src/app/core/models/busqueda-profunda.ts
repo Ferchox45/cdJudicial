@@ -21,6 +21,7 @@ export interface Resultado {
   folioApelacionAnterior: string;
   folioOficio:            string;
   fojas:                  number;
+  tramite:                string;
   expedienteAcumulado:    string | null;
   esReposicion:           boolean;
   expedienteCausa:        string;
@@ -35,6 +36,7 @@ export interface Resultado {
   juzgadoOrigen:          string | null;
   magistradoAsignado:     string | null;
   nomenclatura:           string | null;
+  apelacion:              string | null;
   tipoApelacion:          string | null;
   tipoEscrito:            string | null;
   anexos:                 AnexoDetalle[];

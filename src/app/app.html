@@ -1,1 +1,12 @@
 <router-outlet></router-outlet>
+
+<app-custom-modal
+  [show]="modalService.isOpen()"
+  [type]="modalService.config()?.type ?? 'info'"
+  [title]="modalService.config()?.title ?? ''"
+  [message]="modalService.config()?.message ?? ''"
+  [confirmText]="modalService.config()?.confirmText ?? 'Aceptar'"
+  [cancelText]="modalService.config()?.cancelText ?? 'Cancelar'"
+  (confirm)="modalService.close()"
+  (cancel)="modalService.close()"
+/>

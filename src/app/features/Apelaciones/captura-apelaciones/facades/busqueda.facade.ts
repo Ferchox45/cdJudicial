@@ -68,7 +68,7 @@ export class BusquedaFacade {
         this.buscando = false;
         this.busquedaExitosa = false;
         this.onError?.(
-          `No se encontró ninguna apelación con el folio "${folio}".<br>
+          `No se encontró ninguna apelación con el folio "${folio}".
            Por favor, verifique el folio e intente de nuevo.`
         );
         form.reset();

@@ -31,7 +31,9 @@ export interface ApelacionFormValue {
   fojas: number | null;
   municipioId: number | null;
   localidadId: number | null;
+  magistradoId: number;
   etniaId: number | null;
+  etnia: number | null;
   asunto: string;
   lugarHechos: string;
   esReposicion: boolean;
@@ -206,8 +208,10 @@ export function buildPayload(
     idJuzgado: raw.juzgadoId,
     idMunicipio: raw.municipioId ?? null,
     idLocalidad: raw.localidadId ?? null,
+    idMagistrado: raw.magistradoId ?? null,
     idEtnia: raw.etniaId ?? null,
-    fechaAuto: raw.fechaAuto ?? null,
+    etnia: raw.etnia ?? null,
+    fechaAuto: raw.fechaAuto || null,
     expedienteCausa: raw.expedienteCausa || null,
     expedienteAcumulado: raw.expedienteAcumulado || null,
     folioOficio: raw.folioOficio || null,
