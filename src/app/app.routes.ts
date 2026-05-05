@@ -29,6 +29,12 @@ export const routes: Routes = [
   path: 'buscadorHistorico',
   loadComponent: () => import('./features/buscadores/buscador-historico/buscadorHistorico.component')
   .then(m => m.BuscadorHistoricoComponent)
+},
+
+{
+  path: 'buscadorPlano',
+  loadComponent: () => import('./features/buscadores/buscador-plano/buscadorPlano.component')
+  .then(m => m.BuscadorPlanoComponent)
 }
 
 ];

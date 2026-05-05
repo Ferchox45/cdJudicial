@@ -24,6 +24,7 @@ export const CACHE_KEYS = {
 export class ApelacionService {
   private http = inject(HttpClient);
 
+
   // ── 1. Gestor de Caché Centralizado ─────────────────────────
   // En lugar de múltiples variables nulas, usamos un Map para manejar N cachés
   private memCache = new Map<string, Observable<any>>();
@@ -32,12 +33,16 @@ export class ApelacionService {
   // OBTENCIÓN DE CATÁLOGOS (Usando helper de caché)
   // ══════════════════════════════════════════════════════════
 
-  getCatalogoCaptura(): Observable<CapturaApelacionCatalogos> {
-    const httpCall$ = this.http.get<{ data: CapturaApelacionCatalogos }>(`${BASE_URL}/apelaciones/form-data`)
-      .pipe(map(res => res.data));
+getCatalogoCaptura(materia: string): Observable<CapturaApelacionCatalogos> {
+  const httpCall$ = this.http
+    .get<{ data: CapturaApelacionCatalogos }>(`${BASE_URL}/apelaciones/form-data`, {
+      params: { materia }
+    })
+    .pipe(map(res => res.data));
 
-    return this.manejarCache(CACHE_KEYS.CAPTURA, httpCall$);
-  }
+  // Si usas caché por materia, necesitas una key dinámica:
+  return this.manejarCache(`${CACHE_KEYS.CAPTURA}_${materia}`, httpCall$);
+}
 
   getCatalogoAnexo(): Observable<CapturaAnexoCatalogos> {
     const httpCall$ = this.http.get<{ data: { anexos: any[] } }>(`${BASE_URL}/apelaciones/anexos/form-data`)
@@ -155,6 +160,5 @@ export class ApelacionService {
       .pipe(map(res => res?.data?.folioTentativo ?? ''));
   }
 
-
-
 }
+

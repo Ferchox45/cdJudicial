@@ -19,7 +19,7 @@ export const FORM_VACIO: SearchForm = {
   nombreParte:     '',
   idSala:          '',
   idNomenclatura:  '',
-  idTipoApelacion: '',
+  idApelacion: '',
   fechaInicio:     '',
   fechaFin:        '',
 };

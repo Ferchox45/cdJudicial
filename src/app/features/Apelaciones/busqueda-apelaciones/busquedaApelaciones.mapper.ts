@@ -11,7 +11,7 @@ export interface BusquedaDTO {
   nombreParte?:     string;
   idSala?:          number;
   idNomenclatura?:  number;
-  idTipoApelacion?: number;
+  apelaciones?: number;
   fechaInicio?:     string;
   fechaFin?:        string;
 }
@@ -33,7 +33,7 @@ export class BusquedaApelacionesMapper {
     if (form.nombreParte?.trim())     dto.nombreParte     = form.nombreParte.trim();
     if (form.idSala)                  dto.idSala          = Number(form.idSala);
     if (form.idNomenclatura)          dto.idNomenclatura  = Number(form.idNomenclatura);
-    if (form.idTipoApelacion)         dto.idTipoApelacion = Number(form.idTipoApelacion);
+    if (form.idApelacion)             dto.apelaciones = Number(form.idApelacion);
     if (form.fechaInicio)             dto.fechaInicio     = form.fechaInicio;
     if (form.fechaFin)                dto.fechaFin        = form.fechaFin;
 

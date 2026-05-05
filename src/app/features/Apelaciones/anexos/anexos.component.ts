@@ -5,7 +5,8 @@ import { MainHeaderComponent } from '../../../shared/components/header/header.co
 import { ApelacionService } from '../../../core/services/apelaciones.service';
 import { CatalogoItem } from '../../../core/models';
 import { finalize } from 'rxjs/operators';
-import { ApelacionContextService } from '../../../core/services/apelacion-context.service'; // Ajusta la ruta si es necesario
+import { ApelacionContextService } from '../../../core/services/apelacion-context.service';
+import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
 
 export interface Anexo {
   idAnexo:   number;
@@ -27,15 +28,14 @@ export class AnexosComponent implements OnInit {
   private apelacionService = inject(ApelacionService);
   private cdr              = inject(ChangeDetectorRef);
   private contextoService  = inject(ApelacionContextService);
+  private modalService     = inject(ModalService);
   // ── Estado ─────────────────────────────────────────────────
   cargando = false;
   error: string | null = null;
   guardando = false;
   errorGuardado: string | null = null;
   exitoGuardado: string | null = null;
-  tipoModal: 'success' | 'error' = 'error';
-  modalVisible = false;
-  modalMensaje = '';
+
 
 
   // ── Datos ──────────────────────────────────────────────────
@@ -63,7 +63,7 @@ export class AnexosComponent implements OnInit {
     this.idApelacion = this.contextoService.apelacionId();
     this.folioTramite = this.contextoService.folioOficialia();
     if (!this.idApelacion) {
-      this.mostrarModal('No hay una apelación activa en memoria. Por favor, inicie desde la captura.', 'error');
+      this.modalService.error('Error', 'No hay una apelación activa en memoria. Por favor, inicie desde la captura.');
       // Opcional: regresarlo a la pantalla anterior después de 3 segundos
       setTimeout(() => this.onBack(), 3000);
       return;
@@ -96,16 +96,6 @@ cargarAnexos(): void {
       }
     });
   }
-  mostrarModal(mensaje: string, tipo: 'success' | 'error' = 'error'): void {
-  this.modalMensaje = mensaje;
-  this.modalVisible = true;
-  this.tipoModal = tipo;
-  this.cdr.detectChanges();
-}
-
-cerrarModal(): void {
-  this.modalVisible = false;
-}
 
   // ── Sincroniza descripción cuando cambia el select ─────────
   onTipoChange(id: number): void {
@@ -120,7 +110,7 @@ cerrarModal(): void {
   // ── Agrega anexo a la lista ────────────────────────────────
   agregarAnexo(): void {
     if (!this.nuevoAnexo.idAnexo) {
-    this.mostrarModal('Debes seleccionar un tipo de Anexo', 'error');
+    this.modalService.error('Error', 'Debes seleccionar un tipo de anexo.');
       return;
     }
 
@@ -149,11 +139,11 @@ cerrarModal(): void {
 guardar(): void {
 
   if (!this.idApelacion) {
-    this.mostrarModal('Error crítico: Se perdió el ID de la apelación.', 'error');
+    this.modalService.error('Error crítico', 'Se perdió el ID de la apelación.');
     return;
   }
   if (!this.anexos.length) {
-    this.mostrarModal('Debes agregar al menos un anexo.', 'error');
+    this.modalService.info('Sin anexos', 'No has agregado ningún anexo para guardar.', 'Agregar anexos');
     return;
   }
   const payload = {
@@ -177,11 +167,11 @@ guardar(): void {
     }))
     .subscribe({
       next: () => {
-        this.mostrarModal('Anexos guardados correctamente.', 'success');
+        this.modalService.success('Guardado correctamente','Anexos guardados correctamente.');
       },
       error: (err) => {
         const msg = err?.error?.message ?? 'Error al guardar los anexos.';
-        this.mostrarModal(msg, 'error');
+        this.modalService.error('Error', msg);
       }
     });
 }

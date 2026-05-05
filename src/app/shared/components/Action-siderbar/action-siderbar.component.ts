@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 export interface SidebarAction {
   id: string;
   label: string;
-  icon: 'nuevo' | 'guardar' | 'buscar' | 'anexo'| 'exportar' | 'limpiar';
+  icon: 'nuevo' | 'guardar' | 'buscar' | 'anexo'| 'exportar' | 'limpiar' | 'reporte';
   primary?: boolean;
   disabled?: boolean;
 }

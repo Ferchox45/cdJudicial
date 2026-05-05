@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { CapturaApelacionCatalogos, CatalogoItem } from '../../../../core/models';
-import { ApelacionService } from '../../../../core/services/apelaciones.service';
+import { ApelacionService} from '../../../../core/services/apelaciones.service';
 import { mapearDelitosDisponibles, DelitoDisponible } from '../captura-apelaciones.mapper';
 
 @Injectable()
@@ -32,37 +32,35 @@ export class CatalogosFacade {
   onDelitosLisros?: (delitos: DelitoDisponible[]) => void;
   onError?:        (msg: string) => void;
 
-  cargar(form: FormGroup): void {
-    this.cargando   = true;
-    this.error      = null;
-    this.timeoutMsg = false;
-    this.setControlesDisabled(form, true);
+cargar(form: FormGroup, materia: string): void {
+  this.cargando   = true;
+  this.error      = null;
+  this.timeoutMsg = false;
+  this.setControlesDisabled(form, true);
 
-    const timer = setTimeout(() => {
-      if (this.cargando) this.timeoutMsg = true;
-    }, 5000);
+  const timer = setTimeout(() => {
+    if (this.cargando) this.timeoutMsg = true;
+  }, 5000);
 
-    this.apelacionService.getCatalogoCaptura().subscribe({
-      next: (data: CapturaApelacionCatalogos) => {
-        clearTimeout(timer);
-        this.asignarCatalogos(data);
-        this.setControlesDisabled(form, false);
-        this.onDelitosLisros?.(mapearDelitosDisponibles(this.delitos));
-      },
-      error: (err) => {
-        clearTimeout(timer);
-        console.error('Error al cargar catálogos:', err);
-        this.error      = 'No se pudo conectar con el servidor. Reintentando...';
-        this.cargando   = false;
-        this.timeoutMsg = false;
-        this.onError?.(this.error);
-        setTimeout(() => {
-          this.apelacionService.invalidarCatalogos();
-          this.cargar(form);
-        }, 5000);
-      },
-    });
-  }
+  this.apelacionService.getCatalogoCaptura(materia).subscribe({
+    next: (data: CapturaApelacionCatalogos) => {
+      clearTimeout(timer);
+      this.asignarCatalogos(data);
+      this.setControlesDisabled(form, false);
+      this.onDelitosLisros?.(mapearDelitosDisponibles(this.delitos));
+    },
+    error: (err) => {
+      clearTimeout(timer);
+      this.error    = 'No se pudo conectar con el servidor. Reintentando...';
+      this.cargando = false;
+      this.onError?.(this.error);
+      setTimeout(() => {
+        this.apelacionService.invalidarCatalogos();
+        this.cargar(form, materia); // <-- pasa materia al reintentar
+      }, 5000);
+    },
+  });
+}
 
   actualizarFolioTentativo(form: FormGroup): void {
     this.apelacionService.getFolioTentativo().subscribe({

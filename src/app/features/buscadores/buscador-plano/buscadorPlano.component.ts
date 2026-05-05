@@ -1,10 +1,9 @@
-// historico-apelaciones.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MainHeaderComponent } from '../../../shared/components/header/header.component';
 import { ActionSidebarComponent } from '../../../shared/components/Action-siderbar/action-siderbar.component';
-import { PanelBusquedaHistoricoComponent } from './components/panel-busqueda-historico/panelBusquedaHistorico.component';
-import { PanelResultadosHistoricoComponent } from './components/panel-resultados-historico/panelResultadoHistorico.component';
+import { PanelBusquedaPlanoComponent } from './components/panel-buscador-plano/panlePlano.component';
+import { PanelResultadosPlanoComponent } from './components/panel-resultados-plano/panelResultadosPlano.component';
 import { SidebarAction } from '../../../shared/components/Action-siderbar/action-siderbar.component';
 
 @Component({
@@ -14,18 +13,17 @@ import { SidebarAction } from '../../../shared/components/Action-siderbar/action
     CommonModule,
     MainHeaderComponent,
     ActionSidebarComponent,
-    PanelBusquedaHistoricoComponent,
-    PanelResultadosHistoricoComponent,
+    PanelBusquedaPlanoComponent,
+    PanelResultadosPlanoComponent,
   ],
-  templateUrl: './buscadorHistorico.component.html',
+  templateUrl: './buscadorPlano.component.html',
 })
-export class BuscadorHistoricoComponent {
+export class BuscadorPlanoComponent {
     get sidebarActions(): SidebarAction[] {
       return [
         { id: 'buscar',   label: 'Buscar',   icon: 'buscar',   primary: true },
         { id: 'exportar', label: 'Exportar', icon: 'exportar' },
         { id: 'limpiar',  label: 'Limpiar',  icon: 'limpiar'  },
-        { id: 'reporte',  label: 'Reporte',  icon: 'reporte'  },
       ];
     }
   onAction(_event: any): void {}

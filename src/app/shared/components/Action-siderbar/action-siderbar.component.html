@@ -4,18 +4,15 @@
     type="button"
     class="flex flex-col items-center justify-center gap-1
            w-14 h-14 rounded-lg cursor-pointer select-none
-           border border-gray-300 text-emerald-900
-           transition-all duration-150
-           hover:bg-emerald-50 hover:border-emerald-400
-           active:scale-95
            disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
     [ngClass]="{
-      'bg-emerald-900 border-emerald-900 text-white hover:bg-emerald-800 hover:border-emerald-800': action.primary
+      'bg-forest border border-forest text-white hover:bg-forest-800 hover:border-forest-800': action.primary,
+      'border border-gray-300 text-emerald-900 transition-all duration-150 hover:bg-emerald-50 hover:border-emerald-400 active:scale-95': !action.primary
     }"
     [disabled]="action.disabled ?? false"
     [attr.aria-label]="action.label"
     (click)="onClick(action.id)"
-  >
+>
     <ng-container *ngIf="isIcon(action, 'nuevo')">
       <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -60,6 +57,17 @@
             2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/>
     </svg>
   </ng-container>
+<ng-container *ngIf="isIcon(action, 'reporte')">
+  <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+       stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+    <!-- Silueta del documento -->
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+    <polyline points="14 2 14 8 20 8"></polyline>
+    <!-- Texto PDF simplificado o líneas de reporte -->
+    <path d="M9 13h2a2 2 0 0 0 0-4H9v6"></path>
+    <path d="M13 15V9h1a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-1z"></path>
+  </svg>
+</ng-container>
     <span class="text-[9px] font-bold tracking-widest uppercase leading-none">
       {{ action.label }}
     </span>

@@ -27,5 +27,5 @@ export interface CapturaAnexoCatalogos {
 export interface CatalogoBusqueda {
   salas: CatalogoItem[];
   nomenclaturas: CatalogoItem[];
-  tiposApelaciones: CatalogoItem[];
+  apelaciones: CatalogoItem[];
 }

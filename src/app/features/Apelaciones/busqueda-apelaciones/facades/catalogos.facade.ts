@@ -16,7 +16,7 @@ export class CatalogosFacade {
   // ── Estado público (signals) ────────────────────────────────────────────────
   readonly salas          = signal<CatalogoItem[]>([]);
   readonly nomenclaturas  = signal<CatalogoItem[]>([]);
-  readonly tiposApelacion = signal<CatalogoItem[]>([]);
+  readonly apelaciones = signal<CatalogoItem[]>([]);
   readonly cargando       = signal(false);
 
   // ── Carga ───────────────────────────────────────────────────────────────────
@@ -30,7 +30,7 @@ export class CatalogosFacade {
         next: (cat) => {
           this.salas.set(cat.salas           ?? []);
           this.nomenclaturas.set(cat.nomenclaturas  ?? []);
-          this.tiposApelacion.set(cat.tiposApelaciones ?? []);
+          this.apelaciones.set(cat.apelaciones ?? []);
           this.cargando.set(false);
         },
         error: () => {

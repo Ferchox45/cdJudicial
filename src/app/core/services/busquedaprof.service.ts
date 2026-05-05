@@ -36,6 +36,8 @@ export class BusquedaProfService {
     buscarApelaciones(params: any): Observable<Resultado[]> {
       // Limpieza elegante de parámetros nulos/vacíos
       let httpParams = new HttpParams();
+
+      console.log(params)
       Object.entries(params).forEach(([key, value]) => {
         if (value !== null && value !== undefined && value !== '') {
           httpParams = httpParams.set(key, String(value));

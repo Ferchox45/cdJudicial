@@ -91,7 +91,7 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.buildForm();
     this.wireCallbacks();
-    this.cat.cargar(this.form);
+    this.cat.cargar(this.form, 'penal');
     this.intervalId = setInterval(() => this.fechaActual = new Date(), 1000);
     this.form.get('materiaId')!.valueChanges.subscribe(() =>
       this.bus.actualizarValidadoresPorMateria(this.form, this.esIndigena)
@@ -122,7 +122,7 @@ private wireCallbacks(): void {
     this.form = this.fb.group({
       busquedaRapida: [''], folioOficialia: [''],
       materiaId:           [null, Validators.required],
-      magistradoId:        [null],
+      magistradoId:        [null, Validators.required],
       apelacionId:         [null], tipoApelacionId:     [null], tipoEscritoId:       [null],
       juzgadoId:           [null], municipioId:         [null], localidadId:         [null],
       etniaId:             [null], expedienteCausa:     [''],   expedienteAcumulado: [''],

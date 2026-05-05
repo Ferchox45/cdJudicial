@@ -67,6 +67,27 @@
               <option [ngValue]="item.id">{{ item.descripcion }}</option>
             }
           </select>
+            @if (form.get('materiaId')?.invalid && form.get('materiaId')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
+        </div>
+
+        <div class="col-span-1">
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+            Magistrado Asignado <span class="text-red-500">*</span>
+          </label>
+          <select formControlName="magistradoId"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                   focus:outline-none focus:ring-1 focus:ring-emerald-500
+                   disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+            <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+            @for (item of magistrados; track item.id) {
+              <option [ngValue]="item.id">{{ item.descripcion }}</option>
+            }
+          </select>
+            @if (form.get('magistradoId')?.invalid && form.get('magistradoId')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
         </div>
 
         @if (!esIndigena) {
@@ -84,6 +105,9 @@
                 <option [ngValue]="item.id">{{ item.descripcion }}</option>
               }
             </select>
+            @if (form.get('apelacionId')?.invalid && form.get('apelacionId')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
           </div>
 
           <div class="col-span-1">
@@ -123,21 +147,6 @@
           </div>
 
           <div class="col-span-1">
-          <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
-            Magistrado Asignado <span class="text-red-500">*</span>
-          </label>
-          <select formControlName="magistradoId"
-            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
-                   focus:outline-none focus:ring-1 focus:ring-emerald-500
-                   disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
-            <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
-            @for (item of magistrados; track item.id) {
-              <option [ngValue]="item.id">{{ item.descripcion }}</option>
-            }
-          </select>
-        </div>
-
-          <div class="col-span-1">
             <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Folio Oficio</label>
             <input type="text" formControlName="folioOficio" placeholder="Número de folio"
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
@@ -157,6 +166,10 @@
                 <option [ngValue]="item.id">{{ item.descripcion }}</option>
               }
             </select>
+            @if (form.get('juzgadoId')?.invalid && form.get('juzgadoId')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
+
           </div>
 
           <div class="col-span-1">
@@ -197,6 +210,9 @@
                 <option [ngValue]="item.id">{{ item.descripcion }}</option>
               }
             </select>
+            @if (form.get('municipioId')?.invalid && form.get('municipioId')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
           </div>
 
           <div class="col-span-1">
@@ -212,6 +228,9 @@
                 <option [ngValue]="item.id">{{ item.descripcion }}</option>
               }
             </select>
+            @if (form.get('localidadId')?.invalid && form.get('localidadId')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
           </div>
 
           <div class="col-span-1">
@@ -227,6 +246,9 @@
                 <option [ngValue]="item.id">{{ item.descripcion }}</option>
               }
             </select>
+            @if (form.get('etniaId')?.invalid && form.get('etniaId')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
           </div>
 
           @if (form.get('etniaId')?.value === 17) {
@@ -237,6 +259,9 @@
               <input type="text" formControlName="etnia" placeholder="Escriba el nombre de la etnia..."
                 class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                        focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
+          @if (form.get('etnia')?.invalid && form.get('etnia')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
             </div>
           }
 
@@ -248,6 +273,9 @@
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                      focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
             </textarea>
+              @if (form.get('asunto')?.invalid && form.get('asunto')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
           </div>
 
           <div class="col-span-1 md:col-span-3">
@@ -259,8 +287,10 @@
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                      focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
             </textarea>
+            @if (form.get('lugarHechos')?.invalid && form.get('lugarHechos')?.touched) {
+            <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
           </div>
-
         }
 
         <div class="col-span-1 md:col-span-3 flex items-center justify-start gap-2 pb-1">

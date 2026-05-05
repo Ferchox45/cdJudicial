@@ -50,7 +50,7 @@ export interface SearchForm {
   nombreParte:     string;
   idSala:          string;  // ← string
   idNomenclatura:  string;  // ← string
-  idTipoApelacion: string;  // ← string
+  idApelacion: string;  // ← string
   fechaInicio:     string;
   fechaFin:        string;
 }
