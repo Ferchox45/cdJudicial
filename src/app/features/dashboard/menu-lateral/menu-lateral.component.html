@@ -1,7 +1,17 @@
-<aside class="w-16 bg-[#d6e9dc] h-screen hidden md:flex flex-col items-center py-5 sticky top-0 shrink-0 border-r border-[#b8d4c0]">
+@if (isOpen()) {
+  <div
+    (click)="closeMenu.emit()"
+    class="fixed inset-0 bg-black/30 z-40 md:hidden transition-opacity duration-300">
+  </div>
+}
 
-  <!-- Logo -->
+<aside
+  [class.translate-x-0]="isOpen()"
+  [class.-translate-x-full]="!isOpen()"
+  class="w-16 bg-[#d6e9dc] h-screen flex flex-col items-center py-5 fixed md:sticky top-0 left-0 shrink-0 border-r border-[#b8d4c0] z-50 transition-transform duration-300 ease-in-out md:translate-x-0">
+
   <a routerLink="/inicio"
+     (click)="closeMenu.emit()"
      class="flex flex-col items-center gap-1 mb-8 cursor-pointer group outline-none">
     <div class="w-8 h-8 border border-[#1e3e2b] rounded-lg flex items-center justify-center text-[#1e3e2b] group-hover:bg-[#1e3e2b] group-hover:text-[#d6e9dc] transition-all duration-200">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -11,20 +21,9 @@
     <span class="text-[8px] font-bold text-[#1e3e2b] tracking-widest uppercase">SIJUDI</span>
   </a>
 
-  <!-- Nav -->
   <nav class="flex flex-col gap-1 w-full px-2">
-
-    <a routerLink="/inicio"
-       routerLinkActive="bg-white text-[#1e3e2b] shadow-sm"
-       [routerLinkActiveOptions]="{exact: true}"
-       class="group w-full py-3 rounded-xl flex flex-col items-center justify-center gap-1 text-[#1e3e2b]/50 hover:text-[#1e3e2b] hover:bg-white/50 transition-all duration-150 outline-none">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-      </svg>
-      <span class="text-[8px] tracking-wide font-medium">Inicio</span>
-    </a>
-
     <a routerLink="/capturaApelacion"
+       (click)="closeMenu.emit()"
        routerLinkActive="bg-white text-[#1e3e2b] shadow-sm"
        class="group w-full py-3 rounded-xl flex flex-col items-center justify-center gap-1 text-[#1e3e2b]/50 hover:text-[#1e3e2b] hover:bg-white/50 transition-all duration-150 outline-none">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,6 +33,7 @@
     </a>
 
     <a routerLink="/buscadorPlano"
+       (click)="closeMenu.emit()"
        routerLinkActive="bg-white text-[#1e3e2b] shadow-sm"
        class="group w-full py-3 rounded-xl flex flex-col items-center justify-center gap-1 text-[#1e3e2b]/50 hover:text-[#1e3e2b] hover:bg-white/50 transition-all duration-150 outline-none">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,6 +44,7 @@
     </a>
 
     <a routerLink="/buscadorHistorico"
+       (click)="closeMenu.emit()"
        routerLinkActive="bg-white text-[#1e3e2b] shadow-sm"
        class="group w-full py-3 rounded-xl flex flex-col items-center justify-center gap-1 text-[#1e3e2b]/50 hover:text-[#1e3e2b] hover:bg-white/50 transition-all duration-150 outline-none">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,24 +55,20 @@
     </a>
 
     <a routerLink="/estadisticasPlana"
+       (click)="closeMenu.emit()"
        routerLinkActive="bg-white text-[#1e3e2b] shadow-sm"
        class="group w-full py-3 rounded-xl flex flex-col items-center justify-center gap-1 text-[#1e3e2b]/50 hover:text-[#1e3e2b] hover:bg-white/50 transition-all duration-150 outline-none">
-      
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
       </svg>
-
       <span class="text-[8px] tracking-wide font-medium">Estadísticas</span>
     </a>
-
   </nav>
 
-  <!-- Config -->
-  <a class="mt-auto w-10 h-10 flex items-center justify-center rounded-xl text-[#1e3e2b]/40 hover:text-[#1e3e2b] hover:bg-white/50 transition-all duration-150 cursor-pointer">
+  <a (click)="closeMenu.emit()" class="mt-auto w-10 h-10 flex items-center justify-center rounded-xl text-[#1e3e2b]/40 hover:text-[#1e3e2b] hover:bg-white/50 transition-all duration-150 cursor-pointer">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
     </svg>
   </a>
-
 </aside>

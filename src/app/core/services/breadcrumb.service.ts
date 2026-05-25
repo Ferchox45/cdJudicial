@@ -9,7 +9,6 @@ export class BreadcrumbService {
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
 
-  // Signal que contiene el breadcrumb actual
   breadcrumbs = signal<BreadcrumbItem[]>([]);
 
   constructor() {
@@ -17,7 +16,15 @@ export class BreadcrumbService {
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
       const root = this.activatedRoute.root;
-      this.breadcrumbs.set(this.createBreadcrumbs(root));
+      let crumbs = this.createBreadcrumbs(root);
+
+      // 1. FORZAR "Inicio" AL PRINCIPIO SIEMPRE
+      // Si la lista está vacía o el primer elemento no es inicio, lo agregamos
+      if (crumbs.length === 0 || crumbs[0].label !== 'Inicio') {
+        crumbs.unshift({ label: 'Inicio', url: '/inicio' });
+      }
+
+      this.breadcrumbs.set(crumbs);
     });
   }
 
@@ -30,7 +37,12 @@ export class BreadcrumbService {
       if (routeURL !== '') url += `/${routeURL}`;
 
       const label = child.snapshot.data['breadcrumb'];
-      if (label) breadcrumbs.push({ label, url });
+
+      // 2. EVITAR DUPLICADOS
+      // Solo lo agregamos si NO es exactamente igual al último que acabamos de meter
+      if (label && (breadcrumbs.length === 0 || breadcrumbs[breadcrumbs.length - 1].label !== label)) {
+        breadcrumbs.push({ label, url: url || '/' });
+      }
 
       return this.createBreadcrumbs(child, url, breadcrumbs);
     }

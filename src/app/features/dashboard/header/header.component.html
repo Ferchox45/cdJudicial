@@ -3,29 +3,35 @@
   <div class="flex items-center justify-between px-4 py-2 min-h-14">
 
     <div class="flex items-center gap-3 shrink-0">
+
+      <button
+        (click)="toggleMobileMenu.emit()"
+        class="md:hidden p-1.5 -ml-2 text-gray-600 hover:bg-gray-100 rounded-lg focus:outline-none transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+
       <img
         src="assets/images/logo-oaxaca.png"
         alt="Logo Poder Judicial Oaxaca"
         class="h-10 w-10 object-contain"
       />
-      <div class="leading-tight">
+
+      <div class="leading-tight hidden sm:block">
         <p class="text-[11px] font-bold text-gray-700 tracking-wide uppercase">Poder Judicial del</p>
         <p class="text-[11px] font-bold text-gray-700 tracking-wide uppercase">Estado de Oaxaca</p>
       </div>
     </div>
 
     <div class="flex items-center gap-2.5 shrink-0">
-
       <div class="flex flex-col text-right leading-tight">
-
         <span class="text-[13px] font-bold text-gray-800 uppercase tracking-wide hidden sm:block">
           {{ userName() }}
         </span>
-
         <span class="text-[11px] text-gray-500 hidden md:block">
           Área: {{ area() }} - OIJ Prueba FEDERAL - Perfil: {{ perfil() }} - SubArea: {{ subArea() }}
         </span>
-
       </div>
 
       <div class="h-9 w-9 rounded-full bg-gray-300 border border-gray-300 overflow-hidden flex items-center justify-center">
@@ -33,28 +39,29 @@
           <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
         </svg>
       </div>
-
     </div>
 
   </div>
 
-  <div class="flex items-center gap-1.5 px-4 py-1 bg-gray-50 border-t border-gray-100 text-[11px] text-gray-500">
-
+  <div class="flex items-center gap-1.5 px-4 py-1 bg-gray-50 border-t border-gray-100 text-[13px] text-gray-500">
     <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 12L12 3l9 9M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/>
     </svg>
 
-    @for (item of breadcrumbs(); track item.label; let isLast = $last) {
-      <span class="text-gray-400">/</span>
+@for (item of breadcrumbs(); track item.label; let isFirst = $first, isLast = $last) {
 
-      @if (isLast) {
-        <span class="font-medium text-gray-600">{{ item.label }}</span>
-      } @else {
-        <a [href]="item.url" class="hover:text-gray-800 transition-colors cursor-pointer">
-          {{ item.label }}
-        </a>
-      }
+    @if (!isFirst) {
+      <span class="text-gray-400">/</span>
     }
 
+    @if (isLast) {
+      <span class="font-medium text-gray-600">{{ item.label }}</span>
+    } @else {
+      <a [routerLink]="item.url" class="hover:text-gray-800 font-medium transition-colors cursor-pointer">
+        {{ item.label }}
+      </a>
+    }
+
+  }
   </div>
 </header>

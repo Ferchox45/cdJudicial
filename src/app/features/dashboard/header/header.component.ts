@@ -1,6 +1,7 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbService } from '../../../core/services/breadcrumb.service';
+import { RouterModule } from '@angular/router';
 
 // 1. Creamos una interfaz para definir cómo se ve un elemento del breadcrumb
 export interface BreadcrumbItem {
@@ -11,13 +12,14 @@ export interface BreadcrumbItem {
 @Component({
   selector: 'app-main-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html',
 })
 export class MainHeaderComponent {
 
 private breadcrumbService = inject(BreadcrumbService);
 
+  toggleMobileMenu = output<void>();
   // Usamos el signal del servicio directamente
   breadcrumbs = this.breadcrumbService.breadcrumbs;
 

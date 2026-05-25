@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { DashboardLayoutComponent } from './features/dashboard/dashboardmain/dashboard.component';
-
+import { anexosGuard } from './features/apelaciones/anexos/anexos.guard';
 export const routes: Routes = [
   // 1. PRIMERA REGLA: Si la URL está completamente vacía, redirige al login obligatoriamente
   {
@@ -20,28 +20,35 @@ export const routes: Routes = [
     path: '',
     component: DashboardLayoutComponent,
     children: [
-      // Eliminamos el redireccionamiento vacío de aquí para que no choque con la raíz global
       {
         path: 'inicio',
         loadComponent: () => import('./features/dashboard/home/home.component').then(m => m.HomeComponent),
         data: { breadcrumb: 'Inicio' }
       },
-      // Grupo Apelaciones
+
+      // Grupo Apelaciones (Jerarquizado)
       {
         path: 'capturaApelacion',
-        loadComponent: () => import('./features/apelaciones/captura-apelaciones/captura-apelacones.component').then(m => m.CapturaApelacionesComponent),
-        data: { breadcrumb: 'Captura de Apelación' }
+        data: { breadcrumb: 'Captura de Apelación' },
+        children: [
+          {
+            path: '', // Esta es la ruta base: /capturaApelacion
+            loadComponent: () => import('./features/apelaciones/captura-apelaciones/captura-apelacones.component').then(m => m.CapturaApelacionesComponent)
+          },
+          {
+            path: 'anexos', // Esta es la ruta hija: /capturaApelacion/anexos
+            loadComponent: () => import('./features/apelaciones/anexos/anexos.component').then(m => m.AnexosComponent),
+            data: { breadcrumb: 'Anexos' },
+            canActivate: [anexosGuard]
+          }
+        ]
       },
       {
         path: 'busquedaApelacion',
         loadComponent: () => import('./features/apelaciones/busqueda-apelaciones/busquedaApelaciones.component').then(m => m.BusquedaApelacionesComponent),
         data: { breadcrumb: 'Búsqueda de Apelación' }
       },
-      {
-        path: 'anexos',
-        loadComponent: () => import('./features/apelaciones/anexos/anexos.component').then(m => m.AnexosComponent),
-        data: { breadcrumb: 'Anexos' }
-      },
+
       // Grupo Buscadores
       {
         path: 'buscadorHistorico',
@@ -53,6 +60,7 @@ export const routes: Routes = [
         loadComponent: () => import('./features/buscadores/buscador-plano/buscadorPlano.component').then(m => m.BuscadorPlanoComponent),
         data: { breadcrumb: 'Buscador Plano' }
       },
+
       // Grupo Estadísticas
       {
         path: 'estadisticasPlana',

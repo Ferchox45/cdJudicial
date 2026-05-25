@@ -1,7 +1,7 @@
 import { HomeComponent } from '../home/home.component';
 import { MenulateralComponent } from '../menu-lateral/menu-lateral.component';
 import { MainHeaderComponent } from '../header/header.component';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -10,4 +10,6 @@ import { RouterOutlet } from '@angular/router';
   imports: [MenulateralComponent, MainHeaderComponent, RouterOutlet],
   templateUrl: './dashboard.component.html',
 })
-export class DashboardLayoutComponent {}
+export class DashboardLayoutComponent {
+  isMobileMenuOpen = signal(false);
+}

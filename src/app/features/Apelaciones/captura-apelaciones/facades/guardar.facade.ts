@@ -73,7 +73,7 @@ guardar(
   // y mantenemos el contexto para que los anexos se relacionen con la apelación que acabamos de guardar
   continuarConAnexos(mostrarModal: WritableSignal<boolean>): void {
     mostrarModal.set(false);
-    this.router.navigate(['/anexos']);
+    this.router.navigate(['/capturaApelacion/anexos']);
   }
 
   // Si el usuario decide no agregar anexos, limpiamos el contexto y regresamos al inicio

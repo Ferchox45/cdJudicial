@@ -1,17 +1,18 @@
 <div class="flex h-screen bg-[#fafbfc] overflow-hidden">
 
-  <app-menulateral />
+  <app-menulateral
+    [isOpen]="isMobileMenuOpen()"
+    (closeMenu)="isMobileMenuOpen.set(false)" />
 
   <div class="flex-1 flex flex-col min-w-0">
 
-    <app-main-header />
+    <app-main-header
+      (toggleMobileMenu)="isMobileMenuOpen.set(!isMobileMenuOpen())" />
 
     <main class="flex-1 overflow-y-auto bg-[#f1f4f2]/30 p-4 md:p-6 lg:p-8">
-
       <div class="max-w-7xl mx-auto w-full h-full">
         <router-outlet />
       </div>
-
     </main>
 
   </div>
