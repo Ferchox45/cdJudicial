@@ -8,7 +8,7 @@ export interface Parte {
   direccion:    string;
   menorEdad:    boolean;
   seleccionada: boolean;
-  roleOrigin?: 'procesado' | 'ofendido';
+  roleOrigin?: 'ofendido' | 'procesado';
 }
 
 export interface DelitoBusqueda {
@@ -19,10 +19,10 @@ export interface DelitoBusqueda {
 export interface ParteBusqueda {
   id:        number;
   nombre:    string;
-  direccion: string;
+  direccion: string | null;
   menorEdad: boolean;
-  sexo:      string;
-  tipoParte: string;
+  sexo:      CatalogoItem;
+  tipoParte: CatalogoItem;
 }
 
 export interface RelacionBusqueda {
@@ -32,25 +32,29 @@ export interface RelacionBusqueda {
   delitosRelacion: DelitoBusqueda[];
 }
 
-export interface ApelacionBusqueda {
+export interface BusquedaRapida {
   id:              number;
+  folioOficilia:   string;
   folioTentativo:  string;
+  folioOficio:     string;
   folioApelacion:  string;
   expedienteCausa: string;
+  expedienteAcumulado: string;
   fojas:           number;
   esReposicion:    boolean;
   fechaAuto:       string | null;
   observaciones:   string | null;
   asunto:          string | null;
   lugarHechos:     string | null;
-  materia:         CatalogoItem | null;
+  catMateria:      CatalogoItem | null;
+  catApelacion:    CatalogoItem | null;
   tipoApelacion:   CatalogoItem | null;
   tipoEscrito:     CatalogoItem | null;
-  juzgadoOrigen:   CatalogoItem | null;
-  magistrado:      CatalogoItem | null;
-  municipio:       CatalogoItem | null;
-  localidad:       CatalogoItem | null;
-  etnia:           CatalogoItem | null;
+  catJuzgado:         CatalogoItem | null;
+  catMunicipio:       CatalogoItem | null;
+  catLocalidad:       CatalogoItem | null;
+  catEtnia:           CatalogoItem | null;
+  catMagistrado:      CatalogoItem | null;
   relaciones:      RelacionBusqueda[];
 }
 

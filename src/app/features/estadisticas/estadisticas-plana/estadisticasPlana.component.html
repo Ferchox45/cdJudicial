@@ -1,0 +1,58 @@
+<div class="w-full min-h-screen bg-cream px-6 py-8">
+
+  <!-- Encabezado -->
+  <div class="mb-8 text-left">
+    <h2 class="text-3xl font-bold text-strong-coffee m-0">Estadisticas de Apelaciones</h2>
+    <p class="text-gray-500 mt-1 mb-0">
+      Realize busquedas y estadisticas de apelaciones del sisetma
+    </p>
+  </div>
+
+  <div class="flex flex-col md:flex-row md:items-start gap-4">
+
+    <!-- Contenido principal -->
+    <main class="flex-1 w-full min-w-0 flex flex-col gap-6 pb-24 md:pb-0">
+            <div class="flex-none">
+        <app-panel-busqueda-estadistica/>
+      </div>
+
+      <!-- CAMBIO: Añadido flex flex-col y gap-10 para separar el bloque de la gráfica/resultados de la tabla anidada -->
+      <div class="grow min-h-112.5 flex flex-col gap-10">
+
+        <!-- Contenedor para Resultados o Gráfica -->
+        <div class="grow">
+          @if (vistaActiva() === 'resultados') {
+            <app-tabla-resultados class="block h-full animate-fade-in" />
+          } @else {
+            <app-grafica-totales class="block h-full animate-fade-in"
+            #graficaRef
+            [chartData]="buscarEstadisticas.chartActivo()?.data"
+            [chartTitle]="buscarEstadisticas.chartActivo()?.title"/>
+          }
+        </div>
+
+        <!-- Estadísticas detalladas (Tabla Anidada) -->
+        <div class="flex-none">
+          <app-tabla-anidada
+  [filaActiva]="filaActiva()"
+  (filaClic)="onFilaSeleccionada($event)"
+  (celdaClic)="onCeldaSeleccionada($event)"
+                class="block w-full h-full" />
+        </div>
+
+      </div>
+    </main>
+
+    <aside class="
+      fixed bottom-0 left-0 w-full z-50
+      bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.08)]
+      md:bottom-auto md:left-auto md:w-auto md:z-auto
+      md:bg-transparent md:border-none md:shadow-none
+      md:sticky md:top-8 md:self-start md:shrink-0">
+      <app-action-sidebar
+        [actions]="sidebarActions"
+        (actionClick)="onAction($event)"/>
+    </aside>
+
+  </div>
+</div>

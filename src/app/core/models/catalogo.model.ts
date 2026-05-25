@@ -3,8 +3,18 @@ export interface CatalogoItem {
   descripcion: string;
 }
 
+export interface Anexo {
+  idAnexo:   number;
+  cantidad:  number;
+  tipo:      string;
+  esValor:   boolean;
+  monto:     number | null;
+  otroAnexo: string;
+}
+
 // Respuesta completa del endpoint /capturar-apelacion
 export interface CapturaApelacionCatalogos {
+  folioTentativo:   string
   materias:         CatalogoItem[];
   apelaciones:      CatalogoItem[];
   tiposApelaciones: CatalogoItem[];
@@ -17,7 +27,6 @@ export interface CapturaApelacionCatalogos {
   delitos :         CatalogoItem[];
   tiposPartes:      CatalogoItem[];
   sexos:            CatalogoItem[];
-  folioTentativo:   string
 }
 
 export interface CapturaAnexoCatalogos {

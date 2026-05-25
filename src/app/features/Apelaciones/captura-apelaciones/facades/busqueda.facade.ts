@@ -1,14 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { ApelacionBusqueda, Parte, RelacionBusqueda } from '../../../../core/models';
+import { BusquedaRapida, Parte, RelacionBusqueda } from '../../../../core/models';
 import { ApelacionService } from '../../../../core/services/apelaciones.service';
 import {
-  DelitoDisponible,
   mapearPartesDesdeRelaciones,
   mapearRelaciones,
   sincronizarSeleccionDelitos,
   toDateInput,
 } from '../captura-apelaciones.mapper';
+
+import { DelitoDisponible } from '../../../../core/models/apelacionAuxMapper';
 
 const CAMPOS_BUSQUEDA = [
   'materiaId', 'apelacionId', 'tipoApelacionId', 'tipoEscritoId',
@@ -51,7 +52,7 @@ export class BusquedaFacade {
     this.busquedaExitosa = false;
 
     this.apelacionService.buscarPorFolio(folio).subscribe({
-      next: (data: ApelacionBusqueda) => {
+      next: (data: BusquedaRapida) => {
         this.buscando = false;
 
         if (!data) {
@@ -114,33 +115,36 @@ export class BusquedaFacade {
     });
   }
 
-  private cargarEnFormulario(
+private cargarEnFormulario(
     form: FormGroup,
-    d: ApelacionBusqueda,
+    d: BusquedaRapida,
     delitosDisponibles: DelitoDisponible[]
   ): void {
     form.patchValue({
-      folioTentativo:  d.folioTentativo,
-      expedienteCausa: d.expedienteCausa,
-      fojas:           d.fojas,
-      esReposicion:    d.esReposicion,
-      fechaAuto:       toDateInput(d.fechaAuto),
-      observaciones:   d.observaciones   ?? '',
-      materiaId:       d.materia?.id     ?? null,
-      tipoApelacionId: d.tipoApelacion?.id ?? null,
-      tipoEscritoId:   d.tipoEscrito?.id  ?? null,
-      juzgadoId:       d.juzgadoOrigen?.id ?? null,
-      magistradoId:    d.magistrado?.id   ?? null,
-      etniaId:         d.etnia?.id        ?? null,
-      lugarHechos:     d.lugarHechos      ?? null,
-      asunto:          d.asunto           ?? null,
-      municipioId:     d.municipio?.id    ?? null,
-      localidadId:     d.localidad?.id    ?? null,
+      folioTentativo:      d.folioTentativo,
+      expedienteCausa:     d.expedienteCausa,
+      expedienteAcumulado: d.expedienteAcumulado,
+      folioOficio:         d.folioOficio,
+      fojas:               d.fojas,
+      esReposicion:        d.esReposicion,
+      fechaAuto:           toDateInput(d.fechaAuto),
+      observaciones:       d.observaciones ?? '',
+      materiaId:           d.catMateria?.id ?? null,
+      apelacionId:         d.catApelacion?.id ?? null,
+      tipoApelacionId:     d.tipoApelacion?.id ?? null,
+      tipoEscritoId:       d.tipoEscrito?.id ?? null,
+      juzgadoId:           d.catJuzgado?.id ?? null,
+      magistradoId:        d.catMagistrado?.id ?? null,
+      etniaId:             d.catEtnia?.id ?? null,
+      lugarHechos:         d.lugarHechos ?? null,
+      asunto:              d.asunto ?? null,
+      municipioId:         d.catMunicipio?.id ?? null,
+      localidadId:         d.catLocalidad?.id ?? null,
     });
 
     this.bloquearCampos(form);
 
-    const partes    = mapearPartesDesdeRelaciones(d.relaciones);
+    const partes = mapearPartesDesdeRelaciones(d.relaciones);
     const relaciones = mapearRelaciones(d.relaciones);
     const delitosActualizados = sincronizarSeleccionDelitos(delitosDisponibles, relaciones);
 

@@ -30,23 +30,21 @@
               [disabled]="buscando || cargando"
               class="bg-emerald-900 text-white px-3 rounded-r-md hover:bg-emerald-800
                      disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-              @if (buscando) {
-                <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-                </svg>
-              } @else {
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-              }
-            </button>
-          </div>
-          @if (busquedaExitosa) {
-            <p class="text-xs text-emerald-600 mt-1">Datos cargados correctamente</p>
-          }
+            @if (buscando) {
+        <app-spinner size="sm" color="white" ariaLabel="Buscando..." />
+      } @else {
+        <svg width="16" height="16" fill="none" stroke="currentColor"
+             stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      }
+    </button>
+  </div>
+  @if (busquedaExitosa) {
+    <p class="text-xs text-emerald-600 mt-1">Datos cargados correctamente</p>
+  }
         </div>
-
         <div class="col-span-1 flex flex-col gap-1.5">
           <label class="text-xs font-bold text-gray-700">Folio Tentativo</label>
           <input type="text" readonly [value]="folioTentativo"
@@ -54,6 +52,7 @@
                    text-gray-500 bg-gray-50 cursor-not-allowed"/>
         </div>
 
+        <!-- Materia y Magistrado (campos compartidos por penal e indígena)-->
         <div class="col-span-1">
           <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
             Materia <span class="text-red-500">*</span>
@@ -90,6 +89,7 @@
             }
         </div>
 
+        <!-- Campos específicos para apelaciones en materia penal -->
         @if (!esIndigena) {
 
           <div class="col-span-1">
@@ -129,9 +129,6 @@
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                      focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
           </div>
-        }
-
-        @if (!esIndigena) {
 
           <div class="col-span-1">
             <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Tipo de Escrito</label>
@@ -194,7 +191,7 @@
           </div>
 
         }
-
+        <!-- Campos específicos para apelaciones en materia indígena -->
         @if (esIndigena) {
 
           <div class="col-span-1">
@@ -216,22 +213,24 @@
           </div>
 
           <div class="col-span-1">
-            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
-              Localidad <span class="text-red-500">*</span>
-            </label>
-            <select formControlName="localidadId"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
-                     focus:outline-none focus:ring-1 focus:ring-emerald-500
-                     disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
-              <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
-              @for (item of localidades; track item.id) {
-                <option [ngValue]="item.id">{{ item.descripcion }}</option>
+              <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+                Localidad <span class="text-red-500">*</span>
+              </label>
+              <select formControlName="localidadId"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                      focus:outline-none focus:ring-1 focus:ring-emerald-500
+                      disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+                <option [ngValue]="null">
+                  {{ catalogosFacade.cargandoLocalidades ? 'Cargando...' : 'Seleccione...' }}
+                </option>
+                @for (item of catalogosFacade.localidades; track item.id) {
+                  <option [ngValue]="item.id">{{ item.descripcion }}</option>
+                }
+              </select>
+              @if (form.get('localidadId')?.invalid && form.get('localidadId')?.touched) {
+                <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
               }
-            </select>
-            @if (form.get('localidadId')?.invalid && form.get('localidadId')?.touched) {
-              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
-            }
-          </div>
+            </div>
 
           <div class="col-span-1">
             <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
@@ -256,10 +255,11 @@
               <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
                 Especifique la Etnia <span class="text-red-500">*</span>
               </label>
-              <input type="text" formControlName="etnia" placeholder="Escriba el nombre de la etnia..."
+              <input type="text" formControlName="otroEtnia" placeholder="Escriba el nombre de la etnia..."
                 class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+
                        focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
-          @if (form.get('etnia')?.invalid && form.get('etnia')?.touched) {
+          @if (form.get('otroEtnia')?.invalid && form.get('otroEtnia')?.touched) {
               <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
             }
             </div>

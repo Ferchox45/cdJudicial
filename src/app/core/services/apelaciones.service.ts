@@ -1,19 +1,14 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, of, timeout, catchError, tap, shareReplay, map } from 'rxjs';
-
+import { HttpClient } from '@angular/common/http';
+import { Observable, timeout, map } from 'rxjs';
+import { CacheService } from './cache.service';
 import {
-  ApelacionBusqueda,
+  BusquedaRapida,
   CapturaApelacionCatalogos,
   CapturaAnexoCatalogos,
   CatalogoBusqueda
 } from '../models';
-
-
-const BASE_URL = 'https://judicial-lpkf.onrender.com/api';
-const CACHE_TTL = 1000 * 60 * 30; // 30 minutos
-
-// Centralizamos las llaves de caché para evitar errores tipográficos
+import { environment } from '../../../environments/environment.development';
 export const CACHE_KEYS = {
   CAPTURA: 'catalogos_captura',
   ANEXO: 'catalogos_anexo',
@@ -23,142 +18,54 @@ export const CACHE_KEYS = {
 @Injectable({ providedIn: 'root' })
 export class ApelacionService {
   private http = inject(HttpClient);
+  private cache = inject(CacheService);
+   apiEndpoint = environment.apiUrl;
 
+  // ── Catálogos con Caché ──────────────────────────────────────
 
-  // ── 1. Gestor de Caché Centralizado ─────────────────────────
-  // En lugar de múltiples variables nulas, usamos un Map para manejar N cachés
-  private memCache = new Map<string, Observable<any>>();
-
-  // ══════════════════════════════════════════════════════════
-  // OBTENCIÓN DE CATÁLOGOS (Usando helper de caché)
-  // ══════════════════════════════════════════════════════════
-
-getCatalogoCaptura(materia: string): Observable<CapturaApelacionCatalogos> {
-  const httpCall$ = this.http
-    .get<{ data: CapturaApelacionCatalogos }>(`${BASE_URL}/apelaciones/form-data`, {
-      params: { materia }
-    })
-    .pipe(map(res => res.data));
-
-  // Si usas caché por materia, necesitas una key dinámica:
-  return this.manejarCache(`${CACHE_KEYS.CAPTURA}_${materia}`, httpCall$);
-}
-
-  getCatalogoAnexo(): Observable<CapturaAnexoCatalogos> {
-    const httpCall$ = this.http.get<{ data: { anexos: any[] } }>(`${BASE_URL}/apelaciones/anexos/form-data`)
-      .pipe(map(res => ({ anexo: res?.data?.anexos ?? [] })));
-
-    return this.manejarCache(CACHE_KEYS.ANEXO, httpCall$);
-  }
-
-  getCatalogoBusqueda(): Observable<CatalogoBusqueda> {
-    const httpCall$ = this.http.get<{ data: CatalogoBusqueda }>(`${BASE_URL}/search/filters`)
+  getCatalogoCaptura(materia: string): Observable<CapturaApelacionCatalogos> {
+    const call$ = this.http
+      .get<{ data: CapturaApelacionCatalogos }>(`${this.apiEndpoint}/api/apelaciones/catalogos`, { params: { materia } })
       .pipe(map(res => res.data));
 
-    return this.manejarCache(CACHE_KEYS.BUSQUEDA, httpCall$);
+    return this.cache.manejarCache(`${CACHE_KEYS.CAPTURA}_${materia}`, call$);
   }
 
-  // ══════════════════════════════════════════════════════════
-  // INVALIDACIÓN DE CATÁLOGOS
-  // ══════════════════════════════════════════════════════════
+  getCatalogoAnexo(): Observable<CapturaAnexoCatalogos> {
+    const call$ = this.http.get<{ data: { anexos: any[] } }>(`${this.apiEndpoint}/api/apelaciones/anexos/catalogos`)
+      .pipe(map(res => ({ anexo: res?.data?.anexos ?? [] })));
 
-  invalidarCatalogos(): void        { this.invalidarCache(CACHE_KEYS.CAPTURA); }
-  invalidarAnexos(): void           { this.invalidarCache(CACHE_KEYS.ANEXO); }
-  invalidarCatalogoBusqueda(): void { this.invalidarCache(CACHE_KEYS.BUSQUEDA); }
+    return this.cache.manejarCache(CACHE_KEYS.ANEXO, call$);
+  }
+  // ── Métodos sin Caché (Datos dinámicos/Acciones) ─────────────
+  getLocalidades(idMunicipio: number): Observable<any[]> {
+    return this.http
+      .get<{ data: { localidades: any[] } }>(`${this.apiEndpoint}/api/apelaciones/${idMunicipio}/localidades`)
+      .pipe(timeout(15000), map(res => res.data.localidades));
+  }
 
-  // ══════════════════════════════════════════════════════════
-  // OPERACIONES CRUD Y BÚSQUEDAS
-  // ══════════════════════════════════════════════════════════
-
-  buscarPorFolio(folio: string): Observable<ApelacionBusqueda> {
+  buscarPorFolio(folio: string): Observable<BusquedaRapida> {
     const param = encodeURIComponent(folio.trim());
-    return this.http.get<{ data: ApelacionBusqueda }>(`${BASE_URL}/apelaciones/detail?folioOficialia=${param}`)
-      .pipe(
-        timeout(15000),
-        map(res => res.data)
-      );
+    return this.http.get<{ data: BusquedaRapida }>(`${this.apiEndpoint}/api/apelaciones/detalle?folioOficialia=${param}`)
+      .pipe(timeout(15000), map(res => res.data));
   }
-
-
 
   guardarApelacion(payload: any): Observable<any> {
-    return this.http.post(`${BASE_URL}/apelaciones`, payload)
-      .pipe(timeout(15000));
+    return this.http.post(`${this.apiEndpoint}/api/apelaciones`, payload).pipe(timeout(15000));
   }
 
   guardarAnexos(payload: any): Observable<any> {
-    return this.http.post(`${BASE_URL}/apelaciones/anexos`, payload)
-      .pipe(timeout(15000));
+    return this.http.post(`${this.apiEndpoint}/api/apelaciones/anexos`, payload).pipe(timeout(15000));
   }
 
-  // ══════════════════════════════════════════════════════════
-  // HELPERS PRIVADOS DE CACHÉ
-  // ══════════════════════════════════════════════════════════
+  // ── Invalidación manual ──────────────────────────────────────
 
-  /**
-   * Helper centralizado que maneja la memoria, el sessionStorage y la petición HTTP
-   */
-  private manejarCache<T>(key: string, httpCall$: Observable<T>): Observable<T> {
-    // 1. Revisar caché en memoria
-    if (this.memCache.has(key)) {
-      return this.memCache.get(key)!;
-    }
-
-    // 2. Revisar caché en sessionStorage
-    const cachedData = this.getFromStorage<T>(key);
-    if (cachedData) {
-      const obs$ = of(cachedData);
-      this.memCache.set(key, obs$); // Subir a memoria para acceso rápido
-      return obs$;
-    }
-
-    // 3. Hacer la petición si no hay caché
-    const request$ = httpCall$.pipe(
-      timeout(60000),
-      tap(data => this.saveToStorage(key, data)),
-      shareReplay(1),
-      catchError(err => {
-        this.memCache.delete(key); // Limpiar memoria si falla
-        throw err;
-      })
-    );
-
-    this.memCache.set(key, request$);
-    return request$;
+  invalidarCatalogos(): void {
+    // Borramos ambos para asegurar que el folio se actualice globalmente
+    this.cache.delete(`${CACHE_KEYS.CAPTURA}_penal`);
+    this.cache.delete(`${CACHE_KEYS.CAPTURA}_indigena`);
   }
 
-  private invalidarCache(key: string): void {
-    this.memCache.delete(key);
-    sessionStorage.removeItem(key);
-  }
-
-  private saveToStorage<T>(key: string, data: T): void {
-    try {
-      sessionStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }));
-    } catch { console.warn('Error guardando en sessionStorage'); }
-  }
-
-  private getFromStorage<T>(key: string): T | null {
-    try {
-      const raw = sessionStorage.getItem(key);
-      if (!raw) return null;
-
-      const { data, timestamp } = JSON.parse(raw);
-      if (Date.now() - timestamp > CACHE_TTL) {
-        sessionStorage.removeItem(key);
-        return null;
-      }
-      return data as T;
-    } catch {
-      return null;
-    }
-  }
-
-  getFolioTentativo(): Observable<string> {
-    return this.http.get<{ data: { folioTentativo: string } }>(`${BASE_URL}/apelaciones/form-data
-      `)
-      .pipe(map(res => res?.data?.folioTentativo ?? ''));
-  }
-
+  invalidarAnexos(): void { this.cache.delete(CACHE_KEYS.ANEXO); }
+  invalidarBusqueda(): void { this.cache.delete(CACHE_KEYS.BUSQUEDA); }
 }
-

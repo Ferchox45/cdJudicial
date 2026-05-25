@@ -1,31 +1,14 @@
-<!-- ============================================================
-     historico-apelaciones.component.html  —  COMPONENTE PADRE
-     ============================================================
-     Hijos:
-       <app-panel-busqueda-historico/>
-       <app-panel-resultados-historico/>
-       <app-action-sidebar/>
-     ============================================================ -->
+<div class="w-full min-h-screen bg-cream px-6 py-8">
 
-<app-main-header></app-main-header>
-
-<div class="w-full min-h-screen bg-cream px-4 py-8">
-
-  <!-- Encabezado de página -->
-  <div class="mb-8 text-left max-w-350 mx-auto">
+  <!-- Encabezado -->
+  <div class="mb-8 text-left">
     <h2 class="text-3xl font-bold text-strong-coffee m-0">Búsqueda de Histórico Apelaciones</h2>
     <p class="text-gray-500 mt-1 mb-0">
       Consulte el historial completo de apelaciones registradas en el sistema.
     </p>
   </div>
 
-  <!--
-    LAYOUT PRINCIPAL
-    ─────────────────────────────────────────────────────────────
-    • Móvil  → columna única; sidebar pegado al fondo (fixed)
-    • Desktop → fila; sidebar sticky a la derecha (self-start)
-  -->
-  <div class="flex flex-col md:flex-row md:items-start max-w-350 mx-auto gap-4">
+  <div class="flex flex-col md:flex-row md:items-start gap-4">
 
     <!-- Contenido principal -->
     <main class="flex-1 w-full min-w-0 flex flex-col gap-6 pb-24 md:pb-0">
@@ -33,12 +16,6 @@
       <app-panel-resultados-historico/>
     </main>
 
-    <!--
-      SIDEBAR
-      Móvil  : fixed bottom-0, barra inferior ancho completo
-      Desktop: sticky top-8 + self-start
-               (self-start es obligatorio para que sticky no colapse en DevTools)
-    -->
     <aside class="
       fixed bottom-0 left-0 w-full z-50
       bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.08)]

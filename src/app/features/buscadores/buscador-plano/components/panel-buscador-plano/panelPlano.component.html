@@ -33,86 +33,120 @@
         </div>
         <hr class="mb-4 md:mb-5 opacity-40 border-t-2 border-solid border-bronze"/>
 
-        <!-- 1 col móvil → 2 sm → 3 desktop -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
-
           <!-- Folio Oficialía -->
           <div class="flex flex-col gap-1.5">
             <label for="folioOficialia" class="text-xs font-bold text-gray-700">Folio Oficialía</label>
-            <input id="folioOficialia" type="text" name="folioOficialia"
+            <input
+            id="folioOficialia"
+            type="text"
+            name="folioOficialia"
+            [ngModel]="Form.folioOficialia"
+            (ngModelChange)="updateForm('folioOficialia', $event)"
+
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
               placeholder="Ej. 12345/2023">
           </div>
 
           <!-- Sala -->
-          <div class="flex flex-col gap-1.5">
+                    <div class="flex flex-col gap-1.5">
             <label for="sala" class="text-xs font-bold text-gray-700">Sala</label>
             <select
-              id="sala"
-              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
-                     transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
-              <option value="">Seleccione una Sala</option>
-              <option>Sala Primera</option>
-              <option>Sala Segunda</option>
-              <option>Sala Tercera</option>
+            id="sala"
+            name="sala"
+            [ngModel]="Form.idSala"
+            (ngModelChange)="updateForm('idSala', $event)"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+
+              [disabled]="catalogos.cargando()">
+              <option value="">{{ catalogos.cargando() ? 'Cargando...' : 'Seleccione Sala' }}</option>
+              @for (item of catalogos.salas(); track item.id) {
+                <option [value]="item.id">{{ item.descripcion }}</option>
+              }
             </select>
           </div>
 
                     <!-- Nomenclatura -->
-          <div class="flex flex-col gap-1.5">
+                    <div class="flex flex-col gap-1.5">
             <label for="nomenclatura" class="text-xs font-bold text-gray-700">Nomenclatura</label>
             <select
-              id="nomenclatura"
-              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
-                     transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
-              <option value="">Seleccione una Nomenclatura</option>
-              <option>Nomenclatura Primera</option>
-              <option>Nomenclatura Segunda</option>
-              <option>Nomenclatura Tercera</option>
+            id="nomenclatura"
+            name="nomenclatura"
+            [ngModel]="Form.idNomenclatura"
+            (ngModelChange)="updateForm('idNomenclatura', $event)"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+
+              [disabled]="catalogos.cargando()">
+              <option value="">{{ catalogos.cargando() ? 'Cargando...' : 'Seleccione Nomenclatura' }}</option>
+              @for (item of catalogos.nomenclaturas(); track item.id) {
+                <option [value]="item.id">{{ item.descripcion }}</option>
+              }
             </select>
           </div>
 
                     <!-- Folio Apelación -->
           <div class="flex flex-col gap-1.5">
             <label for="folioApelacion" class="text-xs font-bold text-gray-700">Folio Apelación</label>
-            <input id="folioApelacion" type="text" name="folioApelacion"
+            <input
+            id="folioApelacion"
+            type="text"
+            name="folioApelacion"
+            [ngModel]="Form.folioApelacion"
+            (ngModelChange)="updateForm('folioApelacion', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
               placeholder="Número de folio"
               />
           </div>
                       <!-- Apelación -->
-          <div class="flex flex-col gap-1.5">
-            <label for="apelacion" class="text-xs font-bold text-gray-700">Apelacion</label>
+                    <div class="flex flex-col gap-1.5">
+            <label for="apelacion" class="text-xs font-bold text-gray-700">Apelación</label>
             <select
-              id="apelacion"
-              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
-                     transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
-              <option value="">Seleccione una Apelación</option>
-              <option>Apelación Primera</option>
-              <option>Apelación Segunda</option>
-              <option>Apelación Tercera</option>
+            id="apelacion"
+            name="apelacion"
+            [ngModel]="Form.idApelacion"
+            (ngModelChange)="updateForm('idApelacion', $event)"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+              [disabled]="catalogos.cargando()">
+              <option value="">{{ catalogos.cargando() ? 'Cargando...' : 'Seleccione Tipo de Apelación' }}</option>
+              @for (item of catalogos.apelaciones(); track item.id) {
+                <option [value]="item.id">{{ item.descripcion }}</option>
+              }
             </select>
           </div>
 
                     <!-- Exp/Causa -->
           <div class="flex flex-col gap-1.5">
             <label for="expCausa" class="text-xs font-bold text-gray-700">Exp/Causa</label>
-            <input id="expCausa" type="text" name="expCausa"
+            <input
+            id="expCausa"
+            type="text"
+            name="expCausa"
+            [ngModel]="Form.expedienteCausa"
+            (ngModelChange)="updateForm('expedienteCausa', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
               placeholder="Expediente o Causa"/>
           </div>
 
-          <div class="col-span-1 md:col-span-3">
-          <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Observaciones Generales</label>
-          <textarea rows="3" formControlName="observaciones"
-            placeholder="Añade cualquier nota u observación importante..."
-            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
-                   focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
-          </textarea>
-        </div>
+      <div class="col-span-1 md:col-span-3">
+            <label for="observacion" class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+              Observación
+            </label>
+            <textarea
+              id="observacion"
+              rows="3"
+              name="observacion"
+              [ngModel]="Form.observacion"
+              (ngModelChange)="updateForm('observacion', $event)"
+              placeholder="Añade cualquier nota u observación importante..."
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
+            </textarea>
+      </div>
         </div>
       </section>
 
@@ -133,14 +167,21 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
           <div class="flex flex-col gap-1.5">
             <label for="fechaInicial" class="text-xs font-bold text-gray-700">Fecha Inicial</label>
-            <input id="fechaInicial" type="date" name="fechaInicial"
+            <input id="fechaInicial"
+            type="date"
+            name="fechaInicial"
+            [ngModel]="Form.fechaInicio"
+            (ngModelChange)="updateForm('fechaInicio', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
               />
           </div>
           <div class="flex flex-col gap-1.5">
             <label for="fechaFinal" class="text-xs font-bold text-gray-700">Fecha Final</label>
-            <input id="fechaFinal" type="date" name="fechaFinal"
+            <input id="fechaFinal"
+            type="date" name="fechaFinal"
+            [ngModel]="Form.fechaFin"
+            (ngModelChange)="updateForm('fechaFin', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
               />

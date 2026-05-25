@@ -2,15 +2,9 @@ import { Injectable, inject, signal, computed, DestroyRef } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { BusquedaProfService } from '../../../../core/services/busquedaprof.service';
-import { Resultado, SearchForm } from '../../../../core/models/busqueda-profunda';
+import { PagedResultProf, Resultado, SearchForm } from '../../../../core/models/busqueda-profunda';
 import { BusquedaApelacionesMapper } from '../busquedaApelaciones.mapper';
 import { ModalService } from '../../../../shared/components/modal-custom/services/modal.service';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Constantes
-// ─────────────────────────────────────────────────────────────────────────────
-
-const POR_PAGINA = 10;
 
 export const FORM_VACIO: SearchForm = {
   folioOficialia:  '',
@@ -19,149 +13,171 @@ export const FORM_VACIO: SearchForm = {
   nombreParte:     '',
   idSala:          '',
   idNomenclatura:  '',
-  idApelacion: '',
+  idApelacion:     '',
   fechaInicio:     '',
   fechaFin:        '',
 };
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Facade
-// ─────────────────────────────────────────────────────────────────────────────
 
 @Injectable()
 export class BusquedaFacade {
 
   private readonly busquedaService = inject(BusquedaProfService);
   private readonly destroyRef      = inject(DestroyRef);
-  private modal = inject(ModalService);
+  private readonly modal           = inject(ModalService);
 
-  // ── Estado privado ──────────────────────────────────────────────────────────
-  private readonly _todosResultados = signal<Resultado[]>([]);
-  private readonly _paginaActual    = signal(1);
-  private readonly _filaSeleccionada = signal<Resultado | null>(null);
+  // ── Caché ─────────────────────────────────────────────────────────────
+  private readonly cache = new Map<number, Resultado[]>();
 
-  // ── Estado público (signals) ────────────────────────────────────────────────
+  // ── Estado ────────────────────────────────────────────────────────────
+  readonly form = signal<SearchForm>({ ...FORM_VACIO });
+
   readonly buscando   = signal(false);
   readonly exportando = signal(false);
-  readonly form       = signal<SearchForm>({ ...FORM_VACIO });
+  readonly generando  = signal(false);
 
-  // ── Computed ────────────────────────────────────────────────────────────────
-  readonly totalResultados  = computed(() => this._todosResultados().length);
-  readonly paginaActual     = computed(() => this._paginaActual());
+  readonly resultados = signal<Resultado[]>([]);
+  private readonly _paginacion = signal({ total: 0, page: 1, limit: 10 });
+  private readonly _porPagina  = signal(10);
+
+  private readonly _filaSeleccionada = signal<Resultado | null>(null);
+
+  // ── Computed ──────────────────────────────────────────────────────────
+  readonly porPagina        = computed(() => this._porPagina());
+  readonly paginaActual     = computed(() => this._paginacion().page);
   readonly filaSeleccionada = computed(() => this._filaSeleccionada());
+  readonly totalResultados  = computed(() => this._paginacion().total);
 
   readonly totalPaginas = computed(() =>
-    Math.ceil(this.totalResultados() / POR_PAGINA)
+    Math.ceil(this._paginacion().total / this._paginacion().limit) || 1
   );
 
-  readonly paginaInicio = computed(() =>
-    (this._paginaActual() - 1) * POR_PAGINA + 1
-  );
-
-  readonly paginaFin = computed(() =>
-    Math.min(this._paginaActual() * POR_PAGINA, this.totalResultados())
-  );
-
-  readonly paginas = computed(() => {
-    const actual = this._paginaActual();
-    const total  = this.totalPaginas();
-    const inicio = Math.max(1, actual - 1);
-    const fin    = Math.min(total, actual + 1);
-    return Array.from({ length: fin - inicio + 1 }, (_, i) => inicio + i);
-  });
-
-  readonly resultadosPagina = computed(() => {
-    const inicio = (this._paginaActual() - 1) * POR_PAGINA;
-    return this._todosResultados().slice(inicio, inicio + POR_PAGINA);
-  });
-
-  // ── Búsqueda ─────────────────────────────────────────────────────────────────
-
+  // ── Búsqueda ──────────────────────────────────────────────────────────
   buscar(): void {
     if (!BusquedaApelacionesMapper.tieneCriterios(this.form())) {
-      this.modal.info('Criterios requeridos','Debes ingresar al menos un criterio de búsqueda.');
+      this.modal.info('Criterios requeridos', 'Debes ingresar al menos un criterio de búsqueda.');
       return;
     }
+    this.limpiarCache();
+    this.ejecutarBusqueda(1, true);
+  }
 
+  private ejecutarBusqueda(page: number, mostrarModal: boolean): void {
     this.buscando.set(true);
-
-    this.busquedaService.buscarApelaciones(this.form()).subscribe({
-      next:  (res) => this.onBuscarSuccess(res),
-      error: ()    => this.onBuscarError(),
-    });
+    this.busquedaService
+      .buscarApelaciones(this.form(), page, this.porPagina())
+      .subscribe({
+        next:  res => this._onSuccess(res, mostrarModal),
+        error: ()  => this._onError(),
+      });
   }
 
-  private onBuscarSuccess(resultados: Resultado[]): void {
+  private _onSuccess(res: PagedResultProf, mostrarModal: boolean): void {
     this.buscando.set(false);
-    this._todosResultados.set(resultados);
-    this._paginaActual.set(1);
-    this._filaSeleccionada.set(null);
 
-    if (resultados.length === 0) {
-      this.modal.info('Sin resultados', 'No se encontraron registros con los criterios ingresados.');
-    } else {
-      this.modal.success('Búsqueda exitosa', `Se encontraron ${resultados.length} registros.`);
-    }
+    // Almacenamos en caché y actualizamos las señales
+    this.cache.set(res.paginacion.page, res.resultados);
+    this.resultados.set(res.resultados);
+    this._paginacion.set(res.paginacion);
+
+    if (!mostrarModal) return;
+
+    res.resultados.length === 0
+      ? this.modal.info('Sin resultados', 'No se encontraron registros con los criterios ingresados.')
+      : this.modal.success('Búsqueda exitosa', `Se encontraron ${res.paginacion.total} registros.`);
   }
 
-  private onBuscarError(): void {
+  private _onError(): void {
     this.buscando.set(false);
     this.modal.error('Error de búsqueda', 'Ocurrió un error al intentar conectar con el servidor.');
   }
 
-  // ── Exportar ─────────────────────────────────────────────────────────────────
+  // ── Paginación — usa caché, solo va al backend si no tiene la página ──
+  irPagina(pagina: number): void {
+    if (pagina < 1 || pagina > this.totalPaginas()) return;
 
+    this._filaSeleccionada.set(null); // Limpia selección al cambiar de página
+
+    // Verifica si la página ya existe en el caché
+    if (this.cache.has(pagina)) {
+      this.resultados.set(this.cache.get(pagina)!);
+      this._paginacion.update(p => ({ ...p, page: pagina }));
+      return;
+    }
+
+    // Si no está, dispara la petición http
+    this.ejecutarBusqueda(pagina, false);
+  }
+
+  cambiarPorPagina(limit: number): void {
+    this._porPagina.set(limit);
+    this._filaSeleccionada.set(null);
+    this.limpiarCache();
+    this.ejecutarBusqueda(1, false);
+  }
+
+  // ── Detalle de fila ───────────────────────────────────────────────────
+  seleccionarFila(r: Resultado): void {
+    const actual = this._filaSeleccionada();
+    this._filaSeleccionada.set(actual === r ? null : r);
+  }
+
+  // ── Exportar Excel ────────────────────────────────────────────────────
   exportar(): void {
     if (!BusquedaApelacionesMapper.tieneCriterios(this.form())) {
       this.modal.info('Criterios requeridos', 'Debes ingresar al menos un criterio para exportar.');
       return;
     }
-
     this.exportando.set(true);
-
     this.busquedaService.exportarExcel(this.form())
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.exportando.set(false)),
       )
       .subscribe({
-        next:  (blob) => this.descargarArchivo(blob),
+        next:  (blob) => this._descargarArchivo(blob, 'xlsx'),
         error: ()     => this.modal.error('Error al exportar', 'No se pudo generar el reporte. Intenta de nuevo.'),
       });
   }
 
-  private descargarArchivo(blob: Blob): void {
+  // ── Exportar PDF ──────────────────────────────────────────────────────
+  exportarPdf(): void {
+    if (!BusquedaApelacionesMapper.tieneCriterios(this.form())) {
+      this.modal.info('Criterios requeridos', 'Debes ingresar al menos un criterio para exportar.');
+      return;
+    }
+    this.generando.set(true);
+    this.busquedaService.exportarPdf(this.form())
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.generando.set(false)),
+      )
+      .subscribe({
+        next:  (blob) => this._descargarArchivo(blob, 'pdf'),
+        error: ()     => this.modal.error('Error al exportar', 'No se pudo generar el PDF. Intenta de nuevo.'),
+      });
+  }
+
+  // ── Descarga genérica ─────────────────────────────────────────────────
+  private _descargarArchivo(blob: Blob, extension: 'xlsx' | 'pdf'): void {
     const fecha  = new Date().toISOString().slice(0, 10);
     const url    = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href     = url;
-    anchor.download = `reporte_apelaciones_${fecha}.xlsx`;
+    anchor.download = `reporte_apelaciones_${fecha}.${extension}`;
     anchor.click();
     URL.revokeObjectURL(url);
   }
 
-  // ── Limpiar ───────────────────────────────────────────────────────────────────
-
+  // ── Limpiar ───────────────────────────────────────────────────────────
   limpiar(): void {
     this.form.set({ ...FORM_VACIO });
-    this._todosResultados.set([]);
-    this._paginaActual.set(1);
+    this.resultados.set([]);
     this._filaSeleccionada.set(null);
+    this.limpiarCache();
   }
 
-  // ── Paginación ────────────────────────────────────────────────────────────────
-
-  irPagina(p: number): void {
-    if (p >= 1 && p <= this.totalPaginas()) {
-      this._paginaActual.set(p);
-      this._filaSeleccionada.set(null);
-    }
-  }
-
-  // ── Detalle de fila ───────────────────────────────────────────────────────────
-
-  seleccionarFila(r: Resultado): void {
-    const actual = this._filaSeleccionada();
-    this._filaSeleccionada.set(actual === r ? null : r);
+  private limpiarCache(): void {
+    this.cache.clear();
+    this._paginacion.update(p => ({ ...p, total: 0, page: 1 }));
   }
 }

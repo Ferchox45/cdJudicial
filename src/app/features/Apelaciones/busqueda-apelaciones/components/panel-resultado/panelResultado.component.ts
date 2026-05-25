@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { BusquedaFacade } from '../../facades/busqueda.facade';
 import { PanelDetalleComponent } from '../panel-detalle/panelDetalle.component';
 import { Resultado } from '../../../../../core/models/busqueda-profunda';
+import { PaginacionComponent } from '../../../../../shared/components/paginacion/paginacion.component';
 
 @Component({
   selector:    'app-panel-resultados',
   standalone:  true,
-  imports:     [CommonModule, PanelDetalleComponent],
+  imports:     [CommonModule, PanelDetalleComponent, PaginacionComponent],
   templateUrl: './panelResultado.component.html',
 })
 export class PanelResultadosComponent {

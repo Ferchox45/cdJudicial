@@ -19,104 +19,86 @@
   </div>
 
   @if (abierto) {
+        <div class="w-full overflow-x-auto">
+  <!-- Nota: Si min-w-275 no es una clase personalizada en tu tailwind.config.js, puedes usar min-w-[275px] o min-w-max -->
+  <table class="w-full border-collapse text-center min-w-68.75">
+    <thead>
+      <tr class="bg-sand border-b border-gray-200">
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio Oficialia</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio de Apelacion</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio de Apelacion Anterior</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio de Oficio</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Tramite</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fojas</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Expediente Acumulado</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Reposicion</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Expediente / Causa</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fecha Auto</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fecha y Hora de Recepción</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fecha y Hora de Ingreso al Juzgado</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Observaciones</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Asunto</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Lugar de los Hechos</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Sala</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Sala Anterior</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Juzgado</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Magistrado</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Nomenclatura</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Apelacion</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Tipo de Apelacion</th>
+        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Tipo de Escrito</th>
+      </tr>
+    </thead>
+    <tbody>
+    <tr class="border-b border-gray-100 cursor-pointer transition-colors hover:bg-cream"
+              *ngFor="let item of busquedaPlanaFacade.resultados()">
+          <td class="px-4 py-3.5 text-sm text-forest font-semibold whitespace-nowrap">{{ item.folioOficialia }}</td>
+          <td class="px-4 py-3.5 text-sm text-forest font-semibold whitespace-nowrap">{{ item.folioApelacion }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap font-medium">{{ item.folioApelacionAnterior }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.folioOficio }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ item.tramite }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ item.fojas }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ item.expedienteAcumulado }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ item.esReposicion ? 'SI' : 'NO' }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.expedienteCausa }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.fechaAuto }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.fechaHoraRecepcion }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.fechaHoraIngresoJuz}}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.observaciones }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.asunto }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.lugarHechos }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.sala }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.salaAnterior }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.juzgado }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.magistrado }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.nomenclatura }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.apelacion }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.tipoApelacion }}</td>
+          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.tipoEscrito }}</td>
+        </tr>
 
-    <!--
-      TABLA CON SCROLL HORIZONTAL
-      min-w-[1100px] garantiza que las columnas no colapsen en pantallas pequeñas.
-      El usuario hace scroll horizontal en móvil de forma limpia.
-    -->
-    <div class="w-full overflow-x-auto">
-      <table class="w-full border-collapse text-center min-w-275">
+        <!-- Estado vacío -->
+                  <tr *ngIf="busquedaPlanaFacade.resultados().length === 0 && !busquedaPlanaFacade.buscando()">
 
-        <thead>
-          <tr class="bg-sand border-b border-gray-200">
-            <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio de Oficialia</th>
-            <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio de Apelación</th>
-            <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio de Apelación Anterior</th>
-            <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Tramite</th>
-            <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Sala</th>
-            <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Sala Anterior</th>
-            <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Apelación</th>
-            <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Tipo de Apelación</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!--
-            ITERACIÓN DE RESULTADOS
-            Descomenta y conecta al servicio cuando implementes la lógica.
+          <!-- Cambiado a colspan="9" porque solo hay 9 columnas en el thead -->
+          <td colspan="9" class="px-5 py-10 text-center text-gray-400 italic text-sm">
+            No se encontraron resultados. Ajuste los filtros e intente de nuevo.
+          </td>
+        </tr>
 
-            @for (r of resultados(); track $index) {
-              <tr class="border-b border-gray-100 cursor-pointer transition-colors hover:bg-cream">
-                <td class="px-4 py-3.5 text-sm text-gray-500 font-medium">{{ $index + 1 }}</td>
-                <td class="px-4 py-3.5 text-sm text-forest font-semibold whitespace-nowrap">{{ r.tramite }}</td>
-                <td class="px-4 py-3.5 text-sm text-forest font-semibold whitespace-nowrap">{{ r.expCausa }}</td>
-                <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap font-medium">{{ r.toca }}</td>
-                <td class="px-4 py-3.5 text-sm text-gray-700">{{ r.sala }}</td>
-                <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ r.folioRecepcion }}</td>
-                <td class="px-4 py-3.5 text-sm text-gray-700">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
-                    {{ r.etapa }}
-                  </span>
-                </td>
-                <td class="px-4 py-3.5 text-sm text-gray-700">{{ r.alcance }}</td>
-                <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ r.imputado }}</td>
-                <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ r.victima }}</td>
-                <td class="px-4 py-3.5 text-sm text-gray-700">{{ r.delito }}</td>
-                <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ r.fechaRecepcion }}</td>
-                <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ r.fechaApelacion }}</td>
-              </tr>
-            }
-          -->
+    </tbody>
+  </table>
+</div>
 
-          <!-- Estado vacío -->
-          <tr>
-            <td colspan="13"
-              class="px-5 py-10 text-center text-gray-400 italic text-sm">
-              No se encontraron resultados. Ajuste los filtros e intente de nuevo.
-            </td>
-          </tr>
-        </tbody>
+    <app-paginacion
+      *ngIf="busquedaPlanaFacade.totalResultados() > 0"
+      [paginaActual]="busquedaPlanaFacade.paginaActual()"
+      [totalPaginas]="busquedaPlanaFacade.totalPaginas()"
+      [totalResultados]="busquedaPlanaFacade.totalResultados()"
+      [porPagina]="busquedaPlanaFacade.porPagina()"
+      (paginaCambio)="busquedaPlanaFacade.irPagina($event)"
+      (limitCambio)="busquedaPlanaFacade.cambiarPorPagina($event)" />
 
-      </table>
-    </div>
-
-    <!-- ── Paginación ─────────────────────────────────────────────────── -->
-    <div class="flex flex-col md:flex-row items-center justify-between
-                px-4 md:px-5 py-4 border-t border-gray-100 bg-[#fafafa] gap-3">
-
-      <span class="text-xs md:text-[0.8125rem] text-gray-500 text-center">
-        Mostrando <strong>0–0</strong> de <strong>0</strong> resultados
-      </span>
-
-      <div class="flex items-center gap-1.5 flex-wrap justify-center">
-
-        <!-- Anterior -->
-        <button type="button" disabled
-          class="min-w-8 h-8 px-2 border border-gray-200 rounded-md bg-white text-gray-700
-                 text-[0.8125rem] cursor-pointer transition
-                 hover:bg-sage hover:border-sage-dark hover:text-forest
-                 disabled:opacity-40 disabled:cursor-not-allowed">
-          Ant
-        </button>
-
-        <!-- Página activa (placeholder) -->
-        <button type="button"
-          class="min-w-8 h-8 px-2 border rounded-md text-[0.8125rem] cursor-pointer transition
-                 bg-strong-coffee border-forest text-white font-bold">
-          1
-        </button>
-
-        <!-- Siguiente -->
-        <button type="button" disabled
-          class="min-w-8 h-8 px-2 border border-gray-200 rounded-md bg-white text-gray-700
-                 text-[0.8125rem] cursor-pointer transition
-                 hover:bg-sage hover:border-sage-dark hover:text-forest
-                 disabled:opacity-40 disabled:cursor-not-allowed">
-          Sig
-        </button>
-
-      </div>
-    </div>
 
   }
 </div>

@@ -1,17 +1,17 @@
 export interface ParteBusquedaResultado {
-  tipoParte:   string;
-  nombre: string;
-  sexo:   string;
-  direccion: string;
-  menorEdad: boolean;
+  tipoParte:      string;
+  nombre:         string;
+  sexo:           string;
+  direccion:      string;
+  menorEdad:     boolean;
 }
 
 export interface AnexoDetalle {
-  id: number
-  cantidad: number;
-  descripcion: string;
-  esValor:  boolean;
-  monto:    number;
+  id:           number;
+  cantidad:     number;
+  descripcion:  string;
+  esValor:      boolean;
+  monto:        number;
 }
 
 export interface Resultado {
@@ -33,7 +33,7 @@ export interface Resultado {
   lugarHechos:            string | null;
   sala:                   string | null;
   salaAnterior:           string | null;
-  juzgadoOrigen:          string | null;
+  juzgado:                string | null;
   magistradoAsignado:     string | null;
   nomenclatura:           string | null;
   apelacion:              string | null;
@@ -48,9 +48,9 @@ export interface SearchForm {
   folioApelacion:  string;
   expedienteCausa: string;
   nombreParte:     string;
-  idSala:          string;  // ← string
-  idNomenclatura:  string;  // ← string
-  idApelacion: string;  // ← string
+  idSala:          string;
+  idNomenclatura:  string;
+  idApelacion:      string;
   fechaInicio:     string;
   fechaFin:        string;
 }
@@ -58,4 +58,36 @@ export interface SearchForm {
 export interface FiltroChip {
   label: string;
   campo: keyof SearchForm;
+}
+
+export interface BusquedaDTO {
+  folioOficialia?:  string;
+  folioApelacion?:  string;
+  expedienteCausa?: string;
+  nombreParte?:     string;
+  idSala?:          number;
+  idNomenclatura?:  number;
+  apelaciones?:     number;
+  fechaInicio?:     string;
+  fechaFin?:        string;
+}
+
+export interface ApiResponseBusqProf{
+  data: {
+    apelaciones: Resultado[];   // viene con ñ del backend
+    total: number;
+    page:  number;
+    limit: number;
+  };
+}
+
+export interface PaginacionProf{
+  total: number;
+  page:  number;
+  limit: number;
+}
+
+export interface PagedResultProf{
+  resultados: Resultado[];
+  paginacion: PaginacionProf;
 }

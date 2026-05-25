@@ -1,24 +1,4 @@
-import { SearchForm } from '../../../core/models/busqueda-profunda';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// DTOs  (lo que espera el backend)
-// ─────────────────────────────────────────────────────────────────────────────
-
-export interface BusquedaDTO {
-  folioOficialia?:  string;
-  folioApelacion?:  string;
-  expedienteCausa?: string;
-  nombreParte?:     string;
-  idSala?:          number;
-  idNomenclatura?:  number;
-  apelaciones?: number;
-  fechaInicio?:     string;
-  fechaFin?:        string;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Mapper
-// ─────────────────────────────────────────────────────────────────────────────
+import { SearchForm, BusquedaDTO } from '../../../core/models/busqueda-profunda';
 
 export class BusquedaApelacionesMapper {
 

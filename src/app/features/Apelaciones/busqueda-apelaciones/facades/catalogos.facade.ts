@@ -1,16 +1,20 @@
 import { Injectable, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ApelacionService } from '../../../../core/services/apelaciones.service';
 import { CatalogoItem } from '../../../../core/models';
+import { BusquedaProfService } from '../../../../core/services/busquedaprof.service';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Facade
 // ─────────────────────────────────────────────────────────────────────────────
 
-@Injectable()
+@Injectable({
+providedIn: 'root'
+}
+)
+
 export class CatalogosFacade {
 
-  private readonly apelacionService = inject(ApelacionService);
+  private readonly apelacionService = inject(BusquedaProfService);
   private readonly destroyRef       = inject(DestroyRef);
 
   // ── Estado público (signals) ────────────────────────────────────────────────

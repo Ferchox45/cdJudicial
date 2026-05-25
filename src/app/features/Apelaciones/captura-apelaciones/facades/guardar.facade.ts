@@ -17,7 +17,7 @@ export class GuardarFacade {
 
   // ── Callbacks ──────────────────────────────────────────────
   onExito?:    () => void;
-  onTerminar?: () => void;   // <-- nuevo: limpia estado del padre
+  onTerminar?: () => void;
   onError?:    (msg: string) => void;
 
 guardar(
@@ -27,10 +27,11 @@ guardar(
     sexos: CatalogoItem[],
     tiposPartes: CatalogoItem[],
     folioGuardado: WritableSignal<string>,
+    salaGuardada: WritableSignal<string>,
     onModalInvalido: () => void
   ): void {
 
-    // 1. Primero construimos y mostramos el JSON con lo que sea que tenga el form
+    // Construimos el JSON con lo que sea que tenga el form
     const payload = buildPayload(
       form.getRawValue(),
       relaciones,
@@ -38,25 +39,25 @@ guardar(
       sexos,
       tiposPartes
     );
-    console.log('JSON formateado:', JSON.stringify(payload, null, 2));
-
-    // 2. Despues validamos. Si es inválido, detenemos el flujo para que NO se envíe al servidor
+    console.log('Payload a enviar al servidor:', payload);
+    // Despues validamos. Si es inválido, detenemos el flujo para que NO se envíe al servidor
     if (form.invalid) {
       form.markAllAsTouched();
       onModalInvalido();
       return;
     }
-
-    // 3. Si todo está bien, mandamos la petición al servidor
+    // Si todo está bien, mandamos la petición al servidor
     this.guardando = true;
     this.apelacionService.guardarApelacion(payload).subscribe({
       next: (res: any) => {
         this.guardando = false;
         if (res.status === 'success') {
           const fol = res.data.folioOficialia;
+          const sala = res.data.sala;
           folioGuardado.set(fol);
+          salaGuardada.set(sala);
           this.apelacionService.invalidarCatalogos();
-          this.contextoService.setContexto(res.data.id, fol);
+          this.contextoService.setContexto(res.data.id, fol, sala);
           this.onExito?.();
         }
       },
@@ -68,11 +69,14 @@ guardar(
     });
   }
 
+  // Si el usuario decide agregar anexos, lo llevamos a la siguiente pantalla
+  // y mantenemos el contexto para que los anexos se relacionen con la apelación que acabamos de guardar
   continuarConAnexos(mostrarModal: WritableSignal<boolean>): void {
     mostrarModal.set(false);
     this.router.navigate(['/anexos']);
   }
 
+  // Si el usuario decide no agregar anexos, limpiamos el contexto y regresamos al inicio
   terminarSinAnexos(mostrarModal: WritableSignal<boolean>, form: FormGroup): void {
     mostrarModal.set(false);
     this.contextoService.limpiarContexto();

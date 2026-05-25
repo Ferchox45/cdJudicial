@@ -1,11 +1,3 @@
-<!-- resultado.html — panel de resultados responsive -->
-<!--
-  MEJORAS:
-  • Tabla: scroll horizontal contenido, sin romper el layout
-  • Paginación: apilable en móvil, row en desktop (ya tenías esto)
-  • Botón Atrás: ancho completo en móvil (ya tenías esto)
-  • Fila de detalle expandible: colspan corregido a 18
--->
 
 <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
 
@@ -26,17 +18,7 @@
   </div>
 
   @if (abierto) {
-    <!--
-      TABLA CON SCROLL HORIZONTAL
-      El wrapper tiene overflow-x:auto para que la tabla no rompa el layout.
-      En móvil el usuario hace scroll horizontal para ver todas las columnas.
 
-      ALTERNATIVA RESPONSIVA (cards en móvil):
-      Si prefieres ocultar la tabla en móvil y mostrar cards,
-      puedes añadir "hidden md:block" al wrapper de la tabla
-      y crear un bloque de cards con "block md:hidden".
-      Por ahora se mantiene la tabla con scroll horizontal (más simple de mantener).
-    -->
     <div class="w-full overflow-x-auto">
       <table class="w-full border-collapse text-center min-w-300">
         <thead>
@@ -55,14 +37,15 @@
             <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio de Oficio</th>
             <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">No. de Fojas</th>
             <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Expediente Acumulado</th>
-            <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Juzgado de Origen</th>
+            <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Juzgado</th>
+            <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Magistrado Asignado</th>
             <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fecha de Recepcion</th>
             <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Observaciones</th>
             <th class="px-5 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fecha de Ingreso al Juzgado</th>
           </tr>
         </thead>
         <tbody>
-          @for (r of busqueda.resultadosPagina(); track $index) {
+          @for (r of busqueda.resultados(); track $index) {
 
             <!-- Fila principal -->
             <tr class="border-b border-gray-100 cursor-pointer transition-colors hover:bg-cream"
@@ -72,30 +55,26 @@
               <td class="px-5 py-3.5 text-sm text-forest font-semibold whitespace-nowrap">{{ r.folioApelacion }}</td>
               <td class="px-5 py-3.5 text-sm text-gray-700 whitespace-nowrap font-medium">{{ r.folioApelacionAnterior }}</td>
               <td class="px-5 py-3.5 text-sm text-gray-700 whitespace-nowrap font-medium">{{ r.tramite }}</td>
-              <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.sala }}</td>
-              <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.salaAnterior }}</td>
+              <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ r.sala }}</td>
+              <td class="px-5 py-3.5 text-sm text-gray-700 min-w-62.5">{{ r.salaAnterior }}</td>
               <td class="px-5 py-3.5 text-sm text-gray-700 whitespace-nowrap font-medium">{{ r.apelacion }}</td>
-              <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.tipoApelacion }}</td>
-              <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.fechaAuto }}</td>
-              <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.expedienteCausa }}</td>
-              <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.tipoEscrito }}</td>
+              <td class="px-5 py-3.5 text-sm text-gray-700 min-w-62.5">{{ r.tipoApelacion }}</td>
+              <td class="px-5 py-3.5 text-sm text-gray-700 min-w-62.5">{{ r.fechaAuto }}</td>
+              <td class="px-5 py-3.5 text-sm text-gray-700 min-w-62.5">{{ r.expedienteCausa }}</td>
+              <td class="px-5 py-3.5 text-sm text-gray-700 min-w-62.5">{{ r.tipoEscrito }}</td>
               <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.folioOficio }}</td>
               <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.fojas }}</td>
-              <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.expedienteAcumulado }}</td>
-              <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.juzgadoOrigen }}</td>
-              <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.fechaHoraRecepcion }}</td>
-              <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.observaciones }}</td>
-              <td class="px-5 py-3.5 text-sm text-gray-700">{{ r.fechaHoraIngresoJuz }}</td>
+              <td class="px-5 py-3.5 text-sm text-gray-700 min-w-62.5">{{ r.expedienteAcumulado }}</td>
+              <td class="px-5 py-3.5 text-sm text-gray-700 min-w-62.5">{{ r.juzgado }}</td>
+              <td class="px-5 py-3.5 text-sm text-gray-700 min-w-62.5">{{ r.magistradoAsignado }}</td>
+              <td class="px-5 py-3.5 text-sm text-gray-700 min-w-62.5">{{ r.fechaHoraRecepcion }}</td>
+              <td class="px-5 py-3.5 text-sm text-gray-700 min-w-62.5">{{ r.observaciones }}</td>
+              <td class="px-5 py-3.5 text-sm text-gray-700 min-w-62.5">{{ r.fechaHoraIngresoJuz }}</td>
             </tr>
 
             <!-- Fila de detalle expandible -->
             @if (r === busqueda.filaSeleccionada()) {
               <tr class="bg-[#f8faf9]">
-                <!--
-                  IMPORTANTE: colspan debe ser IGUAL al número de columnas del thead.
-                  Esta tabla tiene 18 columnas → colspan="18"
-                  (el colspan="19" del original era un error)
-                -->
                 <td colspan="18" class="p-0">
                   <app-panel-detalle [fila]="r"/>
                 </td>
@@ -112,41 +91,13 @@
     </div>
 
     <!-- Paginación -->
-    <div class="flex flex-col md:flex-row items-center justify-between px-4 md:px-5 py-4
-                border-t border-gray-100 bg-[#fafafa] gap-3">
-      <span class="text-xs md:text-[0.8125rem] text-gray-500 text-center">
-        Mostrando <strong>{{ busqueda.paginaInicio() }}-{{ busqueda.paginaFin() }}</strong>
-        de <strong>{{ busqueda.totalResultados() }}</strong> resultados
-      </span>
-      <div class="flex items-center gap-1.5 flex-wrap justify-center">
-        <button type="button"
-          class="min-w-8 h-8 px-2 border border-gray-200 rounded-md bg-white text-gray-700 text-[0.8125rem]
-                 cursor-pointer transition hover:bg-sage hover:border-sage-dark hover:text-forest
-                 disabled:opacity-40 disabled:cursor-not-allowed"
-          [disabled]="busqueda.paginaActual() === 1"
-          (click)="busqueda.irPagina(busqueda.paginaActual() - 1)">Ant</button>
-
-        @for (p of busqueda.paginas(); track p) {
-          <button type="button"
-            class="min-w-8 h-8 px-2 border rounded-md text-[0.8125rem] cursor-pointer transition"
-            [class.bg-strong-coffee]="p === busqueda.paginaActual()"
-            [class.border-forest]="p === busqueda.paginaActual()"
-            [class.text-white]="p === busqueda.paginaActual()"
-            [class.font-bold]="p === busqueda.paginaActual()"
-            [class.bg-white]="p !== busqueda.paginaActual()"
-            [class.border-gray-200]="p !== busqueda.paginaActual()"
-            [class.text-gray-700]="p !== busqueda.paginaActual()"
-            (click)="busqueda.irPagina(p)">{{ p }}</button>
-        }
-
-        <button type="button"
-          class="min-w-8 h-8 px-2 border border-gray-200 rounded-md bg-white text-gray-700 text-[0.8125rem]
-                 cursor-pointer transition hover:bg-sage hover:border-sage-dark hover:text-forest
-                 disabled:opacity-40 disabled:cursor-not-allowed"
-          [disabled]="busqueda.paginaActual() === busqueda.totalPaginas()"
-          (click)="busqueda.irPagina(busqueda.paginaActual() + 1)">Sig</button>
-      </div>
-    </div>
+    <app-paginacion
+  [paginaActual]="busqueda.paginaActual()"
+  [totalPaginas]="busqueda.totalPaginas()"
+  [totalResultados]="busqueda.totalResultados()"
+  [porPagina]="busqueda.porPagina()"
+  (paginaCambio)="busqueda.irPagina($event)"
+  (limitCambio)="busqueda.cambiarPorPagina($event)" />
   }
 
   <!-- Botón Atrás -->

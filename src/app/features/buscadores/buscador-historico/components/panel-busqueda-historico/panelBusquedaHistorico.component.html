@@ -1,12 +1,4 @@
-<!-- ============================================================
-     panel-busqueda-historico.component.html  —  HIJO 1
-     ============================================================
-     Secciones:
-       1. Datos de Apelación  → Exp/Causa · Toca · Sala
-       2. Fechas              → Rec. Inicial/Final · Ape. Inicial/Final
-       3. Partes e Infracción → Imputado · Víctima · Delito
-       Acciones               → Limpiar · Buscar
-     ============================================================ -->
+
 <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
 
   <!-- ── Cabecera colapsable ──────────────────────────────────────────── -->
@@ -42,7 +34,6 @@
         </div>
         <hr class="mb-4 md:mb-5 opacity-40 border-t-2 border-solid border-bronze"/>
 
-        <!-- 1 col móvil → 2 sm → 3 desktop -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
 
           <!-- Exp/Causa -->
@@ -50,6 +41,9 @@
             <label for="expCausa" class="text-xs font-bold text-gray-700">Exp / Causa</label>
             <input
               id="expCausa"
+              name="expCausa"
+              [ngModel]="Form.expedienteCausa"
+              (ngModelChange)="updateForm('expedienteCausa', $event)"
               type="text"
               placeholder="Ej. 123/2024"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
@@ -61,6 +55,9 @@
             <label for="toca" class="text-xs font-bold text-gray-700">Toca</label>
             <input
               id="toca"
+              name="toca"
+              [ngModel]="Form.toca"
+              (ngModelChange)="updateForm('toca', $event)"
               type="text"
               placeholder="Número de toca"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
@@ -70,19 +67,25 @@
           <!-- Sala -->
           <div class="flex flex-col gap-1.5">
             <label for="sala" class="text-xs font-bold text-gray-700">Sala</label>
-            <select
-              id="sala"
-              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
-                     transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
-              <option value="">Seleccione una Sala</option>
-              <option>Sala Primera</option>
-              <option>Sala Segunda</option>
-              <option>Sala Tercera</option>
+            <select id="sala" name="sala"
+              [ngModel]="Form.idSala"
+              (ngModelChange)="updateForm('idSala', $event)"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+
+
+
+              [disabled]="catalogoFacade.cargando()">
+              <option value="">{{ catalogoFacade.cargando() ? 'Cargando...' : 'Seleccione Sala' }}</option>
+              @for (item of catalogoFacade.salas(); track item.id) {
+                <option [value]="item.id">{{ item.descripcion }}</option>
+              }
             </select>
           </div>
 
         </div>
       </section>
+
 
       <!-- ── 2. FECHAS ──────────────────────────────────────────────────── -->
       <section>
@@ -97,13 +100,14 @@
         </div>
         <hr class="mb-4 md:mb-5 opacity-40 border-t-2 border-solid border-bronze"/>
 
-        <!-- 1 col móvil → 2 sm → 4 desktop -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
 
           <div class="flex flex-col gap-1.5">
             <label for="fechaRecIni" class="text-xs font-bold text-gray-700">Fecha Rec. Inicial</label>
             <input
               id="fechaRecIni"
+              [ngModel]="Form.fechaRecepcionInicial"
+              (ngModelChange)="updateForm('fechaRecepcionInicial', $event)"
               type="date"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
                      transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"/>
@@ -113,6 +117,8 @@
             <label for="fechaRecFin" class="text-xs font-bold text-gray-700">Fecha Rec. Final</label>
             <input
               id="fechaRecFin"
+              [ngModel]="Form.fechaRecepcionFinal"
+              (ngModelChange)="updateForm('fechaRecepcionFinal', $event)"
               type="date"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
                      transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"/>
@@ -122,6 +128,8 @@
             <label for="fechaApeIni" class="text-xs font-bold text-gray-700">Fecha Ape. Inicial</label>
             <input
               id="fechaApeIni"
+              [ngModel]="Form.fechaApelacionInicial"
+              (ngModelChange)="updateForm('fechaApelacionInicial', $event)"
               type="date"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
                      transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"/>
@@ -131,6 +139,8 @@
             <label for="fechaApeFin" class="text-xs font-bold text-gray-700">Fecha Ape. Final</label>
             <input
               id="fechaApeFin"
+              [ngModel]="Form.fechaApelacionFinal"
+              (ngModelChange)="updateForm('fechaApelacionFinal', $event)"
               type="date"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
                      transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"/>
@@ -152,7 +162,6 @@
         </div>
         <hr class="mb-4 md:mb-5 opacity-40 border-t-2 border-solid border-bronze"/>
 
-        <!-- 1 col móvil → 2 sm → 3 desktop -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
 
           <!-- Imputado -->
@@ -162,6 +171,8 @@
               id="imputado"
               type="text"
               placeholder="Nombre del imputado"
+              [ngModel]="Form.imputado"
+              (ngModelChange)="updateForm('imputado', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
                      transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"/>
           </div>
@@ -173,6 +184,8 @@
               id="victima"
               type="text"
               placeholder="Nombre de la víctima"
+              [ngModel]="Form.victima"
+              (ngModelChange)="updateForm('victima', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
                      transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"/>
           </div>
@@ -184,6 +197,8 @@
               id="delito"
               type="text"
               placeholder="Tipo de delito"
+              [ngModel]="Form.delito"
+              (ngModelChange)="updateForm('delito', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
                      transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"/>
           </div>

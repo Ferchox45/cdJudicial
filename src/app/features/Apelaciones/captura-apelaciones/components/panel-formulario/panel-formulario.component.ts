@@ -7,24 +7,26 @@ import {
   OnInit,
   OnDestroy,
   inject,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Subject, takeUntil, filter, distinctUntilChanged } from 'rxjs';
 import { CatalogoItem } from '../../../../../core/models';
 import { CatalogosFacade } from '../../facades/catalogos.facade';
+import { SpinnerComponent } from '../../../../../shared/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-panel-identificacion',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SpinnerComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './panel-formulario.component.html',
 })
 export class PanelIdentificacionComponent implements OnInit, OnDestroy {
 
   public catalogosFacade = inject(CatalogosFacade);
-
+  private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   @Input() form!: FormGroup;
@@ -34,7 +36,6 @@ export class PanelIdentificacionComponent implements OnInit, OnDestroy {
   @Input() busquedaExitosa = false;
   @Input() esIndigena = false;
   @Input() abierto = true;
-
   @Input() materias:         CatalogoItem[] = [];
   @Input() apelaciones:      CatalogoItem[] = [];
   @Input() tiposApelaciones: CatalogoItem[] = [];
@@ -55,12 +56,11 @@ private readonly MATERIA_MAP: Record<number, string> = {
 };
 
 ngOnInit(): void {
-  // Carga inicial penal por defecto
   this.catalogosFacade.cargar(this.form, 'penal');
-
+  this.catalogosFacade.escucharMunicipio(this.form, () => this.cdr.markForCheck());
   this.form.get('materiaId')?.valueChanges
     .pipe(
-      filter(id => !!id && !!this.MATERIA_MAP[id]),  // solo ids conocidos
+      filter(id => !!id && !!this.MATERIA_MAP[id]),
       distinctUntilChanged(),
       takeUntil(this.destroy$)
     )
@@ -71,8 +71,8 @@ ngOnInit(): void {
 }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.catalogosFacade.cargar(this.form, 'penal');
     this.destroy$.complete();
+    this.destroy$.next();
+    this.catalogosFacade.destruir();
   }
 }

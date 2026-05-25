@@ -1,23 +1,22 @@
-<!-- anexos.component.html -->
-
-<!-- BEGIN: MainHeader -->
-<app-main-header></app-main-header>
-<!-- END: MainHeader -->
 <main class="max-h-max mx-auto px-4 md:px-6 py-4 md:py-6 flex flex-col gap-6 bg-bon-white">
 
-  <!-- BEGIN: FolioSection -->
-  <section class="flex justify-center md:justify-end">
-    <div class="bg-sand/25 border border-bronze/50 px-4 md:px-6 py-3 md:py-4 rounded-lg shadow-sm flex items-center gap-2 md:gap-4 w-full md:w-auto justify-center">
-      <span class="text-bronze font-bold tracking-tight text-sm md:text-base">FOLIO DEL TRÁMITE:</span>
-      <span class="text-forest font-black text-lg md:text-xl">{{ folioTramite }}</span>
-    </div>
-  </section>
-  <!-- END: FolioSection -->
+  <section class="flex flex-col md:flex-row items-center justify-between w-full my-4 gap-5">
 
-  <!-- BEGIN: AddAttachmentForm -->
+    <div class="bg-[#f4f1e7] border border-[#a4763e]/40 rounded-lg px-4 py-2 shadow-sm flex flex-col items-start justify-center w-full md:w-auto md:max-w-[75%] min-h-14">
+      <span class="text-strong-coffee font-bold text-[10px] uppercase tracking-wider mb-0.5">Sala Asignada:</span>
+      <span class="text-forest font-bold text-xs md:text-sm leading-tight wrap-break-words text-left">
+        {{sala}}
+      </span>
+    </div>
+
+    <div class="bg-[#f4f1e7] border border-[#a4763e]/40 rounded-lg px-5 py-2 shadow-sm flex items-center gap-3 md:gap-4 w-full md:w-auto shrink-0 min-h-14">
+      <span class="text-strong-coffee font-bold tracking-tight text-[10px] uppercase">Folio:</span>
+      <span class="text-forest font-bold text-lg md:text-xl tracking-widest leading-none mt-0.5">{{ folioTramite }}</span>
+    </div>
+
+  </section>
   <section class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
     <div class="p-4 md:p-6">
-      <!-- Header -->
       <div class="flex items-center gap-2 mb-6">
         <div class="bg-forest text-white rounded-full p-1 flex">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -27,11 +26,8 @@
         <h2 class="text-bronze font-bold uppercase text-sm tracking-wide m-0">Agregar Nuevo Anexo</h2>
       </div>
 
-      <!-- Grid de campos -->
-      <!-- En móvil es 1 columna, en escritorio son 12 -->
       <div class="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6 items-end">
 
-        <!-- Tipo Anexo -->
         <div class="md:col-span-4 flex flex-col gap-1">
           <label for="tipoAnexo" class="block text-xs font-bold text-gray-600">Anexo</label>
           <select
@@ -44,10 +40,11 @@
             (ngModelChange)="onTipoChange($event)"
             name="tipoAnexo"
           >
-            <option [value]="0" disabled>--Selecciona--</option>
+            <option [ngValue]="null">Seleccione...</option>
             @for (tipo of tiposAnexo; track tipo.id) {
-              <option [value]="tipo.id">{{ tipo.descripcion }}</option>
+              <option [ngValue]="tipo.id">{{ tipo.descripcion }}</option>
             }
+            <option [ngValue]="-1">OTRO ANEXO</option>
           </select>
 
           @if (error && !cargando) {
@@ -61,7 +58,20 @@
           }
         </div>
 
-        <!-- Cantidad -->
+        @if (esOtro) {
+          <div class="md:col-span-4 flex flex-col gap-1">
+            <label for="otroAnexo" class="block text-xs font-bold text-gray-600">Especificar Anexo</label>
+            <input
+              id="otroAnexo"
+              type="text"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+              [(ngModel)]="nuevoAnexo.otroAnexo"
+              name="otroAnexo"
+              placeholder="Ej. Memoria USB, Sobre manila..."
+            />
+          </div>
+        }
+
         <div class="md:col-span-2 flex flex-col gap-1">
           <label for="cantidad" class="block text-xs font-bold text-gray-600">Cantidad</label>
           <input
@@ -74,9 +84,7 @@
           />
         </div>
 
-        <!-- Monto Toggle & Field -->
         <div class="md:col-span-4">
-          <!-- En móvil apilamos el checkbox y el input, en escritorio los ponemos lado a lado -->
           <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 mt-2 md:mt-0">
             <div class="flex items-center gap-2">
               <input id="monto-check" type="checkbox" [(ngModel)]="nuevoAnexo.tieneMonto" name="tieneMonto" class="w-4 h-4 accent-forest" />
@@ -96,30 +104,25 @@
           </div>
         </div>
 
-        <!-- Agregar Button -->
         <div class="md:col-span-2 mt-2 md:mt-0">
-          <button type="button"
-            class="bg-forest text-white font-bold px-4 py-3 md:py-2 rounded-lg border-0 flex items-center justify-center gap-2 w-full cursor-pointer shadow-sm transition hover:opacity-90"
+          @if (!anexosGuardados) {
+            <button type="button"
+            class="bg-forest text-white font-bold px-4 py-3 md:py-2 rounded-lg border-0 flex items-center justify-center gap-2 w-full cursor-pointer shadow-sm transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
             (click)="agregarAnexo()">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
-            </svg>
-            Agregar
-          </button>
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+              </svg>
+              Agregar
+            </button>
+          }
         </div>
-
       </div>
     </div>
   </section>
-  <!-- END: AddAttachmentForm -->
-
-  <!-- BEGIN: AttachmentsTable -->
   <section class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-    <!-- Fondo gris en móvil para destacar las tarjetas, fondo blanco en escritorio -->
     <div class="overflow-x-auto bg-gray-50/50 md:bg-transparent p-2 md:p-0">
       <table class="w-full text-left border-collapse">
 
-        <!-- Ocultamos el thead en móvil -->
         <thead class="hidden md:table-header-group">
           <tr class="bg-sand border-b border-sand">
             <th class="px-6 py-4 text-xs font-bold text-black uppercase tracking-wide">Cantidad</th>
@@ -133,7 +136,6 @@
         <tbody class="block md:table-row-group">
           @for (anexo of anexos; track $index) {
 
-            <!-- Transformamos el tr en tarjeta para móvil -->
             <tr class="block md:table-row bg-white border border-gray-200 md:border-b md:border-x-0 md:border-t-0 rounded-lg md:rounded-none transition hover:bg-cream mb-4 md:mb-0 shadow-sm md:shadow-none">
 
               <td class="flex justify-between items-center md:table-cell px-4 md:px-6 py-3 md:py-4 text-sm font-bold md:font-normal text-gray-800 md:text-gray-700 border-b border-gray-100 md:border-none">
@@ -148,25 +150,31 @@
 
               <td class="flex justify-between items-center md:table-cell px-4 md:px-6 py-3 md:py-4 text-sm text-gray-600 border-b border-gray-100 md:border-none">
                 <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden">Es Valor:</span>
-                <span>{{ anexo.esValor ? 'Sí' : 'No' }}</span>
+                <span>{{ anexo.esValor ? 'SI' : 'NO' }}</span>
               </td>
 
               <td class="flex justify-between items-center md:table-cell px-4 md:px-6 py-3 md:py-4 text-sm font-semibold md:font-normal text-gray-700 md:text-gray-600 border-b border-gray-100 md:border-none">
                 <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden">Monto:</span>
-                <span>${{ anexo.monto | number:'1.2-2' }}</span>
+
+                @if (anexo.esValor) {
+                  <span>${{ anexo.monto | number:'1.2-2' }}</span>
+                } @else {
+                  <span>NO</span>
+                }
               </td>
 
-              <!-- Botón Eliminar con fondo rojizo en móvil para destacarlo -->
               <td class="flex justify-center items-center md:table-cell px-4 md:px-6 py-3 md:py-4 text-center bg-red-50/30 md:bg-transparent rounded-b-lg md:rounded-none">
-                <button type="button"
-                  class="flex items-center justify-center gap-1.5 text-red-600 border border-red-200 md:border-0 bg-white md:bg-transparent px-4 py-2 md:p-0 rounded md:rounded-none cursor-pointer w-full md:w-auto mx-auto transition hover:text-red-700 hover:bg-red-50 md:hover:bg-transparent shadow-sm md:shadow-none"
-                  (click)="eliminarAnexo($index)" title="Eliminar anexo">
-                  <svg class="h-4 w-4 md:h-5 md:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
-                  </svg>
-                  <span class="text-sm font-bold md:font-medium">Eliminar</span>
-                </button>
+                @if (!anexosGuardados) {
+                  <button type="button"
+                    class="flex items-center justify-center gap-1.5 text-red-600 border border-red-200 md:border-0 bg-white md:bg-transparent px-4 py-2 md:p-0 rounded md:rounded-none cursor-pointer w-full md:w-auto mx-auto transition hover:text-red-700 hover:bg-red-50 md:hover:bg-transparent shadow-sm md:shadow-none"
+                    (click)="eliminarAnexo($index)" title="Eliminar anexo">
+                    <svg class="h-4 w-4 md:h-5 md:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                    </svg>
+                    <span class="text-sm font-bold md:font-medium">Eliminar</span>
+                  </button>
+                }
               </td>
             </tr>
 
@@ -181,14 +189,12 @@
       </table>
     </div>
 
-    <!-- Footer de la tabla responsivo -->
     <div class="px-4 md:px-6 py-4 bg-gray-50 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
 
       <p class="text-xs text-gray-500 italic m-0 text-center md:text-left">
         Mostrando {{ anexos.length }} {{ anexos.length === 1 ? 'anexo registrado' : 'anexos registrados' }}
       </p>
 
-      <!-- Botones se apilan (col-reverse) en móvil: Guardar arriba, Atrás abajo -->
       <div class="flex flex-col-reverse md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto">
 
         <button type="button"
@@ -201,14 +207,15 @@
           Atrás
         </button>
 
-        <button type="button"
-          class="bg-forest text-white font-bold px-6 py-3 md:py-2 rounded-md border-0 flex items-center justify-center gap-2 cursor-pointer shadow-sm transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
-          [disabled]="guardando"
-          (click)="guardar()">
-            Guardar Anexos
-        </button>
+        @if (!anexosGuardados) {
+          <button type="button"
+            class="bg-forest text-white font-bold px-6 py-3 md:py-2 rounded-md border-0 flex items-center justify-center gap-2 cursor-pointer shadow-sm transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
+            [disabled]="guardando"
+            (click)="guardar()">
+              Guardar Anexos
+          </button>
+        }
       </div>
     </div>
   </section>
-  <!-- END: AttachmentsTable -->
-</main>
+  </main>

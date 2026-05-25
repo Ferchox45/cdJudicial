@@ -1,49 +1,11 @@
-import {
-  ApelacionBusqueda,
-  CatalogoItem,
+import { BusquedaRapida, CatalogoItem,
   DelitoBusqueda,
   Parte,
   ParteBusqueda,
   RelacionBusqueda,
 } from '../../../core/models';
+import { ApelacionFormValue, DelitoDisponible } from '../../../core/models/apelacionAuxMapper';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Tipos auxiliares del mapper
-// ─────────────────────────────────────────────────────────────────────────────
-
-export interface DelitoDisponible {
-  id: number;
-  delito: string;
-  seleccionado: boolean;
-}
-
-export interface ApelacionFormValue {
-  busquedaRapida: string;
-  materiaId: number | null;
-  apelacionId: number | null;
-  tipoApelacionId: number | null;
-  fechaAuto: string;
-  expedienteCausa: string;
-  tipoEscritoId: number | null;
-  folioOficio: string;
-  juzgadoId: number | null;
-  expedienteAcumulado: string;
-  fojas: number | null;
-  municipioId: number | null;
-  localidadId: number | null;
-  magistradoId: number;
-  etniaId: number | null;
-  etnia: number | null;
-  asunto: string;
-  lugarHechos: string;
-  esReposicion: boolean;
-  observaciones: string;
-  folioTentativo: string;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Funciones puras de transformación
-// ─────────────────────────────────────────────────────────────────────────────
 
 /** Convierte string ISO → "YYYY-MM-DD" para inputs tipo date */
 export function toDateInput(isoString: string | null): string {
@@ -69,8 +31,9 @@ export function mapearParteComun(p: ParteBusqueda & { menorEdad?: unknown }): Pa
   return {
     id: Number(p.id),
     nombre: p.nombre,
-    sexo: p.sexo || '',
-    tipoParte: p.tipoParte || '',
+    // Ahora sexo y tipoParte son CatalogoItem, extraemos la descripción
+    sexo: p.sexo?.descripcion || '',
+    tipoParte: p.tipoParte?.descripcion || '',
     direccion: p.direccion || '',
     menorEdad: parseMenor(p.menorEdad),
     seleccionada: false,
@@ -82,7 +45,7 @@ export function mapearParteComun(p: ParteBusqueda & { menorEdad?: unknown }): Pa
  * marcando su roleOrigin según su posición en las relaciones.
  */
 export function mapearPartesDesdeRelaciones(
-  relaciones: ApelacionBusqueda['relaciones']
+  relaciones: BusquedaRapida['relaciones']
 ): Parte[] {
   const partesMap = new Map<number, Parte>();
 
@@ -106,7 +69,7 @@ export function mapearPartesDesdeRelaciones(
 
 /** Convierte las relaciones de la API al modelo local RelacionBusqueda */
 export function mapearRelaciones(
-  relaciones: ApelacionBusqueda['relaciones']
+  relaciones: BusquedaRapida['relaciones']
 ): RelacionBusqueda[] {
   return (relaciones ?? []).map((rel) => ({
     id: rel.id.toString(),
@@ -188,7 +151,6 @@ export function buildPayload(
       idSexo: sexoCat?.id ?? null,
       direccion: parteLocal?.direccion || null,
       menorEdad: parteLocal?.menorEdad ?? false,
-      activo: true,
     };
   };
 
@@ -210,7 +172,7 @@ export function buildPayload(
     idLocalidad: raw.localidadId ?? null,
     idMagistrado: raw.magistradoId ?? null,
     idEtnia: raw.etniaId ?? null,
-    etnia: raw.etnia ?? null,
+    otroEtnia: raw.otroEtnia ?? null,
     fechaAuto: raw.fechaAuto || null,
     expedienteCausa: raw.expedienteCausa || null,
     expedienteAcumulado: raw.expedienteAcumulado || null,
@@ -257,8 +219,9 @@ export function buildNuevaRelacion(
   const mapearParteABusqueda = (p: Parte): ParteBusqueda => ({
     id: Number(p.id),
     nombre: p.nombre,
-    sexo: p.sexo,
-    tipoParte: p.tipoParte,
+    // Se envuelve el string en la estructura CatalogoItem para satisfacer ParteBusqueda
+    sexo: { id: 0, descripcion: p.sexo },
+    tipoParte: { id: 0, descripcion: p.tipoParte },
     direccion: p.direccion,
     menorEdad: p.menorEdad,
   });

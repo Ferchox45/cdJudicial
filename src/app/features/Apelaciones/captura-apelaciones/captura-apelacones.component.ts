@@ -3,7 +3,6 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject, signal } from 
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/Action-siderbar/action-siderbar.component';
-import { MainHeaderComponent } from '../../../shared/components/header/header.component';
 import { PanelIdentificacionComponent } from './components/panel-formulario/panel-formulario.component';
 import { PanelPartesComponent } from './components/panel-partes/panel-partes.component';
 import { PanelRelacionesComponent } from './components/panel-relaciones/panel-relaciones.component';
@@ -13,7 +12,8 @@ import { CatalogosFacade,} from './facades/catalogos.facade';
 import { GuardarFacade} from './facades/guardar.facade';
 import { BusquedaFacade } from './facades/busqueda.facade';
 import { Router } from '@angular/router';
-import { DelitoDisponible, buildNuevaParte, buildNuevaRelacion } from './captura-apelaciones.mapper';
+import { buildNuevaParte, buildNuevaRelacion } from './captura-apelaciones.mapper';
+import { DelitoDisponible } from '../../../core/models/apelacionAuxMapper';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
 
 @Component({
@@ -22,7 +22,7 @@ import { ModalService } from '../../../shared/components/modal-custom/services/m
   providers: [CatalogosFacade, BusquedaFacade, GuardarFacade],
   imports: [
     CommonModule, ReactiveFormsModule,
-    ActionSidebarComponent, MainHeaderComponent,
+    ActionSidebarComponent,
     PanelIdentificacionComponent, PanelPartesComponent, PanelRelacionesComponent,
     ModalAnexosComponent,
   ],
@@ -50,6 +50,7 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   // ── Modales ────────────────────────────────────────────────
   mostrarModalAnexos = signal(false);
   folioGuardado      = signal('');
+  salaGuardada       = signal('');
 
   // ── Formularios ────────────────────────────────────────────
   form!:      FormGroup;
@@ -112,24 +113,31 @@ private wireCallbacks(): void {
   this.bus.onError = (m) => this.modal.error('Error', m);
   this.bus.onNuevo = () => this.limpiarEstadoCaptura();
 
-  this.grd.onExito    = () => { this.mostrarModalAnexos.set(true); this.cat.actualizarFolioTentativo(this.form); };
-  this.grd.onTerminar = () => this.limpiarEstadoCaptura();
+  this.grd.onExito    = () =>{
+    this.mostrarModalAnexos.set(true)
+    const materiaActual = this.esIndigena ? 'indigena' : 'penal';
+    this.actualizarFolioTentativo(materiaActual);
+  };
+  this.grd.onTerminar = () => {
+    this.limpiarEstadoCaptura();
+    this.actualizarFolioTentativo('penal');
+  };
   this.grd.onError    = (m) => this.modal.error('Error', m);
 }
 
   // ── Formulario ─────────────────────────────────────────────
   private buildForm(): void {
     this.form = this.fb.group({
-      busquedaRapida: [''], folioOficialia: [''],
+      busquedaRapida:      [''],
       materiaId:           [null, Validators.required],
       magistradoId:        [null, Validators.required],
       apelacionId:         [null], tipoApelacionId:     [null], tipoEscritoId:       [null],
       juzgadoId:           [null], municipioId:         [null], localidadId:         [null],
-      etniaId:             [null], expedienteCausa:     [''],   expedienteAcumulado: [''],
-      fechaAuto:           [''],   folioOficio:         [''],   fojas:               [null],
-      etnia:               [''],
-      asunto:              [''],   lugarHechos:         [''],
-      esReposicion:        [false], observaciones:      [''],
+      etniaId:             [null], expedienteCausa:     [null], expedienteAcumulado: [null],
+      fechaAuto:           [null],   folioOficio:         [null],   fojas:               [null],
+      otroEtnia:           [null],
+      asunto:              [null],   lugarHechos:         [null],
+      esReposicion:        [false], observaciones:      [null],
       folioTentativo:      [{ value: '', disabled: true }],
     });
     this.parteForm = this.fb.group({
@@ -144,7 +152,7 @@ private wireCallbacks(): void {
       nuevo:   () => { this.bus.resetNuevo(this.form); this.form.reset(); },
       guardar: () => this.grd.guardar(
         this.form, this.relaciones, this.partes,
-        this.cat.sexos, this.cat.tiposPartes, this.folioGuardado,
+        this.cat.sexos, this.cat.tiposPartes, this.folioGuardado, this.salaGuardada,
         () => this.modal.info('Advertencia', 'Por favor, complete los campos obligatorios.')
       ),
       buscar: () => this.router.navigate(['/busquedaApelacion']),
@@ -199,5 +207,9 @@ private wireCallbacks(): void {
     this.delitosDisponibles    = this.delitosDisponibles.map(d => ({ ...d, seleccionado: false }));
     this.busquedaDelitoTexto.setValue('');
     this.cdr.detectChanges();
+  }
+  private actualizarFolioTentativo(materia?: string): void {
+  const materiaStr = materia || (this.esIndigena ? 'indigena' : 'penal');
+  this.cat.cargar(this.form, materiaStr);
   }
 }

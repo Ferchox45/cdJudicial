@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { DelitoDisponible } from '../../captura-apelaciones.mapper';
+import { DelitoDisponible } from '../../../../../core/models';
 import { Parte, RelacionBusqueda } from '../../../../../core/models';
 
 @Component({

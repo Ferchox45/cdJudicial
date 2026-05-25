@@ -1,0 +1,132 @@
+<!-- busquedamera.html — panel de búsqueda responsive -->
+<!--
+  MEJORAS:
+  • Inputs con py-3 en móvil y py-2 en desktop (ya tenías esto, se conserva)
+  • Grid 1 col en móvil → 4 cols en desktop
+  • Gap y padding reducidos en móvil
+-->
+
+<div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+
+  <!-- Cabecera colapsable -->
+  <div class="bg-forest px-5 py-3.5 flex items-center justify-between cursor-pointer select-none border-b border-forest/20"
+    (click)="toggle()">
+    <div class="flex items-center gap-2.5 text-white">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </svg>
+      <h2 class="text-sm font-bold text-white uppercase tracking-wide m-0">Opciones de Búsqueda</h2>
+    </div>
+    <svg class="w-4 h-4 text-white transition-transform duration-200"
+      [class.rotate-180]="!abierto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    </svg>
+  </div>
+
+  @if (abierto) {
+    <div class="p-4 md:p-6 flex flex-col gap-6 md:gap-10">
+
+      <!-- ── Datos de Apelación ─────────────────────────────────────────── -->
+      <section>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-bronze flex">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            </svg>
+          </span>
+          <h3 class="font-bold text-bronze uppercase tracking-widest text-sm m-0">DATOS DE APELACIÓN</h3>
+        </div>
+        <hr class="mb-4 md:mb-5 opacity-40 border-t-2 border-solid border-bronze"/>
+
+        <!-- 1 col móvil → 2 cols sm → 4 cols desktop -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+          <!-- Sala -->
+          <div class="flex flex-col gap-1.5">
+            <label for="sala" class="text-xs font-bold text-gray-700">Sala</label>
+            <select id="sala" name="sala"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+              [ngModel]="Form.idSala"
+              (ngModelChange)="updateForm('idSala', $event)"
+              [disabled]="catalogos.cargando()">
+              <option value="">{{ catalogos.cargando() ? 'Cargando...' : 'Seleccione Sala' }}</option>
+              @for (item of catalogos.salas(); track item.id) {
+                <option [value]="item.id">{{ item.descripcion }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Nomenclatura -->
+          <div class="flex flex-col gap-1.5">
+            <label for="nomenclatura" class="text-xs font-bold text-gray-700">Nomenclatura</label>
+            <select id="nomenclatura" name="nomenclatura"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+              [ngModel]="Form.idNomenclatura"
+              (ngModelChange)="updateForm('idNomenclatura', $event)"
+              [disabled]="catalogos.cargando()">
+              <option value="">{{ catalogos.cargando() ? 'Cargando...' : 'Seleccione Nomenclatura' }}</option>
+              @for (item of catalogos.nomenclaturas(); track item.id) {
+                <option [value]="item.id">{{ item.descripcion }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Nombre Parte — ocupa 2 columnas en desktop -->
+          <div class="flex flex-col gap-1.5 sm:grid-cols-3">
+          <label for="apelacion" class="text-xs font-bold text-gray-700">Apelación</label>
+          <select id="apelacion" name="apelacion"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+              [ngModel]="Form.idApelacion"
+              (ngModelChange)="updateForm('idApelacion', $event)"
+              [disabled]="catalogos.cargando()">
+              <option value="">{{ catalogos.cargando() ? 'Cargando...' : 'Seleccione Tipo de Apelación' }}</option>
+              @for (item of catalogos.apelaciones(); track item.id) {
+              <option [value]="item.id">{{ item.descripcion }}</option>
+              }
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Fecha de Recepción ──────────────────────────────────────────── -->
+      <section>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-bronze flex">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            </svg>
+          </span>
+          <h3 class="font-bold text-bronze uppercase tracking-widest text-sm m-0">FECHA DE RECEPCIÓN</h3>
+        </div>
+        <hr class="mb-4 md:mb-5 opacity-40 border-t-2 border-solid border-bronze"/>
+
+        <!-- 1 col móvil → 2 en sm en adelante -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+          <div class="flex flex-col gap-1.5">
+            <label for="fechaInicial" class="text-xs font-bold text-gray-700">Fecha Inicial</label>
+            <input id="fechaInicial" type="date" name="fechaInicial"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+              [ngModel]="Form.fechaInicio"
+              (ngModelChange)="updateForm('fechaInicio', $event)"/>
+
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="fechaFinal" class="text-xs font-bold text-gray-700">Fecha Final</label>
+            <input id="fechaFinal" type="date" name="fechaFinal"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+              [ngModel]="Form.fechaFin"
+              (ngModelChange)="updateForm('fechaFin', $event)"/>
+
+          </div>
+        </div>
+      </section>
+
+    </div>
+  }
+</div>

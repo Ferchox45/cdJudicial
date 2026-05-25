@@ -12,7 +12,7 @@
   @if (datosGeneralesOpen) {
     <div class="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] divide-y md:divide-y-0 md:divide-x divide-gray-200">
 
-      <div class="flex flex-col"
+          <div class="flex flex-col"
         [class.pointer-events-none]="bloquearSeccion"
         [class.opacity-50]="bloquearSeccion">
         <div class="bg-bronze text-white text-xs font-bold uppercase tracking-wide px-3 py-2.5 md:py-2 text-center">
@@ -46,7 +46,7 @@
             </tbody>
           </table>
         </div>
-        <div class="border-t border-gray-200 p-3 md:p-2">
+        <div class="border-t border-gray-200 p-3 md:p-2 mt-auto">
           <button type="button" (click)="marcarTodosProcesadosEvt.emit()"
             class="w-full bg-forest text-white text-xs font-bold uppercase py-3 md:py-2 rounded hover:opacity-90 transition">
             Marcar Todos

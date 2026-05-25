@@ -1,16 +1,6 @@
-<!-- detalle.html — panel de detalle (partes y anexos) -->
-<!--
-  Este componente ya era responsivo con cards en móvil.
-  Se conserva tal cual, solo se corrigen los colspan:
-    • Tabla Partes:  5 columnas → colspan="5"  ✓ (ya estaba correcto)
-    • Tabla Anexos:  4 columnas → colspan="4"  ✓ (ya estaba correcto)
-
-  No hay cambios de fondo aquí.
--->
 
 <div class="mx-2 md:mx-4 my-2 md:my-3 border border-gray-200 rounded-md overflow-hidden bg-white shadow-sm md:shadow-none">
 
-  <!-- Tabs con scroll horizontal en móvil (sin cortes) -->
   <div class="flex overflow-x-auto border-b border-gray-200 px-2 md:px-6 hide-scrollbar">
     <button type="button"
       class="flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 -mb-px cursor-pointer
@@ -45,7 +35,7 @@
     </button>
   </div>
 
-  <!-- ── Tab: Partes (Cards en móvil, tabla en desktop) ──────────────── -->
+  <!-- ── Tab: Partes  ── -->
   @if (tabActiva() === 'partes') {
     <div class="bg-gray-50/50 md:bg-transparent p-2 md:p-0">
       <table class="w-full text-left md:text-center border-collapse">
@@ -106,7 +96,7 @@
     </div>
   }
 
-  <!-- ── Tab: Anexos (Cards en móvil, tabla en desktop) ──────────────── -->
+  <!-- ── Tab: Anexos ── -->
   @if (tabActiva() === 'anexos') {
     <div class="bg-gray-50/50 md:bg-transparent p-2 md:p-0">
       <table class="w-full text-left md:text-center border-collapse">
