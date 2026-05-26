@@ -1,5 +1,5 @@
 <div class="bg-white border border-gray-300 rounded-lg overflow-hidden flex flex-col shadow-sm h-full">
-  <!-- Cabecera principal (sin cambios) -->
+  <!-- Cabecera principal -->
   <div class="bg-forest px-5 py-3.5 flex items-center justify-between cursor-pointer select-none shrink-0"
        (click)="toggle()">
     <div class="flex items-center gap-2.5 text-white">
@@ -19,7 +19,7 @@
   @if (abierto) {
     <div class="w-full overflow-y-auto overflow-x-auto max-h-150 bg-white relative">
       <table class="w-full text-left bg-white border-collapse">
-        <!-- Thead (sin cambios) -->
+
         <thead class="sticky top-0 z-20 bg-white shadow-sm">
           <tr>
             <th colspan="6" class="border border-gray-200 px-4 py-3 text-sm font-bold text-forest uppercase tracking-wide bg-forest/10">
@@ -55,76 +55,116 @@
             </tr>
           } @else {
             @for (row of tableData().rows; track $index) {
-              <!-- Ocultar la fila entera si está colapsada por un nivel superior -->
               @if (!row.oculto) {
                 <tr class="transition-colors hover:bg-blue-50/50 cursor-pointer"
                     [class.bg-blue-50]="filaActiva() === row"
                     (click)="onRowClick(row)">
-                @if (row.isSubtotal) {
-                <td [attr.colspan]="7 - row.level!"
-                    class="border-b-2 border-gray-300 bg-gray-100 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-left text-gray-800 shadow-inner">
-                  {{ row.label }}
-                </td>
-                <td class="border-b-2 border-gray-300 bg-gray-100 px-4 py-2.5 font-bold text-right text-black text-sm shadow-inner">
-                  {{ row.total }}
-                </td>
-              }
-                  @else {
+
+                  @if (row.isSubtotal) {
+                    <td [attr.colspan]="7 - row.level!"
+                        class="border-b-2 border-gray-300 bg-gray-100 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-left text-gray-800 shadow-inner">
+                      {{ row.label }}
+                    </td>
+                    <td class="border-b-2 border-gray-300 bg-gray-100 px-4 py-2.5 font-bold text-right text-black text-sm shadow-inner">
+                      {{ row.total }}
+                    </td>
+                  } @else {
 
                     @if (row.salaRowspan) {
                       <td [attr.rowspan]="row.salaRowspan"
-                          class="border border-gray-200 px-4 py-2 align-top text-xs font-bold text-forest bg-white cursor-pointer hover:bg-forest/10 transition-colors"
-                          (click)="toggleColapso(row, 'sala'); $event.stopPropagation()">
+                          class="border border-gray-200 px-4 py-2 align-top text-xs font-bold text-forest bg-white transition-colors"
+                          (click)="$event.stopPropagation()">
                         <div class="flex items-center justify-between gap-2">
-                          <span class="hover:underline" (click)="onCeldaClick(row.salaChartData!, row.salaChartTitle!); $event.stopPropagation()">
+                          <span class="cursor-pointer hover:underline"
+                                (click)="onCeldaClick(row.salaChartData!, row.salaChartTitle!)">
                             {{ row.sala }}
                           </span>
-                          <svg class="w-4 h-4 transition-transform" [class.-rotate-90]="row.salaColapsado" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                      </td>
-                    }
-                    @if (row.anioRowspan) {
-                      <td [attr.rowspan]="row.anioRowspan"
-                          class="border border-gray-200 px-4 py-2 align-top text-sm text-gray-700 bg-white cursor-pointer hover:bg-blue-50 transition-colors"
-                          (click)="toggleColapso(row, 'anio'); $event.stopPropagation()">
-                        <div class="flex items-center justify-between gap-2">
-                          <span class="hover:underline" (click)="onCeldaClick(row.anioChartData!, row.anioChartTitle!); $event.stopPropagation()">{{ row.anio }}</span>
-                          <svg class="w-4 h-4 transition-transform" [class.-rotate-90]="row.anioColapsado" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                      </td>
-                    }
-                    @if (row.mesRowspan) {
-                      <td [attr.rowspan]="row.mesRowspan"
-                          class="border border-gray-200 px-4 py-2 align-top text-xs uppercase text-gray-700 bg-white cursor-pointer hover:bg-blue-50 transition-colors"
-                          (click)="toggleColapso(row, 'mes'); $event.stopPropagation()">
-                        <div class="flex items-center justify-between gap-2">
-                          <span class="hover:underline" (click)="onCeldaClick(row.mesChartData!, row.mesChartTitle!); $event.stopPropagation()">{{ row.mes }}</span>
-                          <svg class="w-4 h-4 transition-transform" [class.-rotate-90]="row.mesColapsado" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                      </td>
-                    }
-                    @if (row.nomRowspan) {
-                      <td [attr.rowspan]="row.nomRowspan"
-                          class="border border-gray-200 px-4 py-2 align-top text-xs font-mono text-gray-600 bg-white cursor-pointer hover:bg-blue-50 transition-colors"
-                          (click)="toggleColapso(row, 'nom'); $event.stopPropagation()">
-                        <div class="flex items-center justify-between gap-2">
-                          <span class="hover:underline" (click)="onCeldaClick(row.nomChartData!, row.nomChartTitle!); $event.stopPropagation()">{{ row.nom }}</span>
-                          <svg class="w-4 h-4 transition-transform" [class.-rotate-90]="row.nomColapsado" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                      </td>
-                    }
-                    @if (row.apeRowspan) {
-                      <td [attr.rowspan]="row.apeRowspan"
-                          class="border border-gray-200 px-4 py-2 align-top text-xs text-gray-700 bg-white cursor-pointer hover:bg-blue-50 transition-colors"
-                          (click)="toggleColapso(row, 'ape'); $event.stopPropagation()">
-                        <div class="flex items-center justify-between gap-2">
-                          <span class="hover:underline" (click)="onCeldaClick(row.apeChartData!, row.apeChartTitle!); $event.stopPropagation()">{{ row.ape }}</span>
-                          <svg class="w-4 h-4 transition-transform" [class.-rotate-90]="row.apeColapsado" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                          <svg class="w-4 h-4 transition-transform cursor-pointer hover:text-forest/60"
+                               [class.-rotate-90]="row.salaColapsado"
+                               (click)="toggleColapso(row, 'sala')"
+                               fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                          </svg>
                         </div>
                       </td>
                     }
 
-                    <!-- Celdas finales -->
+                    @if (row.anioRowspan) {
+                      <td [attr.rowspan]="row.anioRowspan"
+                          class="border border-gray-200 px-4 py-2 align-top text-sm text-gray-700 bg-white transition-colors"
+                          (click)="$event.stopPropagation()">
+                        <div class="flex items-center justify-between gap-2">
+                          <span class="cursor-pointer hover:underline"
+                                (click)="onCeldaClick(row.anioChartData!, row.anioChartTitle!)">
+                            {{ row.anio }}
+                          </span>
+                          <svg class="w-4 h-4 transition-transform cursor-pointer hover:text-gray-400"
+                               [class.-rotate-90]="row.anioColapsado"
+                               (click)="toggleColapso(row, 'anio')"
+                               fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                          </svg>
+                        </div>
+                      </td>
+                    }
+
+                    @if (row.mesRowspan) {
+                      <td [attr.rowspan]="row.mesRowspan"
+                          class="border border-gray-200 px-4 py-2 align-top text-xs uppercase text-gray-700 bg-white transition-colors"
+                          (click)="$event.stopPropagation()">
+                        <div class="flex items-center justify-between gap-2">
+                          <span class="cursor-pointer hover:underline"
+                                (click)="onCeldaClick(row.mesChartData!, row.mesChartTitle!)">
+                            {{ row.mes }}
+                          </span>
+                          <svg class="w-4 h-4 transition-transform cursor-pointer hover:text-gray-400"
+                               [class.-rotate-90]="row.mesColapsado"
+                               (click)="toggleColapso(row, 'mes')"
+                               fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                          </svg>
+                        </div>
+                      </td>
+                    }
+
+                    @if (row.nomRowspan) {
+                      <td [attr.rowspan]="row.nomRowspan"
+                          class="border border-gray-200 px-4 py-2 align-top text-xs font-mono text-gray-600 bg-white transition-colors"
+                          (click)="$event.stopPropagation()">
+                        <div class="flex items-center justify-between gap-2">
+                          <span class="cursor-pointer hover:underline"
+                                (click)="onCeldaClick(row.nomChartData!, row.nomChartTitle!)">
+                            {{ row.nom }}
+                          </span>
+                          <svg class="w-4 h-4 transition-transform cursor-pointer hover:text-gray-400"
+                               [class.-rotate-90]="row.nomColapsado"
+                               (click)="toggleColapso(row, 'nom')"
+                               fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                          </svg>
+                        </div>
+                      </td>
+                    }
+
+                    @if (row.apeRowspan) {
+                      <td [attr.rowspan]="row.apeRowspan"
+                          class="border border-gray-200 px-4 py-2 align-top text-xs text-gray-700 bg-white transition-colors"
+                          (click)="$event.stopPropagation()">
+                        <div class="flex items-center justify-between gap-2">
+                          <span class="cursor-pointer hover:underline"
+                                (click)="onCeldaClick(row.apeChartData!, row.apeChartTitle!)">
+                            {{ row.ape }}
+                          </span>
+                          <svg class="w-4 h-4 transition-transform cursor-pointer hover:text-gray-400"
+                               [class.-rotate-90]="row.apeColapsado"
+                               (click)="toggleColapso(row, 'ape')"
+                               fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                          </svg>
+                        </div>
+                      </td>
+                    }
+
                     <td class="border border-gray-200 px-4 py-2 text-xs text-gray-600">{{ row.tipo }}</td>
                     <td class="border border-gray-200 px-4 py-2 text-right text-sm font-bold text-gray-800">{{ row.total }}</td>
                   }

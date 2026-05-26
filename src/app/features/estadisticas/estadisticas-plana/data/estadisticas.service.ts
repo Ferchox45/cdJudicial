@@ -30,9 +30,9 @@ buscarEstadistica(
     }
   });
 
-  return this.http.get<ApiResponseEstadisticas>(`${this.apiEndpoint}/api/estadisticas/plana/`, { params }).pipe(
+  return this.http.get<ApiResponseEstadisticas>(`${this.apiEndpoint}/api/estadisticas/plano/`, { params }).pipe(
     map(response => ({
-      resultados: response.data.plano.map(item => this.mapItem(item)),
+      resultados: response.data.planos.map(item => this.mapItem(item)),
       paginacion: {
         total: response.data.total,
         page:  response.data.page,
@@ -65,8 +65,8 @@ buscarAgrupada(
       }
     });
 
-    return this.http.get<ApiResponseAgrupada>(`${this.apiEndpoint}/api/estadisticas/agrupada/`, { params }).pipe(
-      map(response => this.aplanarAgrupado(response.data.agrupado))
+    return this.http.get<ApiResponseAgrupada>(`${this.apiEndpoint}/api/estadisticas/agrupado/`, { params }).pipe(
+      map(response => this.aplanarAgrupado(response.data.agrupados))
     );
   }
 
@@ -144,8 +144,8 @@ buscarAgrupadaJerarquica(form: searchFormPlanaEstadistica): Observable<ReporteAg
     }
   });
 
-  return this.http.get<ApiResponseAgrupada>(`${this.apiEndpoint}/api/estadisticas/agrupada/`, { params }).pipe(
-    map(response => response.data.agrupado)
+  return this.http.get<ApiResponseAgrupada>(`${this.apiEndpoint}/api/estadisticas/agrupado/`, { params }).pipe(
+    map(response => response.data.agrupados)
   );
 }
 

@@ -22,7 +22,7 @@ export class BuscadorPlanoService {
         }
       });
 
-      return this.http.get<ApiResponsePlana>(`${this.apiEndpoint}/api/busquedas/plana/`, { params: httpParams })
+      return this.http.get<ApiResponsePlana>(`${this.apiEndpoint}/api/busquedas/plano/`, { params: httpParams })
         .pipe(
           map(response => ({
             resultados: response.data.planos ?? [],
@@ -47,7 +47,7 @@ export class BuscadorPlanoService {
         }
       });
     }
-    return this.http.get(`${this.apiEndpoint}/api/busquedas/plana/exportar-excel`, {
+    return this.http.get(`${this.apiEndpoint}/api/busquedas/plano/exportar-excel`, {
       params: params,
       responseType: 'blob' // ¡Crucial para poder descargar el archivo correctamente!
     });
@@ -67,7 +67,7 @@ export class BuscadorPlanoService {
         });
       }
 
-      return this.http.get(`${this.apiEndpoint}/api/busquedas/plana/exportar-pdf`, {
+      return this.http.get(`${this.apiEndpoint}/api/busquedas/plano/exportar-pdf`, {
         params: params,
         responseType: 'blob' // ¡Crucial para poder descargar el archivo correctamente!
       });

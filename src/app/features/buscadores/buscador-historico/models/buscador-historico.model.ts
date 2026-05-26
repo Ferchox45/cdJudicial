@@ -18,7 +18,7 @@ export interface ResultadoBusquedaHistorica {
 
 export interface ApiResponseHistorico{
   data:{
-    historico: ResultadoBusquedaHistorica[];
+    historicos: ResultadoBusquedaHistorica[];
     total: number;
     page:  number;
     limit: number;

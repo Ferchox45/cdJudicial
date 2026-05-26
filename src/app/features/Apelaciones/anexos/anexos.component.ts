@@ -39,7 +39,7 @@ export class AnexosComponent implements OnInit {
 
   // ── Nuevo anexo (modelo del formulario) ────────────────────
   nuevoAnexo = {
-    idAnexo:    0,
+    idAnexo:    null,
     tipo:       '',
     cantidad:   1,
     tieneMonto: false,
@@ -130,7 +130,13 @@ agregarAnexo(): void {
     console.log('Anexo agregado a la lista:', anexo);
     this.anexos.push(anexo);
     // Reset del formulario (incluyendo el ID)
-    this.nuevoAnexo = { idAnexo: 0, tipo: '', cantidad: 1, tieneMonto: false, monto: 0, otroAnexo: '' };
+    this.nuevoAnexo = {
+      idAnexo: null,
+      tipo: '',
+      cantidad: 1,
+      tieneMonto: false,
+      monto: 0,
+      otroAnexo: '' };
   }
 
   eliminarAnexo(index: number): void {

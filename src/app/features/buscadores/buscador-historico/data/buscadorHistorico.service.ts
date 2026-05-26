@@ -28,7 +28,7 @@ buscarHistorico(
   return this.http.get<ApiResponseHistorico>(`${this.apiEndpoint}/api/busquedas/historico/`, { params: httpParams })
     .pipe(
       map(response => ({
-        resultados: response.data.historico ?? [],
+        resultados: response.data.historicos ?? [],
         paginacion: {
           total: response.data.total,
           page:  response.data.page,
