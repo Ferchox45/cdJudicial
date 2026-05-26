@@ -90,7 +90,7 @@ export interface PagedResultHistorico {
 
 export interface ApiResponsePlana{
     data:{
-    plana: ResultadoBusquedaPlana[];
+    planos: ResultadoBusquedaPlana[];
     total: number;
     page:  number;
     limit: number;

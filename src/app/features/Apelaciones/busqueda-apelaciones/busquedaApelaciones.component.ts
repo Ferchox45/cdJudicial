@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/Action-siderbar/action-siderbar.component';
 import { PanelBusquedaComponent } from './components/panel-busqueda/panelBusqueda.component';
 import { PanelResultadosComponent } from './components/panel-resultado/panelResultado.component';
-
 import { BusquedaFacade } from './facades/busqueda.facade';
 import { CatalogosFacade } from './facades/catalogos.facade';
 
@@ -45,7 +44,7 @@ export class BusquedaApelacionesComponent implements OnInit {
         id:       'exportar',
         label:    'Exportar',
         icon:     'exportar',
-        loading:   exportando,   
+        loading:   exportando,
         disabled:  ocupado,
       },
       {
@@ -58,7 +57,7 @@ export class BusquedaApelacionesComponent implements OnInit {
         id:       'reporte',
         label:    'Reporte',
         icon:     'reporte',
-        loading:   generando,    
+        loading:   generando,
         disabled:  ocupado,
       },
     ];

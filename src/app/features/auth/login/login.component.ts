@@ -3,11 +3,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SpinnerComponent],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
@@ -47,7 +48,7 @@ onSubmit() {
   const payload = {
     usuario: this.loginForm.value.usuario,
     contrasenia: this.loginForm.value.contrasena,
-    idSistema: 1 // Asegúrate de que sea el ID correcto de tu sistema
+    idSistema: 0
   };
 
   this.authService.login(payload).subscribe({

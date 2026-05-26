@@ -44,6 +44,12 @@ export class ApelacionService {
       .pipe(timeout(15000), map(res => res.data.localidades));
   }
 
+  getTiposApelacion(idApelacion: number): Observable<any[]> {
+    return this.http
+      .get<{ data: { tiposApelacion: any[] } }>(`${this.apiEndpoint}/api/apelaciones/${idApelacion}/tipos-apelacion`)
+      .pipe(timeout(15000), map(res => res.data.tiposApelacion));
+  }
+
   buscarPorFolio(folio: string): Observable<BusquedaRapida> {
     const param = encodeURIComponent(folio.trim());
     return this.http.get<{ data: BusquedaRapida }>(`${this.apiEndpoint}/api/apelaciones/detalle?folioOficialia=${param}`)

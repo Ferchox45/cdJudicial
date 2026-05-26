@@ -65,13 +65,20 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   busquedaDelitoTexto = new FormControl('');
   mostrarFormParte    = false;
 
+  // Señal para el spinner al momento de guardar
+  guardando = signal(false);
+
   // ── Sidebar ────────────────────────────────────────────────
-  sidebarActions: SidebarAction[] = [
-    { id: 'nuevo',   label: 'Nuevo',   icon: 'nuevo',   primary: true },
-    { id: 'guardar', label: 'Guardar', icon: 'guardar' },
-    { id: 'buscar',  label: 'Buscar',  icon: 'buscar'  },
-    { id: 'anexo',   label: 'Anexo',   icon: 'anexo'   },
-  ];
+// ── Sidebar ────────────────────────────────────────────────
+  get sidebarActions(): SidebarAction[] {
+    const isSaving = this.guardando();
+    return [
+      { id: 'nuevo',   label: 'Nuevo',   icon: 'nuevo',   primary: true, disabled: isSaving },
+      { id: 'guardar', label: 'Guardar', icon: 'guardar', loading: isSaving, disabled: isSaving },
+      { id: 'buscar',  label: 'Buscar',  icon: 'buscar',  disabled: isSaving },
+      { id: 'anexo',   label: 'Anexo',   icon: 'anexo',   disabled: isSaving },
+    ];
+  }
 
   private intervalId?: ReturnType<typeof setInterval>;
 
@@ -114,15 +121,22 @@ private wireCallbacks(): void {
   this.bus.onNuevo = () => this.limpiarEstadoCaptura();
 
   this.grd.onExito    = () =>{
+    this.guardando.set(false); // <-- APAGAR AL TENER ÉXITO
     this.mostrarModalAnexos.set(true)
     const materiaActual = this.esIndigena ? 'indigena' : 'penal';
     this.actualizarFolioTentativo(materiaActual);
   };
+
   this.grd.onTerminar = () => {
+    this.guardando.set(false); // <-- APAGAR AL TERMINAR
     this.limpiarEstadoCaptura();
     this.actualizarFolioTentativo('penal');
   };
-  this.grd.onError    = (m) => this.modal.error('Error', m);
+
+  this.grd.onError    = (m) => {
+    this.guardando.set(false); // <-- APAGAR SI HAY ERROR DE SERVIDOR
+    this.modal.error('Error', m);
+  };
 }
 
   // ── Formulario ─────────────────────────────────────────────
@@ -147,14 +161,22 @@ private wireCallbacks(): void {
   }
 
   // ── Acciones sidebar ───────────────────────────────────────
+// ── Acciones sidebar ───────────────────────────────────────
   handleAction(id: string): void {
     const actions: Record<string, () => void> = {
       nuevo:   () => { this.bus.resetNuevo(this.form); this.form.reset(); },
-      guardar: () => this.grd.guardar(
-        this.form, this.relaciones, this.partes,
-        this.cat.sexos, this.cat.tiposPartes, this.folioGuardado, this.salaGuardada,
-        () => this.modal.info('Advertencia', 'Por favor, complete los campos obligatorios.')
-      ),
+      guardar: () => {
+        this.guardando.set(true); // 1. ENCIENDE EL SPINNER
+
+        this.grd.guardar(
+          this.form, this.relaciones, this.partes,
+          this.cat.sexos, this.cat.tiposPartes, this.folioGuardado, this.salaGuardada,
+          () => {
+            this.guardando.set(false); // 2. APAGA EL SPINNER si el formulario era inválido y no llegó al backend
+            this.modal.info('Advertencia', 'Por favor, complete los campos obligatorios.');
+          }
+        );
+      },
       buscar: () => this.router.navigate(['/busquedaApelacion']),
     };
     actions[id]?.();

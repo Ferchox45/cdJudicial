@@ -25,7 +25,7 @@ export class BuscadorPlanoService {
       return this.http.get<ApiResponsePlana>(`${this.apiEndpoint}/api/busquedas/plana/`, { params: httpParams })
         .pipe(
           map(response => ({
-            resultados: response.data.plana ?? [],
+            resultados: response.data.planos ?? [],
             paginacion: {
               total: response.data.total,
               page:  response.data.page,
