@@ -7,12 +7,12 @@ import { PanelIdentificacionComponent } from './components/panel-formulario/pane
 import { PanelPartesComponent } from './components/panel-partes/panel-partes.component';
 import { PanelRelacionesComponent } from './components/panel-relaciones/panel-relaciones.component';
 import { ModalAnexosComponent } from './components/modal-anexo/modal-anexo.component';
-import { Parte, RelacionBusqueda } from '../../../core/models';
+import { Parte, RelacionBusqueda } from './models/busqueda-rap.model';
 import { CatalogosFacade,} from './facades/catalogos.facade';
 import { GuardarFacade} from './facades/guardar.facade';
 import { BusquedaFacade } from './facades/busqueda.facade';
 import { Router } from '@angular/router';
-import { buildNuevaParte, buildNuevaRelacion } from './captura-apelaciones.mapper';
+import { buildNuevaParte, buildNuevaRelacion } from './utils/captura-apelaciones.mapper';
 import { DelitoDisponible } from '../../../core/models/apelacionAuxMapper';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
 

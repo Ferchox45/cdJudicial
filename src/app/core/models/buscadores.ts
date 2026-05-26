@@ -1,4 +1,4 @@
-import { CatalogoItem } from "./catalogo.model";
+import { CatalogoItem } from "../../features/apelaciones/captura-apelaciones/models/catalogo-apelaciones.model";
 
 export interface catBusqHistorica{
 salas: CatalogoItem[];

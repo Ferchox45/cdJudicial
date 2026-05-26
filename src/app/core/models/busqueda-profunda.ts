@@ -1,3 +1,4 @@
+import { CatalogoItem } from "../../features/apelaciones/captura-apelaciones/models/catalogo-apelaciones.model";
 export interface ParteBusquedaResultado {
   tipoParte:      string;
   nombre:         string;
@@ -90,4 +91,10 @@ export interface PaginacionProf{
 export interface PagedResultProf{
   resultados: Resultado[];
   paginacion: PaginacionProf;
+}
+
+export interface CatalogoBusqueda {
+  salas: CatalogoItem[];
+  nomenclaturas: CatalogoItem[];
+  apelaciones: CatalogoItem[];
 }

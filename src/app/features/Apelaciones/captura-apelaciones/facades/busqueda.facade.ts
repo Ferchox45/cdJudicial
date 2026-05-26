@@ -1,13 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { BusquedaRapida, Parte, RelacionBusqueda } from '../../../../core/models';
-import { ApelacionService } from '../../../../core/services/apelaciones.service';
+import { BusquedaRapida, Parte, RelacionBusqueda } from '../models/busqueda-rap.model';
+import { ApelacionApiService } from '../data/captura-apelacion.service';
 import {
   mapearPartesDesdeRelaciones,
   mapearRelaciones,
   sincronizarSeleccionDelitos,
   toDateInput,
-} from '../captura-apelaciones.mapper';
+} from '../utils/captura-apelaciones.mapper';
 
 import { DelitoDisponible } from '../../../../core/models/apelacionAuxMapper';
 
@@ -27,7 +27,7 @@ export interface ResultadoBusqueda {
 @Injectable()
 export class BusquedaFacade {
 
-  private apelacionService = inject(ApelacionService);
+  private apelacionService = inject(ApelacionApiService);
 
   // ── Estado público ─────────────────────────────────────────
   buscando        = false;

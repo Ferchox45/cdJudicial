@@ -1,15 +1,15 @@
 import { Injectable, inject, ApplicationConfig } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Subject, switchMap, tap, takeUntil, of } from 'rxjs';  // añadir imports
-import { CapturaApelacionCatalogos, CatalogoItem } from '../../../../core/models';
-import { ApelacionService } from '../../../../core/services/apelaciones.service';
-import { mapearDelitosDisponibles } from '../captura-apelaciones.mapper';
+import { CapturaApelacionCatalogos, CatalogoItem } from '../models/catalogo-apelaciones.model';
+import { mapearDelitosDisponibles } from '../utils/captura-apelaciones.mapper';
 import { DelitoDisponible } from '../../../../core/models/apelacionAuxMapper';
+import { ApelacionApiService } from '../data/captura-apelacion.service';
 
 @Injectable()
 export class CatalogosFacade {
 
-  private apelacionService = inject(ApelacionService);
+  private apelacionService = inject(ApelacionApiService);
   private destroy$ = new Subject<void>();
 
   // ── Estado público ─────────────────────────────────────────

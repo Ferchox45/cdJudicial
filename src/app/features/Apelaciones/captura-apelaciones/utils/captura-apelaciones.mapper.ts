@@ -1,10 +1,11 @@
-import { BusquedaRapida, CatalogoItem,
+import { BusquedaRapida,
   DelitoBusqueda,
   Parte,
   ParteBusqueda,
   RelacionBusqueda,
-} from '../../../core/models';
-import { ApelacionFormValue, DelitoDisponible } from '../../../core/models/apelacionAuxMapper';
+} from '../models/busqueda-rap.model';
+import { ApelacionFormValue, DelitoDisponible } from '../../../../core/models/apelacionAuxMapper';
+import { CatalogoItem } from '../models/catalogo-apelaciones.model';
 
 
 /** Convierte string ISO → "YYYY-MM-DD" para inputs tipo date */

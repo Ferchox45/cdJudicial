@@ -212,7 +212,12 @@
             class="bg-forest text-white font-bold px-6 py-3 md:py-2 rounded-md border-0 flex items-center justify-center gap-2 cursor-pointer shadow-sm transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
             [disabled]="guardando"
             (click)="guardar()">
-              Guardar Anexos
+            @if (!guardando) {
+              <span>Guardar Anexos</span>
+            } @else {
+              <app-spinner size="sm" color="white" ariaLabel="Guardando..."></app-spinner>
+              <span>Guardando...</span>
+            }
           </button>
         }
       </div>

@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
-import { CatalogoItem, Parte } from '../../../../../core/models';
+import { CatalogoItem} from '../../models/catalogo-apelaciones.model';
+import { Parte } from '../../models/busqueda-rap.model';
 @Component({
   selector: 'app-panel-partes',
   standalone: true,

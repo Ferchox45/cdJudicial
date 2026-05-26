@@ -3,10 +3,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { ApiResponseBusqProf, Resultado } from './../models/busqueda-profunda';
 import { CacheService } from './cache.service';
-import { CACHE_KEYS } from './apelaciones.service';
-import { CatalogoBusqueda } from '../models';
 import { environment } from '../../../environments/environment.development';
-import { PagedResultProf } from '../models/busqueda-profunda';
+import { PagedResultProf, CatalogoBusqueda } from '../models/busqueda-profunda';
+import { CACHE_KEYS_APELACION } from '../../features/apelaciones/captura-apelaciones/data/captura-apelacion.service';
 
 @Injectable({ providedIn: 'root' })
 export class BusquedaProfService {
@@ -22,7 +21,7 @@ export class BusquedaProfService {
       const call$ = this.http.get<{ data: CatalogoBusqueda }>(`${this.apiEndpoint}/api/busquedas/filtros`)
         .pipe(map(res => res.data));
 
-      return this.cache.manejarCache(CACHE_KEYS.BUSQUEDA, call$);
+      return this.cache.manejarCache(CACHE_KEYS_APELACION.BUSQUEDA, call$);
     }
 
   exportarExcel(filtros: any): Observable<Blob> {

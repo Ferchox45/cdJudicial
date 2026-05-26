@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { ApelacionContextService} from '../../../core/services/apelacion-context.service';
+import { ApelacionContextService} from '../data/apelacion-context.service';
 
 export const anexosGuard: CanActivateFn = (route, state) => {
   const contextService = inject(ApelacionContextService);

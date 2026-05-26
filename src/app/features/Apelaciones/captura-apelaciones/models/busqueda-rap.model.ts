@@ -1,4 +1,4 @@
-import { CatalogoItem } from "./catalogo.model";
+import { CatalogoItem } from "./catalogo-apelaciones.model";
 
 export interface Parte {
   id:           number;

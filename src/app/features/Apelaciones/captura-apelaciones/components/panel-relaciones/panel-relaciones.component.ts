@@ -1,3 +1,4 @@
+import { DelitoDisponible } from './../../../../../core/models/apelacionAuxMapper';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,8 +8,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { DelitoDisponible } from '../../../../../core/models';
-import { Parte, RelacionBusqueda } from '../../../../../core/models';
+import { Parte, RelacionBusqueda} from '../../models/busqueda-rap.model';
 
 @Component({
   selector: 'app-panel-relaciones',

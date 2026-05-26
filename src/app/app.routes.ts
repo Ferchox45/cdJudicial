@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { DashboardLayoutComponent } from './features/dashboard/dashboardmain/dashboard.component';
-import { anexosGuard } from './features/apelaciones/anexos/anexos.guard';
+import { anexosGuard } from './features/apelaciones/anexos/guards/anexos.guard';
 export const routes: Routes = [
   // 1. PRIMERA REGLA: Si la URL está completamente vacía, redirige al login obligatoriamente
   {

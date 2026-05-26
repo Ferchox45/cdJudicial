@@ -12,7 +12,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Subject, takeUntil, filter, distinctUntilChanged } from 'rxjs';
-import { CatalogoItem } from '../../../../../core/models';
+import { CatalogoItem } from '../../models/catalogo-apelaciones.model';
 import { CatalogosFacade } from '../../facades/catalogos.facade';
 import { SpinnerComponent } from '../../../../../shared/components/spinner/spinner.component';
 

@@ -9,7 +9,7 @@
   },
   "include": [
     "src/**/*.ts"
-, "src/app/core/services/apelacion-context.service.ts"  ],
+, "src/app/features/apelaciones/anexos/data/apelacion-context.service.ts"  ],
   "exclude": [
     "src/**/*.spec.ts"
   ]

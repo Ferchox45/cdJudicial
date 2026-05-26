@@ -1,21 +1,23 @@
 import { Component, OnInit, inject,  ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApelacionService } from '../../../core/services/apelaciones.service';
-import { CatalogoItem, Anexo } from '../../../core/models';
+import { AnexoApiService } from './data/anexos.service';
+import { CatalogoItem} from '../../apelaciones/captura-apelaciones/models/catalogo-apelaciones.model';
 import { finalize } from 'rxjs/operators';
-import { ApelacionContextService } from '../../../core/services/apelacion-context.service';
+import { Anexo } from './models/anexo';
+import { ApelacionContextService } from './data/apelacion-context.service';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
+import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-anexos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SpinnerComponent],
   templateUrl: './anexos.component.html',
 })
 export class AnexosComponent implements OnInit {
 
-  private apelacionService = inject(ApelacionService);
+  private apelacionService = inject(AnexoApiService);
   private cdr              = inject(ChangeDetectorRef);
   private contextoService  = inject(ApelacionContextService);
   private modalService     = inject(ModalService);

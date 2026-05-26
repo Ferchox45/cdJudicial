@@ -1,15 +1,16 @@
 import { Injectable, WritableSignal, inject } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CatalogoItem, Parte, RelacionBusqueda } from '../../../../core/models';
-import { ApelacionService } from '../../../../core/services/apelaciones.service';
-import { ApelacionContextService } from '../../../../core/services/apelacion-context.service';
-import { buildPayload } from '../captura-apelaciones.mapper';
+import { Parte, RelacionBusqueda } from '../models/busqueda-rap.model';
+import { CatalogoItem } from '../models/catalogo-apelaciones.model';
+import { ApelacionContextService } from '../../anexos/data/apelacion-context.service';
+import { buildPayload } from '../utils/captura-apelaciones.mapper';
+import { ApelacionApiService } from '../data/captura-apelacion.service';
 
 @Injectable()
 export class GuardarFacade {
 
-  private apelacionService = inject(ApelacionService);
+  private apelacionService = inject(ApelacionApiService);
   private contextoService  = inject(ApelacionContextService);
   private router           = inject(Router);
 
