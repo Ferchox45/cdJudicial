@@ -1,10 +1,11 @@
 import { Injectable, inject, ApplicationConfig } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Subject, switchMap, tap, takeUntil, of } from 'rxjs';  // añadir imports
-import { CapturaApelacionCatalogos, CatalogoItem } from '../models/catalogo-apelaciones.model';
+import { CapturaApelacionCatalogos } from '../models/catalogo-apelaciones.model';
 import { mapearDelitosDisponibles } from '../utils/captura-apelaciones.mapper';
 import { DelitoDisponible } from '../models/apelacion-aux.model';
 import { ApelacionApiService } from '../data/captura-apelacion.service';
+import { CatalogoItem } from '../../../../core/models/catalogo-global.model';
 
 @Injectable()
 export class CatalogosFacade {

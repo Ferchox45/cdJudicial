@@ -100,7 +100,10 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
     this.buildForm();
     this.wireCallbacks();
     this.cat.cargar(this.form, 'penal');
-    this.intervalId = setInterval(() => this.fechaActual = new Date(), 1000);
+    this.intervalId = setInterval(() => {
+    this.fechaActual = new Date();
+    this.cdr.detectChanges();
+    }, 1000);
     this.form.get('materiaId')!.valueChanges.subscribe(() =>
       this.bus.actualizarValidadoresPorMateria(this.form, this.esIndigena)
     );
@@ -177,7 +180,7 @@ private wireCallbacks(): void {
           }
         );
       },
-      buscar: () => this.router.navigate(['/busquedaApelacion']),
+      buscar: () => this.router.navigate(['capturaApelacion/busquedaApelacion']),
     };
     actions[id]?.();
   }

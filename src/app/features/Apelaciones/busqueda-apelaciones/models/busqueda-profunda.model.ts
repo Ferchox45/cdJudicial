@@ -1,4 +1,5 @@
-import { CatalogoItem } from "../../captura-apelaciones/models/catalogo-apelaciones.model";
+import { CatalogoItem } from "../../../../core/models/catalogo-global.model";
+
 export interface ParteBusquedaResultado {
   tipoParte:      string;
   nombre:         string;

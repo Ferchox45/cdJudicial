@@ -2,10 +2,10 @@ import { Injectable, WritableSignal, inject } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Parte, RelacionBusqueda } from '../models/busqueda-rap.model';
-import { CatalogoItem } from '../models/catalogo-apelaciones.model';
 import { ApelacionContextService } from '../../anexos/data/apelacion-context.service';
 import { buildPayload } from '../utils/captura-apelaciones.mapper';
 import { ApelacionApiService } from '../data/captura-apelacion.service';
+import { CatalogoItem } from '../../../../core/models/catalogo-global.model';
 
 @Injectable()
 export class GuardarFacade {

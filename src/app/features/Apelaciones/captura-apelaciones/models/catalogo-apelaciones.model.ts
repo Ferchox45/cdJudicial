@@ -1,7 +1,4 @@
-export interface CatalogoItem {
-  id: number;
-  descripcion: string;
-}
+import { CatalogoItem } from "../../../../core/models/catalogo-global.model";
 
 // Respuesta completa del endpoint /capturar-apelacion
 export interface CapturaApelacionCatalogos {

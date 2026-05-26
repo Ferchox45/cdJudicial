@@ -1,309 +1,37 @@
-# Arquitectura del Sistema SIJUDI
+# Sistema de Gestión Penal de Segunda Instancia
 
-> **Sistema de Gestión Penal — Tribunal Superior de Justicia**  
+> **Tribunal Superior de Justicia**  
 > Stack: Angular 21 · Tailwind CSS v4 · TypeScript · SQL Server 2022
 
-Este documento describe la arquitectura técnica, los patrones de diseño aplicados, las decisiones de diseño tomadas y la justificación de cada una de ellas. Está destinado a cualquier desarrollador que se incorpore al proyecto o que necesite entender su estructura antes de modificarla.
+Sistema judicial para la gestión, captura y consulta de apelaciones penales. Construido con arquitectura Feature-Driven y el patrón Facade, orientado a equipos pequeños trabajando en paralelo sobre módulos de negocio independientes.
 
 ---
 
-## Tabla de Contenidos
+## Documentación
 
-1. [Filosofía Arquitectónica](#1-filosofía-arquitectónica)
-2. [Estructura Real del Proyecto](#2-estructura-real-del-proyecto)
-3. [Desglose de Capas](#3-desglose-de-capas)
-4. [Patrones de Diseño Aplicados](#4-patrones-de-diseño-aplicados)
-5. [Convenciones de Nomenclatura](#5-convenciones-de-nomenclatura)
-6. [Tecnologías y Herramientas](#6-tecnologías-y-herramientas)
-7. [Justificación de la Arquitectura](#7-justificación-de-la-arquitectura)
-8. [Deuda Técnica y Observaciones](#8-deuda-técnica-y-observaciones)
-
----
-
-## 1. Filosofía Arquitectónica
-
-El sistema SIJUDI opera en un entorno gubernamental con requisitos específicos: múltiples módulos de negocio independientes, equipos pequeños trabajando en paralelo, conectividad de red variable y necesidad de auditoría y trazabilidad de datos. Estas condiciones dictaron tres principios no negociables:
-
-**Separación estricta de responsabilidades.** Ninguna capa debe conocer los detalles internos de otra. Los componentes no hablan directamente con la API; las fachadas no conocen el DOM; los servicios no conocen la UI.
-
-**Crecimiento por adición, no por modificación.** Incorporar un nuevo módulo judicial (ej. amparos, sentencias) debe implicar crear una nueva carpeta en `features/`, no tocar el código existente.
-
-**Resistencia a cambios del backend.** Los contratos de la API REST pueden cambiar. Los `mapper.ts` de cada feature actúan como frontera explícita, absorbiendo ese impacto sin que llegue a los componentes.
-
----
-
-## 2. Estructura Real del Proyecto
-
-```
-sisGestionPenal/
-└── src/
-    └── app/
-        ├── core/                              # Infraestructura global (Singletons)
-        │   ├── auth/
-        │   │   └── auth.interceptor.ts
-        │   ├── models/                        # Contratos de datos globales
-        │   │   ├── buscadores.ts
-        │   │   ├── busqueda-profunda.ts
-        │   │   ├── busqueda-rap.model.ts
-        │   │   ├── catalogo.model.ts
-        │   │   └── index.ts
-        │   └── services/                      # Comunicación con API + caché
-        │       ├── apelacion-context.service.ts
-        │       ├── apelaciones.service.ts
-        │       ├── breadcrumb.service.ts
-        │       ├── buscadorHistorico.service.ts
-        │       ├── buscadorPlano.service.ts
-        │       └── busquedaprof.service.ts
-        │
-        ├── features/                          # Módulos de negocio independientes
-        │   │
-        │   ├── apelaciones/                   # Dominio: gestión de apelaciones
-        │   │   ├── anexos/
-        │   │   │   ├── anexos.component.html
-        │   │   │   └── anexos.component.ts
-        │   │   │
-        │   │   ├── busqueda-apelaciones/      # Sub-módulo: consulta de apelaciones
-        │   │   │   ├── components/
-        │   │   │   │   ├── panel-busqueda/
-        │   │   │   │   ├── panel-detalle/
-        │   │   │   │   └── panel-resultado/
-        │   │   │   ├── facades/
-        │   │   │   │   ├── busqueda.facade.ts
-        │   │   │   │   └── catalogos.facade.ts
-        │   │   │   ├── busquedaApelaciones.component.html
-        │   │   │   ├── busquedaApelaciones.component.ts
-        │   │   │   └── busquedaApelaciones.mapper.ts
-        │   │   │
-        │   │   └── captura-apelaciones/       # Sub-módulo: registro de apelaciones
-        │   │       ├── components/
-        │   │       │   ├── modal-anexo/
-        │   │       │   ├── panel-formulario/
-        │   │       │   ├── panel-partes/
-        │   │       │   └── panel-relaciones/
-        │   │       ├── facades/
-        │   │       │   ├── captura-busqueda.facade.ts   # renombrado desde busqueda.facade.ts
-        │   │       │   ├── catalogos.facade.ts
-        │   │       │   └── guardar.facade.ts
-        │   │       ├── captura-apelaciones.component.html
-        │   │       ├── captura-apelaciones.component.ts
-        │   │       └── captura-apelaciones.mapper.ts
-        │   │
-        │   ├── buscadores/                    # Dominio: motores de consulta especializados
-        │   │   ├── buscador-historico/
-        │   │   │   ├── components/
-        │   │   │   │   ├── panel-busqueda-historico/
-        │   │   │   │   └── panel-resultados-historico/
-        │   │   │   ├── facades/
-        │   │   │   │   ├── buscar.facade.ts             # renombrado desde buscar.ts
-        │   │   │   │   └── catalogo.facade.ts
-        │   │   │   ├── buscadorHistorico.component.html
-        │   │   │   ├── buscadorHistorico.component.ts
-        │   │   │   └── buscadorHistorico.mapper.ts
-        │   │   │
-        │   │   └── buscador-plano/
-        │   │       ├── components/
-        │   │       │   ├── panel-buscador-plano/
-        │   │       │   └── panel-resultados-plano/
-        │   │       ├── facades/
-        │   │       │   └── busquedaPlana.facade.ts
-        │   │       ├── buscadorPlano.component.html
-        │   │       ├── buscadorPlano.component.ts
-        │   │       └── buscadorPlano.mapper.ts
-        │   │
-        │   └── dashboard/                     # Shell de la aplicación
-        │       ├── action-card/
-        │       ├── dashmain/
-        │       ├── header/
-        │       ├── home/
-        │       └── menu-lateral/
-        │
-        └── shared/                            # Elementos transversales reutilizables
-            └── components/
-                ├── action-sidebar/            # renombrado desde Action-siderbar
-                └── modal-custom/
-```
-
----
-
-## 3. Desglose de Capas
-
-### 3.1 Capa de Núcleo — `core/`
-
-**Qué contiene:** Infraestructura técnica agnóstica al negocio. Todo lo que aquí vive es un Singleton (`providedIn: 'root'`) y no conoce ningún módulo de negocio específico.
-
-| Subcarpeta | Responsabilidad |
+| Documento | Descripción |
 |---|---|
-| `auth/` | Interceptor que adjunta el token JWT a todas las peticiones HTTP salientes |
-| `models/` | Interfaces TypeScript que definen los contratos de datos compartidos entre múltiples features |
-| `services/` | Servicios de comunicación con la API REST e implementación de la caché multinivel |
-
-**Regla de oro de esta capa:** si un archivo necesita importar algo de `features/`, no pertenece a `core/`.
-
-**Caché Multinivel.** Los servicios implementan una estrategia de dos niveles:
-- **Nivel 1 — Memoria RAM:** resultados de la sesión activa, acceso instantáneo.
-- **Nivel 2 — `sessionStorage`:** catálogos pesados (tipos de delito, juzgados, partes) que sobreviven a la navegación dentro de la misma pestaña pero se limpian al cerrar el navegador.
-
-Esta estrategia reduce significativamente las peticiones al servidor en entornos con conectividad limitada o inestable.
-
+| [Arquitectura](./docs/arquitectura.md) | Filosofía, capas, patrones y justificación de decisiones |
+| [Estructura de carpetas](./docs/estructura.md) | Árbol real del proyecto con anotaciones |
 ---
 
-### 3.2 Capa de Funcionalidades — `features/`
+## Inicio rápido
 
-**Qué contiene:** Los módulos de negocio del sistema. Cada feature es autónoma: tiene sus propios componentes, fachadas, mappers y modelos locales. No debe importar directamente de otras features.
-
-#### `apelaciones/`
-
-El dominio central del sistema. Se divide en tres sub-módulos con responsabilidades bien definidas:
-
-- **`anexos/`** — Gestión documental adjunta a las apelaciones.
-- **`busqueda-apelaciones/`** — Consulta y visualización de apelaciones existentes. Implementa el patrón Smart/Dumb: el componente raíz orquesta `panel-busqueda`, `panel-detalle` y `panel-resultado` como componentes "dumb" sin lógica propia.
-- **`captura-apelaciones/`** — Registro de nuevas apelaciones. El formulario se divide en paneles especializados (`panel-formulario`, `panel-partes`, `panel-relaciones`, `modal-anexo`) para permitir desarrollo paralelo sin conflictos de merge.
-
-#### `buscadores/`
-
-Motores de consulta especializados que operan sobre distintas fuentes de datos o criterios de búsqueda:
-
-- **`buscador-historico/`** — Consultas sobre el registro histórico judicial.
-- **`buscador-plano/`** — Búsqueda por número de expediente o datos básicos.
-
-Ambos buscadores replican la misma estructura interna (`components/`, `facades/`, `mapper.ts`), lo que garantiza coherencia y facilita el onboarding de nuevos desarrolladores.
-
-#### `dashboard/`
-
-Gestiona el shell visual de la aplicación: `header`, `menu-lateral`, `dashmain` y la vista de `home`. Al estar dentro de `features/` y cargarse con Lazy Loading, el bundle inicial de la aplicación es mínimo. La separación entre los componentes de layout (`dashmain`, `header`, `menu-lateral`) y el contenido (`home`, `action-card`) permite modificar la navegación sin tocar las vistas funcionales.
-
----
-
-### 3.3 Capa de Presentación Compartida — `shared/`
-
-**Qué contiene:** Componentes visuales que son utilizados por más de una feature y que no pertenecen a ningún dominio específico.
-
-| Componente | Uso |
-|---|---|
-| `action-sidebar/` | Panel lateral contextual reutilizable entre módulos |
-| `modal-custom/` | Modal genérico configurable vía inputs para cualquier feature |
-
-**Regla de oro de esta capa:** los componentes de `shared/` no deben importar nada de `features/`. La dependencia siempre fluye en sentido contrario.
-
----
-
-### 3.4 Fachadas — `facades/` (dentro de cada feature)
-
-Las fachadas son la capa de orquestación entre los componentes visuales y los servicios de datos. Cada sub-módulo de negocio tiene su propio directorio `facades/` con archivos específicos por responsabilidad:
-
-- `busqueda.facade.ts` / `captura-busqueda.facade.ts` — Gestión del estado de búsqueda y sus resultados.
-- `catalogos.facade.ts` — Carga y caché de catálogos (tipos, estados, clasificaciones).
-- `guardar.facade.ts` — Orquestación del flujo de guardado y validación previa.
-
-Un componente Angular nunca llama directamente a un servicio de `core/`. Siempre pasa por su fachada correspondiente.
-
----
-
-### 3.5 Mappers — `.mapper.ts` (dentro de cada feature)
-
-Cada sub-módulo expone exactamente un archivo mapper que transforma la respuesta cruda del backend (`ApiResponse`) al modelo de dominio del frontend (`DomainModel`). Este archivo es la única pieza del sistema que conoce la estructura del backend.
-
-```
-API Response  →  [mapper.ts]  →  Domain Model  →  Facade  →  Component
+```bash
+npm install
+ng serve
 ```
 
-Si el backend cambia un campo (ej. `num_expediente` pasa a llamarse `expediente_id`), el único archivo que se modifica es el mapper. Los componentes y fachadas no se enteran del cambio.
+> Requiere Node 20+. La configuración de entorno vive en `src/environments/`.
 
 ---
 
-## 4. Patrones de Diseño Aplicados
+## Principios no negociables
 
-| Patrón | Dónde se implementa | Propósito |
-|---|---|---|
-| **Facade** | `*/facades/*.facade.ts` en cada sub-módulo | Desacopla los componentes de la lógica de negocio y los servicios. Los componentes solo conocen la fachada. |
-| **Data Mapper** | `*.mapper.ts` en cada sub-módulo | Transforma datos del backend al modelo de dominio. Actúa como Capa Anticorrupción (ACL). |
-| **Smart / Dumb Components** | Componente raíz + paneles especializados | El componente "smart" orquesta el estado; los paneles "dumb" solo renderizan props. Facilita testing y reutilización. |
-| **Singleton** | Servicios en `core/` con `providedIn: 'root'` | Una única instancia global para servicios de infraestructura. Garantiza coherencia de la caché entre rutas. |
-| **Lazy Loading** | `loadComponent` en `app.routes.ts` | Cada feature se carga solo cuando el usuario navega a ella, reduciendo el tiempo de carga inicial. |
-| **Caché Multinivel** | Servicios en `core/services/` | Estrategia RAM + `sessionStorage` para minimizar peticiones al servidor en condiciones de red limitadas. |
+- **Separación estricta de responsabilidades** — ninguna capa conoce los detalles internos de otra.
+- **Crecimiento por adición** — un módulo nuevo es una carpeta nueva en `features/`, sin tocar código existente.
+- **Resistencia a cambios del backend** — los `mapper.ts` de cada feature absorben ese impacto antes de que llegue a los componentes.
 
 ---
 
-## 5. Convenciones de Nomenclatura
-
-Seguir estas convenciones de forma estricta es fundamental para la legibilidad del proyecto.
-
-| Elemento | Convención | Ejemplo correcto |
-|---|---|---|
-| Carpetas | `kebab-case` | `captura-apelaciones/`, `action-sidebar/` |
-| Componentes Angular | `kebab-case.component.ts` | `busquedaApelaciones.component.ts` |
-| Fachadas | `nombre-descriptivo.facade.ts` | `captura-busqueda.facade.ts` |
-| Mappers | `nombre-feature.mapper.ts` | `captura-apelaciones.mapper.ts` |
-| Modelos / Interfaces | `nombre.model.ts` | `catalogo.model.ts` |
-| Servicios | `nombre.service.ts` | `apelaciones.service.ts` |
-
-**Regla crítica:** el sufijo `.facade.ts` es obligatorio en todos los archivos de fachada. Omitirlo (como ocurría con `buscar.ts`) rompe la convención y dificulta la búsqueda global en el IDE.
-
----
-
-## 6. Tecnologías y Herramientas
-
-| Tecnología | Versión | Justificación de uso |
-|---|---|---|
-| **Angular** | 21 | Framework principal. Se usan exclusivamente **Standalone Components**, eliminando NgModules y reduciendo el boilerplate. |
-| **Angular Signals** | — | Manejo reactivo de estado local en la UI (visibilidad de modales, estados de carga). Más predecible que Subject/BehaviorSubject para estado local. |
-| **RxJS** | — | Gestión de flujos asíncronos complejos (peticiones HTTP, combinación de observables en fachadas). |
-| **Tailwind CSS** | v4 | Utilidades CSS con enfoque Mobile-First. Evita el crecimiento descontrolado de hojas de estilos por componente. |
-| **TypeScript** | — | Tipado estático en toda la aplicación. Los modelos en `core/models/` garantizan contratos verificados en tiempo de compilación. |
-| **SQL Server** | 2022 | Backend de persistencia. La comunicación es exclusivamente vía API REST; el frontend no conoce la estructura de la base de datos. |
-
----
-
-## 7. Justificación de la Arquitectura
-
-### ¿Por qué Feature-Based y no por tipo de archivo?
-
-Una arquitectura organizada por tipo (`/components`, `/services`, `/models` en la raíz) funciona bien en proyectos pequeños. En un sistema judicial con múltiples flujos independientes (apelaciones, buscadores, captura), ese enfoque provoca que archivos relacionados queden dispersos en el árbol de directorios. El desarrollador que trabaja en `captura-apelaciones` necesita navegar a `/services`, `/components` y `/models` por separado.
-
-Con Feature-Based, todo lo relacionado con `captura-apelaciones` vive en una sola carpeta. Borrar o refactorizar ese módulo implica tocar una sola ubicación.
-
-### ¿Por qué Fachadas en lugar de inyectar servicios directamente?
-
-Sin fachadas, un componente Angular con un formulario complejo termina inyectando 4 o 5 servicios distintos, mezclando lógica de carga, validación, caché y guardado en el mismo archivo TypeScript. Esto hace los componentes difíciles de leer y prácticamente impossibles de testear unitariamente.
-
-La fachada centraliza esa orquestación. El componente se convierte en una vista reactiva que solo escucha señales y dispara acciones. El resultado es que dos desarrolladores pueden trabajar simultáneamente en el mismo módulo: uno en la fachada y otro en el template, sin conflictos de merge.
-
-### ¿Por qué un Mapper por sub-módulo?
-
-El backend de un sistema gubernamental rara vez tiene una API bien documentada y estable. Los contratos cambian, los nombres de campos varían entre endpoints y las estructuras anidadas son inconsistentes. Sin una capa de transformación explícita, esos cambios se propagan a todos los componentes que consumen esos datos.
-
-El mapper es la "aduana" entre el backend y el dominio del frontend. Cuando el backend cambia, se actualiza el mapper y el resto del sistema no se entera. Adicionalmente, el mapper garantiza inmutabilidad: los objetos que salen de él son estructuras nuevas, no referencias mutables de la respuesta original.
-
-### ¿Por qué `core/` debe ser agnóstico al negocio?
-
-Si `core/` contiene servicios con lógica de dominio específica (ej. `apelacionAuxMapper.ts`), se convierte en una dependencia implícita que todo el sistema arrastra. Cualquier cambio en ese archivo tiene el potencial de afectar features no relacionadas. Mantener `core/` estrictamente limitado a infraestructura (autenticación, HTTP, caché genérica, modelos compartidos) permite que las features sean verdaderamente independientes entre sí.
-
-### ¿Por qué Lazy Loading en todas las features?
-
-El sistema judicial incluye flujos que no todos los usuarios utilizan en cada sesión: un capturista usa `captura-apelaciones` pero nunca toca `buscador-historico`. Sin Lazy Loading, el navegador descarga y parsea el JavaScript de todos los módulos al arrancar, aunque el usuario nunca los visite. Con `loadComponent`, cada feature se carga solo cuando el router la necesita, manteniendo el tiempo de arranque de la aplicación constante independientemente de cuántos módulos se agreguen en el futuro.
-
----
-
-## 8. Deuda Técnica y Observaciones
-
-Las siguientes inconsistencias fueron identificadas al revisar la estructura real del proyecto. Deben resolverse antes de incorporar nuevos desarrolladores o agregar módulos adicionales.
-
-| # | Severidad | Archivo / Carpeta afectada | Problema | Acción requerida |
-|---|---|---|---|---|
-| 1 | 🔴 Alta | `core/models/apelacionAuxMapper.ts` | Un mapper con lógica de dominio específica de apelaciones vive en `core/`, violando el principio de que esta capa debe ser agnóstica al negocio | Mover a `features/apelaciones/` o dividir la lógica reutilizable en un modelo puro en `core/models/` |
-| 2 | 🟡 Media | `captura-apelaciones/facades/busqueda.facade.ts` | El nombre `busqueda.facade.ts` existe también en `busqueda-apelaciones/facades/`. Genera ambigüedad en búsquedas globales del IDE y en imports | Renombrar a `captura-busqueda.facade.ts` en el módulo de captura |
-| 3 | 🟡 Media | `buscador-historico/facades/buscar.ts` | El archivo no sigue la convención obligatoria `*.facade.ts`, rompiendo la coherencia del proyecto | Renombrar a `buscar.facade.ts` |
-| 4 | 🟢 Baja | `shared/components/Action-siderbar/` | El nombre usa mayúscula inicial (`Action-`) y tiene un typo (`siderbar` en lugar de `sidebar`), rompiendo la convención `kebab-case` | Renombrar a `action-sidebar/` y actualizar todos los imports |
-
-### Reglas para evitar nueva deuda técnica
-
-- Todo archivo de fachada **debe** terminar en `.facade.ts`.
-- Todo archivo en `core/` **no debe** importar nada de `features/`.
-- Todo mapper **debe** vivir dentro del sub-módulo al que pertenece, no en `core/`.
-- Toda carpeta **debe** usar exclusivamente `kebab-case` sin mayúsculas.
-- Nombres de archivos dentro de un mismo módulo **no deben repetirse** en sub-módulos hermanos.
-
----
-
-*Documento generado para el proyecto SIJUDI — Tribunal Superior de Justicia.*  
-*Última revisión de arquitectura: Mayo 2026.*
+*Última revisión: Mayo 2026*

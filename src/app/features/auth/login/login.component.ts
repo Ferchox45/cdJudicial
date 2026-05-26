@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 
@@ -12,9 +11,8 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
-  // Inyección de dependencias moderna de Angular 21 (sin constructor)
+  // Inyección de dependencias (AuthService eliminado)
   private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
   private router = inject(Router);
 
   public loginForm: FormGroup;
@@ -22,7 +20,7 @@ export class LoginComponent {
   // Signals de estado
   public isLoading = signal<boolean>(false);
   public showPassword = signal<boolean>(false);
-  public errorMessage = signal<string | null>(null); // Para manejar errores de la API
+  public errorMessage = signal<string | null>(null);
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -36,40 +34,27 @@ export class LoginComponent {
     this.showPassword.update(value => !value);
   }
 
-onSubmit() {
-  if (this.loginForm.invalid) {
-    this.loginForm.markAllAsTouched();
-    return;
-  }
+  onSubmit() {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
 
-  this.isLoading.set(true);
-  this.errorMessage.set(null); // Limpiamos errores previos
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
 
-  const payload = {
-    usuario: this.loginForm.value.usuario,
-    contrasenia: this.loginForm.value.contrasena,
-    idSistema: 0
-  };
+    const { usuario, contrasena } = this.loginForm.value;
 
-  this.authService.login(payload).subscribe({
-    next: (response) => {
+    // Simulamos un retraso de red de 1.5 segundos para que se vea el spinner
+    setTimeout(() => {
       this.isLoading.set(false);
 
-      // Evaluamos la bandera success que manda tu API
-      if (response.success) {
+      // Validación estática (Puedes cambiar estas credenciales por las que prefieras)
+      if (usuario === 'admin' && contrasena === 'admin') {
         this.router.navigate(['/inicio']);
       } else {
-        this.errorMessage.set(response.message || 'Usuario o contraseña incorrectos.');
+        this.errorMessage.set('Usuario o contraseña incorrectos.');
       }
-    },
-    error: (err) => {
-      this.isLoading.set(false);
-      if (err.error && err.error.message) {
-        this.errorMessage.set(err.error.message);
-      } else {
-        this.errorMessage.set('Error de conexión con el servidor. Intente más tarde.');
-      }
-    }
-  });
-}
+    }, 1500);
+  }
 }

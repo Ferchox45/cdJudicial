@@ -5,8 +5,7 @@ import { BusquedaRapida,
   RelacionBusqueda,
 } from '../models/busqueda-rap.model';
 import { ApelacionFormValue, DelitoDisponible } from '../models/apelacion-aux.model';
-import { CatalogoItem } from '../models/catalogo-apelaciones.model';
-
+import { CatalogoItem } from '../../../../core/models/catalogo-global.model';
 
 /** Convierte string ISO → "YYYY-MM-DD" para inputs tipo date */
 export function toDateInput(isoString: string | null): string {

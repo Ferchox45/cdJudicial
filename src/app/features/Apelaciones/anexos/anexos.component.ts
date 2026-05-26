@@ -2,7 +2,7 @@ import { Component, OnInit, inject,  ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AnexoApiService } from './data/anexos.service';
-import { CatalogoItem} from '../../apelaciones/captura-apelaciones/models/catalogo-apelaciones.model';
+import { CatalogoItem } from '../../../core/models/catalogo-global.model';
 import { finalize } from 'rxjs/operators';
 import { Anexo } from './models/anexo.model';
 import { ApelacionContextService } from './data/apelacion-context.service';
