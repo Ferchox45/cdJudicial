@@ -3,8 +3,8 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CatalogoFacade } from '../../facades/catalogo.facade';
 import { BuscarFacade } from '../../facades/buscar.facade';
-import { searchFormHistorico } from '../../../../../core/models/buscadores';
 import { FormsModule } from '@angular/forms';
+import { searchFormHistorico } from '../../models/buscador-historico.model';
 @Component({
   selector: 'app-panel-busqueda-historico',
   standalone: true,

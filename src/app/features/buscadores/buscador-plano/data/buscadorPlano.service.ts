@@ -2,8 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
 import { map } from 'rxjs/internal/operators/map';
-import { ApiResponsePlana, PagedResultPlana, ResultadoBusquedaPlana } from '../models/buscadores';
-import { environment } from '../../../environments/environment.development';
+import { ApiResponsePlana, PagedResultPlana} from '../models/buscador-plano.model';
+import { environment } from '../../../../../environments/environment.development';
 
 
 @Injectable({ providedIn: 'root' })

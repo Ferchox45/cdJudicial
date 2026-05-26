@@ -1,7 +1,7 @@
 import { Component, inject, computed, output, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BusquedaEstadisticaFacade } from '../../facades/busquedaEstadistica.facade';
-import { TableRow, ChartSlice } from '../../../../../core/models/estadisticas';
+import { TableRow, ChartSlice } from '../../models/estadisticas';
 
 @Component({
   selector: 'app-tabla-anidada',

@@ -49,16 +49,6 @@ export interface PaginacionEstadistica {
   limit: number;
 }
 
-export interface FilaEstadisticaAnidada {
-  sala:          string;
-  anio:          string;
-  mes:           string;
-  nomenclatura:  string;
-  apelacion:     string;
-  tipoApelacion: string;
-  total:         number;
-}
-
 export interface ApiResponseAgrupada {
   status: string;
   message: string;

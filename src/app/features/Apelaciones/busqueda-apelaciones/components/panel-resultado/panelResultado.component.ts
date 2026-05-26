@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BusquedaFacade } from '../../facades/busqueda.facade';
 import { PanelDetalleComponent } from '../panel-detalle/panelDetalle.component';
-import { Resultado } from '../../../../../core/models/busqueda-profunda';
+import { Resultado } from '../../models/busqueda-profunda.model';
 import { PaginacionComponent } from '../../../../../shared/components/paginacion/paginacion.component';
 
 @Component({

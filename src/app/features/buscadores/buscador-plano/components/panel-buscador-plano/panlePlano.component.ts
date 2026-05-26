@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CatalogosFacade } from '../../../../apelaciones/busqueda-apelaciones/facades/catalogos.facade';
 import { BusquedaPlanaFacade } from '../../facades/busquedaPlana.facade';
-import { searchFormPlana } from '../../../../../core/models/buscadores';
+import { searchFormPlana } from '../../models/buscador-plano.model';
 
 @Component({
   selector: 'app-panel-busqueda-plano',

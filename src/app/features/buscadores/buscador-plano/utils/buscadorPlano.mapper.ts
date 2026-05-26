@@ -1,16 +1,4 @@
-import { searchFormPlana } from "../../../core/models/buscadores";
-
-export interface BusquedaPlanoDTO {
-  folioOficialia?: string;
-  folioApelacion?: string;
-  idSala?: number;
-  idApelacion?: number;
-  idNomenclatura?: number;
-  expedienteCausa?: string;
-  observacion?: string;
-  fechaInicio?: string;
-  fechaFin?: string;
-}
+import { searchFormPlana, BusquedaPlanoDTO } from "../models/buscador-plano.model";
 
 export class BusquedaPlanoMapper {
 static toDTO(form: searchFormPlana): BusquedaPlanoDTO {

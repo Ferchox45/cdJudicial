@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BusquedaProfService } from '../../../../core/services/busquedaprof.service';
+import { BusquedaProfService } from '../data/busquedaprof.service';
 import { CatalogoItem } from '../../captura-apelaciones/models/catalogo-apelaciones.model';
 
 // ─────────────────────────────────────────────────────────────────────────────

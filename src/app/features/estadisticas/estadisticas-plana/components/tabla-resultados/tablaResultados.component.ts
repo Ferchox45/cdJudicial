@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BusquedaEstadisticaFacade } from '../../facades/busquedaEstadistica.facade';
 import { PaginacionComponent } from '../../../../../shared/components/paginacion/paginacion.component';
-import { TablaColumna } from '../../../../../core/models/estadisticas';
+import { TablaColumna } from '../../models/estadisticas';
 @Component({
   selector: 'app-tabla-resultados',
   standalone: true,

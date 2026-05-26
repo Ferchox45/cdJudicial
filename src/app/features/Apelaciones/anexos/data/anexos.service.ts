@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, timeout, map } from 'rxjs';
 import { CacheService } from '../../../../core/services/cache.service';
-import { CapturaAnexoCatalogos } from '../../anexos/models/anexo';
+import { CapturaAnexoCatalogos } from '../models/anexo.model';
 import { environment } from '../../../../../environments/environment.development';
 
 export const CACHE_KEYS_ANEXO = {

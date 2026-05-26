@@ -4,10 +4,9 @@ import { Observable } from 'rxjs/internal/Observable';
 import { map } from 'rxjs/internal/operators/map';
 import { ResultadoBusquedaPlanaEstadistica, ApiResponseEstadisticas,
   searchFormPlanaEstadistica, PagedResult, ReporteAgrupado,
-  FilaEstadisticaAnidada, ApiResponseAgrupada} from '../models/estadisticas';
-import { BusquedaEstadisticaMapper } from '../../features/estadisticas/estadisticas-plana/estadisticasPlana.mapper';
-import { EstadisticaAnidadaMapper } from '../../features/estadisticas/estadisticas-plana/estadisticaAnidada.mapper';
-import { environment } from '../../../environments/environment.development';
+  ApiResponseAgrupada} from '../models/estadisticas';
+import { BusquedaEstadisticaMapper } from '../util/estadisticasPlana.mapper';
+import { environment } from '../../../../../environments/environment.development';
 @Injectable({ providedIn: 'root' })
 export class EstadisticaService {
 private http = inject(HttpClient);

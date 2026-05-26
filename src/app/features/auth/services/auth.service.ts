@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { LoginRequest, LoginResponse } from '../interfaces/auth.interface';
+import { LoginRequest, LoginResponse } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root' // Disponible globalmente o puedes limitarlo a la feature ruta

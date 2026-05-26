@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { DashboardLayoutComponent } from './features/dashboard/dashboardmain/dashboard.component';
+import { DashboardLayoutComponent } from './features/dashboard/components/dashboardmain/dashboard.component';
 import { anexosGuard } from './features/apelaciones/anexos/guards/anexos.guard';
 export const routes: Routes = [
   // 1. PRIMERA REGLA: Si la URL está completamente vacía, redirige al login obligatoriamente
@@ -22,7 +22,7 @@ export const routes: Routes = [
     children: [
       {
         path: 'inicio',
-        loadComponent: () => import('./features/dashboard/home/home.component').then(m => m.HomeComponent),
+        loadComponent: () => import('./features/dashboard/components/home/home.component').then(m => m.HomeComponent),
         data: { breadcrumb: 'Inicio' }
       },
 

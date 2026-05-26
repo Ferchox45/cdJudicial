@@ -1,4 +1,4 @@
-import { searchFormPlanaEstadistica } from "../../../core/models/estadisticas";
+import { searchFormPlanaEstadistica } from "../models/estadisticas";
 
 export interface BusquedaEstadisticaDTO{
   idSala?: number,

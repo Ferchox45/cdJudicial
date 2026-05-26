@@ -1,6 +1,6 @@
 import { Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BreadcrumbService } from '../../../core/services/breadcrumb.service';
+import { BreadcrumbService } from '../../data/breadcrumb.service';
 import { RouterModule } from '@angular/router';
 
 // 1. Creamos una interfaz para definir cómo se ve un elemento del breadcrumb

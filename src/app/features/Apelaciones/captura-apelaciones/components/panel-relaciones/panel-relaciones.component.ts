@@ -1,4 +1,4 @@
-import { DelitoDisponible } from './../../../../../core/models/apelacionAuxMapper';
+import { DelitoDisponible } from '../../models/apelacion-aux.model';
 import {
   ChangeDetectionStrategy,
   Component,

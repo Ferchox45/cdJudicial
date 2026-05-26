@@ -13,7 +13,7 @@ import { GuardarFacade} from './facades/guardar.facade';
 import { BusquedaFacade } from './facades/busqueda.facade';
 import { Router } from '@angular/router';
 import { buildNuevaParte, buildNuevaRelacion } from './utils/captura-apelaciones.mapper';
-import { DelitoDisponible } from '../../../core/models/apelacionAuxMapper';
+import { DelitoDisponible } from './models/apelacion-aux.model';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
 
 @Component({

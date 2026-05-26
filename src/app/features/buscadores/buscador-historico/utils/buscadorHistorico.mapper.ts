@@ -1,18 +1,6 @@
-import { searchFormHistorico } from "../../../core/models/buscadores";
+import { searchFormHistorico, BusquedaHistoricoDTO } from "../models/buscador-historico.model";
 
-export interface BusquedaHistoricoDTO {
-  expedienteCausa?: string;
-  toca?: string;
-  idSala?: number;
-  fechaRecepcionInicial?: string;
-  fechaRecepcionFinal?: string;
-  fechaApelacionInicial?: string;
-  fechaApelacionFinal?: string;
-  imputado?: string;
-  victima?: string;
-  delito?: string;
-  observacion?: string;
-}
+
 
 export class BusquedaHistoricoMapper {
 

@@ -1,6 +1,6 @@
 import { Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { searchFormPlanaEstadistica } from '../../../../../core/models/estadisticas';
+import { searchFormPlanaEstadistica } from '../../models/estadisticas';
 import { BusquedaEstadisticaFacade } from '../../facades/busquedaEstadistica.facade';
 import { CatalogosFacade } from '../../../../apelaciones/busqueda-apelaciones/facades/catalogos.facade';
 

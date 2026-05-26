@@ -6,7 +6,7 @@ import { BusquedaEstadisticaFacade } from './facades/busquedaEstadistica.facade'
 import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/Action-siderbar/action-siderbar.component';
 import { TablaAnidadaComponent } from './components/tabla-anidada/tablaAnidada.component';
 import { CatalogosFacade } from '../../apelaciones/busqueda-apelaciones/facades/catalogos.facade';
-import { TableRow, ChartSlice } from '../../../core/models/estadisticas';
+import { TableRow, ChartSlice } from './models/estadisticas';
 
 @Component({
   selector: 'app-estadisticas-plana',

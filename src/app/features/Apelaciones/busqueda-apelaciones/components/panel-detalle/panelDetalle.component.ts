@@ -1,6 +1,6 @@
 import { Component, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Resultado } from '../../../../../core/models/busqueda-profunda';
+import { Resultado } from '../../models/busqueda-profunda.model';
 
 @Component({
   selector:    'app-panel-detalle',

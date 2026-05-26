@@ -1,10 +1,10 @@
-import { ResultadoBusquedaPlana, searchFormPlana, PagedResultPlana } from "../../../../core/models/buscadores";
+import { ResultadoBusquedaPlana, searchFormPlana, PagedResultPlana } from "../models/buscador-plano.model";
 import { Injectable, inject, signal, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BuscadorPlanoService } from "../../../../core/services/buscadorPlano.service";
+import { BuscadorPlanoService } from "../data/buscadorPlano.service";
 import { ModalService } from '../../../../shared/components/modal-custom/services/modal.service';
 import { finalize } from 'rxjs';
-import { BusquedaPlanoMapper } from "../buscadorPlano.mapper";
+import { BusquedaPlanoMapper } from "../utils/buscadorPlano.mapper";
 
 export const FORM_VACIO = {
   folioOficialia: '',

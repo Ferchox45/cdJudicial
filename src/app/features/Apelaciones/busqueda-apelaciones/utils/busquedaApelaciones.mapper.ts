@@ -1,4 +1,4 @@
-import { SearchForm, BusquedaDTO } from '../../../core/models/busqueda-profunda';
+import { SearchForm, BusquedaDTO } from '../models/busqueda-profunda.model';
 
 export class BusquedaApelacionesMapper {
 

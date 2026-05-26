@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AnexoApiService } from './data/anexos.service';
 import { CatalogoItem} from '../../apelaciones/captura-apelaciones/models/catalogo-apelaciones.model';
 import { finalize } from 'rxjs/operators';
-import { Anexo } from './models/anexo';
+import { Anexo } from './models/anexo.model';
 import { ApelacionContextService } from './data/apelacion-context.service';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';

@@ -1,5 +1,5 @@
 import { Component, input, computed, ElementRef, viewChild, effect } from '@angular/core';
-import { ChartSlice } from '../../../../../core/models/estadisticas';
+import { ChartSlice } from '../../models/estadisticas';
 
 @Component({
   selector: 'app-grafica-totales',

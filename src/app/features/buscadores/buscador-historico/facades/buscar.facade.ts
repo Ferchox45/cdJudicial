@@ -1,9 +1,9 @@
 import { Injectable, inject, signal, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalService } from '../../../../shared/components/modal-custom/services/modal.service';
-import { ResultadoBusquedaHistorica, searchFormHistorico, PagedResultHistorico, PaginacionHistorico } from '../../../../core/models/buscadores';
-import { BuscadoresService } from '../../../../core/services/buscadorHistorico.service';
-import { BusquedaHistoricoMapper } from '../buscadorHistorico.mapper';
+import { ResultadoBusquedaHistorica, searchFormHistorico, PagedResultHistorico} from '../models/buscador-historico.model';
+import { BuscadoresService } from '../data/buscadorHistorico.service';
+import { BusquedaHistoricoMapper } from '../utils/buscadorHistorico.mapper';
 import { finalize } from 'rxjs';
 
 export const FORM_VACIO = {

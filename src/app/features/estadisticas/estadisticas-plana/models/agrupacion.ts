@@ -24,14 +24,6 @@ export const OPCIONES_AGRUPACION: OpcionAgrupacion[] = [
   { campo: 'anioRecep',     etiqueta: 'Año'                },
 ];
 
-export interface FilaTablaAgrupada {
-  tipo:      'dato' | 'subtotal';
-  etiqueta?: string;
-  valores:   Record<CampoAgrupacion, string | number | null>;
-  total:     number;
-  nivel:     number;
-}
-
 // estadisticas.model.ts
 export interface GrupoAgrupado {
   id:        string;           // clave única del grupo

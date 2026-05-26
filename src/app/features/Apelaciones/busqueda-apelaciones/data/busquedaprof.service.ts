@@ -1,11 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { ApiResponseBusqProf, Resultado } from './../models/busqueda-profunda';
-import { CacheService } from './cache.service';
-import { environment } from '../../../environments/environment.development';
-import { PagedResultProf, CatalogoBusqueda } from '../models/busqueda-profunda';
-import { CACHE_KEYS_APELACION } from '../../features/apelaciones/captura-apelaciones/data/captura-apelacion.service';
+import { ApiResponseBusqProf} from '../models/busqueda-profunda.model';
+import { CacheService } from '../../../../core/services/cache.service';
+import { environment } from '../../../../../environments/environment.development';
+import { PagedResultProf, CatalogoBusqueda } from '../models/busqueda-profunda.model';
+import { CACHE_KEYS_APELACION } from '../../captura-apelaciones/data/captura-apelacion.service';
 
 @Injectable({ providedIn: 'root' })
 export class BusquedaProfService {

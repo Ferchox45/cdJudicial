@@ -1,6 +1,6 @@
 // estadisticasAnidada.mapper.ts
-import { ResultadoBusquedaPlanaEstadistica } from '../../../core/models/estadisticas';
-import { CampoAgrupacion, FilaTablaAgrupada, GrupoAgrupado, FilaDato } from '../../../core/models/agrupacion';
+import { ResultadoBusquedaPlanaEstadistica } from '../models/estadisticas';
+import { CampoAgrupacion, GrupoAgrupado, FilaDato } from '../models/agrupacion';
 
 export class EstadisticaAnidadaMapper {
 

@@ -4,7 +4,7 @@ import { BusquedaRapida,
   ParteBusqueda,
   RelacionBusqueda,
 } from '../models/busqueda-rap.model';
-import { ApelacionFormValue, DelitoDisponible } from '../../../../core/models/apelacionAuxMapper';
+import { ApelacionFormValue, DelitoDisponible } from '../models/apelacion-aux.model';
 import { CatalogoItem } from '../models/catalogo-apelaciones.model';
 
 

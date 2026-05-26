@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { Subject, switchMap, tap, takeUntil, of } from 'rxjs';  // añadir imports
 import { CapturaApelacionCatalogos, CatalogoItem } from '../models/catalogo-apelaciones.model';
 import { mapearDelitosDisponibles } from '../utils/captura-apelaciones.mapper';
-import { DelitoDisponible } from '../../../../core/models/apelacionAuxMapper';
+import { DelitoDisponible } from '../models/apelacion-aux.model';
 import { ApelacionApiService } from '../data/captura-apelacion.service';
 
 @Injectable()

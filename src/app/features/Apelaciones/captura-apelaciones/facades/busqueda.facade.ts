@@ -9,7 +9,7 @@ import {
   toDateInput,
 } from '../utils/captura-apelaciones.mapper';
 
-import { DelitoDisponible } from '../../../../core/models/apelacionAuxMapper';
+import { DelitoDisponible } from '../models/apelacion-aux.model';
 
 const CAMPOS_BUSQUEDA = [
   'materiaId', 'apelacionId', 'tipoApelacionId', 'tipoEscritoId',

@@ -1,9 +1,9 @@
 import { Injectable, inject, signal, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
-import { BusquedaProfService } from '../../../../core/services/busquedaprof.service';
-import { PagedResultProf, Resultado, SearchForm } from '../../../../core/models/busqueda-profunda';
-import { BusquedaApelacionesMapper } from '../busquedaApelaciones.mapper';
+import { BusquedaProfService } from '../data/busquedaprof.service';
+import { PagedResultProf, Resultado, SearchForm } from '../models/busqueda-profunda.model';
+import { BusquedaApelacionesMapper } from '../utils/busquedaApelaciones.mapper';
 import { ModalService } from '../../../../shared/components/modal-custom/services/modal.service';
 
 export const FORM_VACIO: SearchForm = {

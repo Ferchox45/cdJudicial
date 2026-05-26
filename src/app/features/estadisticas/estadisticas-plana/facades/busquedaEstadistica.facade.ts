@@ -1,15 +1,12 @@
-import { inject, Injectable, signal, computed, DestroyRef, effect } from "@angular/core";
+import { inject, Injectable, signal, computed, DestroyRef } from "@angular/core";
 import { ModalService } from "../../../../shared/components/modal-custom/services/modal.service";
-import { searchFormPlanaEstadistica, PagedResult, ReporteAgrupado, ChartSlice } from "../../../../core/models/estadisticas";
-import { EstadisticaService, } from "../../../../core/services/estadisticas.service";
-import { ResultadoBusquedaPlanaEstadistica, FilaEstadisticaAnidada } from "../../../../core/models/estadisticas";
-import { BusquedaEstadisticaMapper } from "../estadisticasPlana.mapper";
-import { EstadisticaAnidadaMapper } from "../estadisticaAnidada.mapper";
-import { CampoAgrupacion, FilaTablaAgrupada,
-  OPCIONES_AGRUPACION, OpcionAgrupacion, GrupoAgrupado
- } from "../../../../core/models/agrupacion";
+import { searchFormPlanaEstadistica, PagedResult, ReporteAgrupado, ChartSlice } from "../models/estadisticas";
+import { EstadisticaService, } from "../data/estadisticas.service";
+import { ResultadoBusquedaPlanaEstadistica } from "../models/estadisticas";
+import { BusquedaEstadisticaMapper } from "../util/estadisticasPlana.mapper";
+import { CampoAgrupacion, OPCIONES_AGRUPACION, GrupoAgrupado } from "../models/agrupacion";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { finalize, switchMap, tap } from 'rxjs';
+import { finalize } from 'rxjs';
 
 export const FORM_VACIO: searchFormPlanaEstadistica = {
   idSala: '',
