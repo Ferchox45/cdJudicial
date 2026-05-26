@@ -5,7 +5,7 @@ import { Observable, timeout, map } from 'rxjs';
 import { CacheService } from '../../../../core/services/cache.service';
 import { CapturaApelacionCatalogos } from '../models/catalogo-apelaciones.model';
 import { BusquedaRapida } from '../models/busqueda-rap.model';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 
 export const CACHE_KEYS_APELACION = {
   CAPTURA: 'catalogos_captura',

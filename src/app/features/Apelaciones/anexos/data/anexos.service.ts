@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, timeout, map } from 'rxjs';
 import { CacheService } from '../../../../core/services/cache.service';
 import { CapturaAnexoCatalogos } from '../models/anexo.model';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 
 export const CACHE_KEYS_ANEXO = {
   ANEXO: 'catalogos_anexo',

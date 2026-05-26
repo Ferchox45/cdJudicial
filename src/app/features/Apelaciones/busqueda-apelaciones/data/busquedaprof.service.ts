@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { ApiResponseBusqProf} from '../models/busqueda-profunda.model';
 import { CacheService } from '../../../../core/services/cache.service';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 import { PagedResultProf, CatalogoBusqueda } from '../models/busqueda-profunda.model';
 import { CACHE_KEYS_APELACION } from '../../captura-apelaciones/data/captura-apelacion.service';
 

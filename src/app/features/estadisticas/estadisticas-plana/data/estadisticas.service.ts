@@ -6,7 +6,7 @@ import { ResultadoBusquedaPlanaEstadistica, ApiResponseEstadisticas,
   searchFormPlanaEstadistica, PagedResult, ReporteAgrupado,
   ApiResponseAgrupada} from '../models/estadisticas';
 import { BusquedaEstadisticaMapper } from '../util/estadisticasPlana.mapper';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class EstadisticaService {
 private http = inject(HttpClient);
