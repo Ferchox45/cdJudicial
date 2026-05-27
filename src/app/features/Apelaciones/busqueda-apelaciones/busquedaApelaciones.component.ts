@@ -26,10 +26,10 @@ export class BusquedaApelacionesComponent implements OnInit {
   // ── Sidebar ──────────────────────────────────────────────────────────────────
   get sidebarActions(): SidebarAction[] {
     const buscando   = this.busquedaFacade.buscando();
-    const exportando = this.busquedaFacade.exportando();  // solo Excel/CSV
-    const generando  = this.busquedaFacade.generando();   // solo PDF/Reporte
+    const exportando = this.busquedaFacade.exportando();
+    const generando  = this.busquedaFacade.generando();
 
-    const ocupado = buscando || exportando || generando;  // bloqueo global
+    const ocupado = buscando || exportando || generando;
 
     return [
       {
@@ -63,7 +63,6 @@ export class BusquedaApelacionesComponent implements OnInit {
     ];
   }
 
-  // ── Lifecycle ────────────────────────────────────────────────────────────────
   ngOnInit(): void {
     this.catalogosFacade.cargar();
   }

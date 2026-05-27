@@ -1,6 +1,6 @@
 <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
 
-  <!-- ── Cabecera colapsable ──────────────────────────────────────────── -->
+  <!-- ── Cabecera colapsable -->
   <div class="bg-forest px-5 py-3.5 flex items-center justify-between cursor-pointer select-none border-b border-forest/20"
     (click)="toggle()">
     <div class="flex items-center gap-2.5 text-white">
@@ -20,7 +20,7 @@
   @if (abierto) {
     <div class="p-4 md:p-6 flex flex-col gap-6 md:gap-10">
 
-      <!-- ── 1. DATOS DE APELACIÓN ──────────────────────────────────────── -->
+      <!-- ── 1. DATOS DE APELACIÓN -->
       <section>
         <div class="flex items-center gap-2 mb-2">
           <span class="text-bronze flex">
@@ -150,7 +150,7 @@
         </div>
       </section>
 
-          <!-- ── Fecha de Recepción ──────────────────────────────────────────── -->
+          <!-- Fecha de Recepción -->
       <section>
         <div class="flex items-center gap-2 mb-2">
           <span class="text-bronze flex">
@@ -163,7 +163,6 @@
         </div>
         <hr class="mb-4 md:mb-5 opacity-40 border-t-2 border-solid border-bronze"/>
 
-        <!-- 1 col móvil → 2 en sm en adelante -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
           <div class="flex flex-col gap-1.5">
             <label for="fechaInicial" class="text-xs font-bold text-gray-700">Fecha Inicial</label>

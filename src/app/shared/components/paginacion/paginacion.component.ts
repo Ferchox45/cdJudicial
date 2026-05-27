@@ -10,17 +10,17 @@ import { CommonModule } from '@angular/common';
 })
 export class PaginacionComponent {
 
-  // ── Inputs ────────────────────────────────────────────────────────────
+  // ── Inputs
   paginaActual    = input.required<number>();
   totalPaginas    = input.required<number>();
   totalResultados = input.required<number>();
   porPagina       = input.required<number>();
 
-  // ── Outputs ───────────────────────────────────────────────────────────
+  // ── Outputs
   paginaCambio  = output<number>();
   limitCambio   = output<number>();
 
-  // ── Computed ──────────────────────────────────────────────────────────
+  // ── Computed
   readonly paginasVisibles = computed<(number | '...')[]>(() => {
     const total  = this.totalPaginas();
     const actual = this.paginaActual();

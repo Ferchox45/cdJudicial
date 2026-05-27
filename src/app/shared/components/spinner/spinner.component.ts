@@ -11,7 +11,6 @@ export type SpinnerColor = 'white' | 'emerald' | 'forest' | 'gray' | 'current';
   templateUrl: './spinner.component.html',
 })
 export class SpinnerComponent {
-  /** Tamaño del spinner: xs=12px, sm=16px, md=20px, lg=24px, xl=32px */
   @Input() size: SpinnerSize = 'sm';
 
   /** Color del trazo */

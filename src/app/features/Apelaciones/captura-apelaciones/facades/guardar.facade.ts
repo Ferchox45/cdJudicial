@@ -16,7 +16,7 @@ export class GuardarFacade {
 
   guardando = false;
 
-  // ── Callbacks ──────────────────────────────────────────────
+  // Callbacks
   onExito?:    () => void;
   onTerminar?: () => void;
   onError?:    (msg: string) => void;

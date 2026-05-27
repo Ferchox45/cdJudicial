@@ -13,7 +13,7 @@ export class CatalogosFacade {
   private apelacionService = inject(ApelacionApiService);
   private destroy$ = new Subject<void>();
 
-  // ── Estado público ─────────────────────────────────────────
+  // Estado público
   materias:         CatalogoItem[] = [];
   apelaciones:      CatalogoItem[] = [];
   tiposApelaciones: CatalogoItem[] = [];
@@ -36,7 +36,7 @@ export class CatalogosFacade {
   onDelitosLisros?: (delitos: DelitoDisponible[]) => void;
   onError?:        (msg: string) => void;
 
-  // ── Carga principal de catálogos ───────────────────────────
+  // Carga principal de catálogos
   cargar(form: FormGroup, materia: string): void {
     this.cargando   = true;
     this.error      = null;
@@ -67,7 +67,7 @@ export class CatalogosFacade {
     });
   }
 
-  // ── Carga las localidades del municipio seleccionado ─────────
+  // Carga las localidades del municipio seleccionado
 escucharMunicipio(form: FormGroup, markForCheck?: () => void): void {
   form.get('municipioId')?.valueChanges
     .pipe(
@@ -97,7 +97,7 @@ escucharMunicipio(form: FormGroup, markForCheck?: () => void): void {
     });
 }
 
-  // ──Limpieza del facade ─────────────────────────────
+  // Limpieza del facade
   destruir(): void {
     this.destroy$.next();
     this.destroy$.complete();

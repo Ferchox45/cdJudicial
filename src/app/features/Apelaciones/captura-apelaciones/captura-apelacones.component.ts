@@ -30,7 +30,7 @@ import { ModalService } from '../../../shared/components/modal-custom/services/m
 })
 export class CapturaApelacionesComponent implements OnInit, OnDestroy {
 
-  // ── Facades ────────────────────────────────────────────────
+  // ── Facades
   cat = inject(CatalogosFacade);
   bus = inject(BusquedaFacade);
   grd = inject(GuardarFacade);
@@ -39,7 +39,7 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private modal = inject(ModalService);
 
-  // ── UI ─────────────────────────────────────────────────────
+  // ── UI
   identificacionOpen = true;
   partesOpen         = true;
   datosGeneralesOpen = true;
@@ -47,16 +47,16 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   activeTab: 'partes' | 'relaciones' = 'partes';
   fechaActual = new Date();
 
-  // ── Modales ────────────────────────────────────────────────
+  // ── Modales
   mostrarModalAnexos = signal(false);
   folioGuardado      = signal('');
   salaGuardada       = signal('');
 
-  // ── Formularios ────────────────────────────────────────────
+  // ── Formularios
   form!:      FormGroup;
   parteForm!: FormGroup;
 
-  // ── Estado de partes / relaciones ──────────────────────────
+  // ── Estado de partes / relaciones
   partes:     Parte[]            = [];
   relaciones: RelacionBusqueda[] = [];
   delitosDisponibles: DelitoDisponible[] = [];
@@ -68,8 +68,7 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   // Señal para el spinner al momento de guardar
   guardando = signal(false);
 
-  // ── Sidebar ────────────────────────────────────────────────
-// ── Sidebar ────────────────────────────────────────────────
+// ── Sidebar
   get sidebarActions(): SidebarAction[] {
     const isSaving = this.guardando();
     return [
@@ -82,7 +81,7 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
 
   private intervalId?: ReturnType<typeof setInterval>;
 
-  // ── Getters ────────────────────────────────────────────────
+  // Getters
   get esIndigena(): boolean {
     const id = this.form.get('materiaId')?.value;
     const desc = this.cat.materias.find(m => m.id === id)?.descripcion ?? '';
@@ -95,7 +94,7 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
     return q ? this.delitosDisponibles.filter(d => d.delito.toLowerCase().includes(q)) : this.delitosDisponibles;
   }
 
-  // ── Lifecycle ──────────────────────────────────────────────
+  // Lifecycle
   ngOnInit(): void {
     this.buildForm();
     this.wireCallbacks();
@@ -111,7 +110,7 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void { clearInterval(this.intervalId); }
 
-  // ── Callbacks de facades ───────────────────────────────────
+  // Callbacks de facades
 private wireCallbacks(): void {
   this.cat.onDelitosLisros = (d) => { this.delitosDisponibles = d; this.cdr.detectChanges(); };
   this.cat.onError = (m) => this.modal.error('Error', m);
@@ -124,25 +123,25 @@ private wireCallbacks(): void {
   this.bus.onNuevo = () => this.limpiarEstadoCaptura();
 
   this.grd.onExito    = () =>{
-    this.guardando.set(false); // <-- APAGAR AL TENER ÉXITO
+    this.guardando.set(false);
     this.mostrarModalAnexos.set(true)
     const materiaActual = this.esIndigena ? 'indigena' : 'penal';
     this.actualizarFolioTentativo(materiaActual);
   };
 
   this.grd.onTerminar = () => {
-    this.guardando.set(false); // <-- APAGAR AL TERMINAR
+    this.guardando.set(false);
     this.limpiarEstadoCaptura();
     this.actualizarFolioTentativo('penal');
   };
 
   this.grd.onError    = (m) => {
-    this.guardando.set(false); // <-- APAGAR SI HAY ERROR DE SERVIDOR
+    this.guardando.set(false);
     this.modal.error('Error', m);
   };
 }
 
-  // ── Formulario ─────────────────────────────────────────────
+  // Formulario
   private buildForm(): void {
     this.form = this.fb.group({
       busquedaRapida:      [''],
@@ -163,19 +162,17 @@ private wireCallbacks(): void {
     });
   }
 
-  // ── Acciones sidebar ───────────────────────────────────────
-// ── Acciones sidebar ───────────────────────────────────────
+// Acciones sidebar
   handleAction(id: string): void {
     const actions: Record<string, () => void> = {
       nuevo:   () => { this.bus.resetNuevo(this.form); this.form.reset(); },
       guardar: () => {
-        this.guardando.set(true); // 1. ENCIENDE EL SPINNER
-
+        this.guardando.set(true);
         this.grd.guardar(
           this.form, this.relaciones, this.partes,
           this.cat.sexos, this.cat.tiposPartes, this.folioGuardado, this.salaGuardada,
           () => {
-            this.guardando.set(false); // 2. APAGA EL SPINNER si el formulario era inválido y no llegó al backend
+            this.guardando.set(false);
             this.modal.info('Advertencia', 'Por favor, complete los campos obligatorios.');
           }
         );
@@ -185,7 +182,7 @@ private wireCallbacks(): void {
     actions[id]?.();
   }
 
-  // ── Partes ─────────────────────────────────────────────────
+  // ── Partes
   agregarParte(): void {
     this.parteForm.reset({ nombre: '', sexo: '', tipoParte: '', direccion: '', esMenor: false });
     this.mostrarFormParte = true;
@@ -197,7 +194,7 @@ private wireCallbacks(): void {
     this.cdr.detectChanges();
   }
 
-  // ── Relaciones ─────────────────────────────────────────────
+  // ── Relaciones
   agregarRelacionDesdePanel(): void {
     if (!this.procesadoSeleccionado || !this.ofendidoSeleccionado) return;
     this.relaciones = [...this.relaciones, buildNuevaRelacion(
@@ -223,7 +220,7 @@ private wireCallbacks(): void {
   seleccionarProcesado(p: Parte): void { this.procesadoSeleccionado = this.procesadoSeleccionado?.id === p.id ? null : p; this.cdr.detectChanges(); }
   seleccionarOfendido(p: Parte):  void { this.ofendidoSeleccionado  = this.ofendidoSeleccionado?.id  === p.id ? null : p; this.cdr.detectChanges(); }
 
-  // ── Limpieza de estado post-guardado / nuevo ───────────────
+  // Limpieza de estado post-guardado
   private limpiarEstadoCaptura(): void {
     this.partes                = [];
     this.relaciones            = [];

@@ -1,6 +1,6 @@
 <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
 
-  <!-- ── Cabecera colapsable ──────────────────────────────────────────── -->
+  <!-- Cabecera colapsable -->
   <div class="bg-forest px-5 py-3.5 flex items-center justify-between cursor-pointer select-none border-b border-forest/20"
     (click)="toggle()">
     <div class="flex items-center gap-2.5 text-white">
@@ -20,7 +20,6 @@
 
   @if (abierto) {
         <div class="w-full overflow-x-auto">
-  <!-- Nota: Si min-w-275 no es una clase personalizada en tu tailwind.config.js, puedes usar min-w-[275px] o min-w-max -->
   <table class="w-full border-collapse text-center min-w-68.75">
     <thead>
       <tr class="bg-sand border-b border-gray-200">
@@ -80,7 +79,6 @@
         <!-- Estado vacío -->
                   <tr *ngIf="busquedaPlanaFacade.resultados().length === 0 && !busquedaPlanaFacade.buscando()">
 
-          <!-- Cambiado a colspan="9" porque solo hay 9 columnas en el thead -->
           <td colspan="9" class="px-5 py-10 text-center text-gray-400 italic text-sm">
             No se encontraron resultados. Ajuste los filtros e intente de nuevo.
           </td>

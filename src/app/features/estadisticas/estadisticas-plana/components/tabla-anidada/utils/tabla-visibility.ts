@@ -46,7 +46,7 @@ export function applyVisibility(rows: TableRowRich[], collapsed: Set<string>): T
   return rows;
 }
 
-// ── Helpers privados ──────────────────────────────────────────────────────────
+// ── Helpers privados
 
 function _isOculto(row: TableRowRich, p: Punteros): boolean {
   if (p.cSala?.salaColapsado && row !== p.cSala) return true;

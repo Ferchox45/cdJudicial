@@ -17,7 +17,7 @@ import { CatalogoItem } from '../../../../../core/models/catalogo-global.model';
   templateUrl: "./panel.partes.component.html",
 })
 export class PanelPartesComponent {
-  // ── Inputs ────────────────────────────────────────────────
+
   @Input() partes: Parte[] = [];
   @Input() parteForm!: FormGroup;
   @Input() mostrarFormParte = false;
@@ -25,7 +25,6 @@ export class PanelPartesComponent {
   @Input() tiposPartes: CatalogoItem[] = [];
   @Input() bloquearBtn = true;
 
-  // ── Outputs ───────────────────────────────────────────────
   @Output() toggleMenorEvt    = new EventEmitter<Parte>();
   @Output() seleccionarEvt    = new EventEmitter<Parte>();
   @Output() agregarParteEvt   = new EventEmitter<void>();

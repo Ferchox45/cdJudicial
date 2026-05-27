@@ -4,13 +4,13 @@ import { Observable, of, tap, shareReplay, catchError } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class CacheService {
   private memCache = new Map<string, Observable<any>>();
-  private readonly CACHE_TTL = 1000 * 60 * 30; // 30 minutos
+  private readonly CACHE_TTL = 1000 * 60 * 30;
 
   manejarCache<T>(key: string, httpCall$: Observable<T>): Observable<T> {
-    // 1. Memoria (Acceso ultra rápido)
+    // Memoria
     if (this.memCache.has(key)) return this.memCache.get(key)!;
 
-    // 2. Storage (Persistencia al recargar)
+    // Storage (Persistencia al recargar)
     const cachedData = this.getFromStorage<T>(key);
     if (cachedData) {
       const obs$ = of(cachedData).pipe(shareReplay(1));
@@ -18,7 +18,7 @@ export class CacheService {
       return obs$;
     }
 
-    // 3. HTTP (Si no hay nada)
+    // HTTP
     const request$ = httpCall$.pipe(
       tap(data => this.saveToStorage(key, data)),
       shareReplay(1),

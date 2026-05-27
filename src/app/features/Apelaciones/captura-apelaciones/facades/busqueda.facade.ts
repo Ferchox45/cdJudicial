@@ -29,13 +29,13 @@ export class BusquedaFacade {
 
   private apelacionService = inject(ApelacionApiService);
 
-  // ── Estado público ─────────────────────────────────────────
+  // Estado público
   buscando        = false;
   busquedaExitosa = false;
   bloquearBtn     = true;
   bloquearSeccion = false;
 
-  // ── Callbacks para notificar al padre ──────────────────────
+  // Callbacks para notificar al padre
   onExito?:  (resultado: ResultadoBusqueda) => void;
   onError?:  (msg: string) => void;
   onNuevo?:  () => void;

@@ -4,7 +4,7 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root'
 })
 export class ApelacionContextService {
-  // Inicializamos los signals para almacenar el ID y el Folio
+  // Se inicializan los signals para almacenar el ID y el Folio
   apelacionId = signal<number | null>(null);
   folioOficialia = signal<string | null>(null);
   sala = signal<string | null>(null);
@@ -16,7 +16,7 @@ export class ApelacionContextService {
     this.sala.set(sala);
   }
 
-  // Útil para limpiar la memoria cuando termines de subir los anexos
+  // Limpia la memoria cuando se acaban de subir los anezos
   limpiarContexto() {
     this.apelacionId.set(null);
     this.folioOficialia.set(null);

@@ -6,11 +6,11 @@ export const anexosGuard: CanActivateFn = (route, state) => {
   const contextService = inject(ApelacionContextService);
   const router = inject(Router);
 
-  // Verificamos si ya tenemos un ID de apelación guardado en tu Signal
+  // Verifica si ya tiene guardado un ID de apelacion en el Signal
   if (contextService.apelacionId() !== null) {
     return true; // Puede pasar a la pantalla de anexos
   } else {
-    // No hay ID, lo regresamos al formulario principal
+    // Si no hay ID se regresa a la pantalla principal
     return router.parseUrl('/capturaApelacion');
   }
 };

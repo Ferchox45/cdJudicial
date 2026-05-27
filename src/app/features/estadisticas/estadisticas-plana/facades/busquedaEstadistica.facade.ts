@@ -27,7 +27,7 @@ export class BusquedaEstadisticaFacade {
   readonly dataJerarquica = signal<ReporteAgrupado[]>([]);
 
 
-  // ── Estado ────────────────────────────────────────────────────────────
+  // ── Estado
   readonly buscando      = signal(false);
   readonly exportando    = signal(false);
   readonly form          = signal<searchFormPlanaEstadistica>({ ...FORM_VACIO });
@@ -98,7 +98,7 @@ private busquedaAgrupada(): void {
 etiquetaCampo(campo: CampoAgrupacion): string {
   return OPCIONES_AGRUPACION.find(o => o.campo === campo)?.etiqueta ?? campo;
 }
-  // ── Acciones públicas ─────────────────────────────────────────────────
+  // ── Acciones públicas
   buscarEstadistica(): void {
     if (!BusquedaEstadisticaMapper.tieneCriterios(this.form())) {
       this.modal.info('Criterios requeridos', 'Debes ingresar al menos un criterio de búsqueda.');
@@ -108,7 +108,7 @@ etiquetaCampo(campo: CampoAgrupacion): string {
     this._ejecutarBusqueda(1, true);
     this.busquedaAgrupada();
   }
-  // ── Privados ──────────────────────────────────────────────────────────
+  // ── Privados
   private _limpiarCache(): void {
     this._cache.clear();
     this._paginacion.update(p => ({ ...p, total: 0, page: 1 }));

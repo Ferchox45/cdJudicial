@@ -1,7 +1,7 @@
 export interface LoginRequest {
   usuario: string;
   contrasenia: string;
-  idSistema: number; // Modifica el tipo (number o string) según lo requiera tu API
+  idSistema: number;
 }
 
 export interface LoginResponse {

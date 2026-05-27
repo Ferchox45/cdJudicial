@@ -1,7 +1,7 @@
 import { ChartSlice } from '../../../models/estadisticas';
 import { getChartColor } from './grafica-colors';
 
-// ── Dona visible en pantalla ──────────────────────────────────────────────────
+// ── Dona visible en pantalla
 
 export function drawDona(canvas: HTMLCanvasElement, slices: ChartSlice[]): void {
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -51,7 +51,7 @@ export function drawDona(canvas: HTMLCanvasElement, slices: ChartSlice[]): void 
   ctx.fillText('Total', cx, cy + 14);
 }
 
-// ── Imagen completa para Excel (offscreen) ────────────────────────────────────
+// ── Imagen completa para Excel (offscreen)
 
 export async function getDonaImageBase64(
   slices: ChartSlice[],
@@ -76,7 +76,7 @@ export async function getDonaImageBase64(
   return cvs.toDataURL('image/png');
 }
 
-// ── Helpers privados del offscreen ───────────────────────────────────────────
+// ── Helpers privados del offscreen
 
 function _drawBackground(ctx: CanvasRenderingContext2D, W: number, H: number): void {
   ctx.fillStyle = '#ffffff';

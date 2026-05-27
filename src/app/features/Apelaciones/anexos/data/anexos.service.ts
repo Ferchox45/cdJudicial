@@ -28,7 +28,7 @@ export class AnexoApiService {
     return this.cache.manejarCache(CACHE_KEYS_ANEXO.ANEXO, call$);
   }
 
-  // ── Métodos sin Caché ────────────────────────────────────────
+  // ── Manda la peticion al servicor para guardar los anezos
 
   guardarAnexos(payload: any): Observable<any> {
     return this.http

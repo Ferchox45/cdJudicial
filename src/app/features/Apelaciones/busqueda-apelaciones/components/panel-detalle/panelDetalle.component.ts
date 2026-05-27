@@ -10,7 +10,7 @@ import { Resultado } from '../../models/busqueda-profunda.model';
 })
 export class PanelDetalleComponent {
 
-  /** Fila actualmente seleccionada en la tabla de resultados. */
+  //Fila seleccionada en la tabla de Resultados
   readonly fila = input.required<Resultado>();
 
   readonly tabActiva = signal<'partes' | 'anexos'>('partes');

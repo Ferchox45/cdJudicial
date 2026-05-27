@@ -54,7 +54,7 @@ buscarHistorico(
 
     return this.http.get(`${this.apiEndpoint}/api/busquedas/historico/exportar-excel`, {
       params: params,
-      responseType: 'blob' // ¡Crucial para poder descargar el archivo correctamente!
+      responseType: 'blob'
     });
   }
 
@@ -74,7 +74,7 @@ buscarHistorico(
 
     return this.http.get(`${this.apiEndpoint}/api/busquedas/historico/exportar-pdf`, {
       params: params,
-      responseType: 'blob' // ¡Crucial para poder descargar el archivo correctamente!
+      responseType: 'blob'
     });
   }
 }

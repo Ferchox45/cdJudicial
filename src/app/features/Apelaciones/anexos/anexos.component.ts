@@ -37,7 +37,6 @@ export class AnexosComponent implements OnInit {
   tiposAnexo:  CatalogoItem[] = [];
   anexos:      Anexo[]        = [];
 
-  // ── Nuevo anexo (modelo del formulario) ────────────────────
   nuevoAnexo = {
     idAnexo:    null,
     tipo:       '',
@@ -47,7 +46,7 @@ export class AnexosComponent implements OnInit {
     otroAnexo:  '',
   };
 
-  // ── Detecta si el tipo seleccionado es "OTRO" ──────────────
+  // ── Detecta si el tipo seleccionado es "OTRO"
   get esOtro(): boolean {
     return this.nuevoAnexo.idAnexo === -1;
   }
@@ -58,15 +57,14 @@ export class AnexosComponent implements OnInit {
     this.sala = this.contextoService.sala();
     if (!this.idApelacion) {
       this.modalService.error('Error', 'No hay una apelación activa en memoria. Por favor, inicie desde la captura.');
-      // Opcional: regresarlo a la pantalla anterior después de 3 segundos
       setTimeout(() => this.onBack(), 3000);
       return;
     }
-    // 3. Si todo está bien, cargamos los catálogos
+    // Si todo está bien, cargamos los catálogos
     this.cargarAnexos();
   }
 
-  // ── Carga catálogo ─────────────────────────────────────────
+  // ── Carga los catalogos ─────────────────────────────────────────
 cargarAnexos(): void {
     this.cargando = true;
     this.error    = null;
@@ -76,13 +74,13 @@ cargarAnexos(): void {
         console.log('Tipos de anexo cargados:', data.anexo);
         this.tiposAnexo = data.anexo;
         this.cargando   = false;
-        this.cdr.detectChanges();  // ← fuerza actualización
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('❌ Error:', err);
         this.error    = 'No se pudieron cargar los tipos de anexo.';
         this.cargando = false;
-        this.cdr.detectChanges();  // ← también aquí
+        this.cdr.detectChanges();
         setTimeout(() => {
           this.apelacionService.invalidarAnexos();
           this.cargarAnexos();
@@ -111,7 +109,7 @@ agregarAnexo(): void {
       return;
     }
 
-    // Validación extra: Si es "Otro", el campo no puede estar vacío
+    // Si es "Otro", el campo no puede estar vacío
     if (this.esOtro && (!this.nuevoAnexo.otroAnexo || this.nuevoAnexo.otroAnexo.trim() === '')) {
       this.modalService.error('Error', 'Debes especificar el nombre del nuevo anexo.');
       return;
@@ -120,7 +118,6 @@ agregarAnexo(): void {
     const anexo: Anexo = {
       idAnexo:   this.nuevoAnexo.idAnexo,
       cantidad:  this.nuevoAnexo.cantidad,
-      // Guardamos el texto escrito por el usuario en 'tipo' para que se vea bonito en la tabla
       tipo:      this.esOtro ? this.nuevoAnexo.otroAnexo.trim() : this.nuevoAnexo.tipo,
       esValor:   this.nuevoAnexo.tieneMonto,
       monto:     this.nuevoAnexo.tieneMonto ? this.nuevoAnexo.monto : null,
@@ -144,7 +141,6 @@ agregarAnexo(): void {
     this.anexos.splice(index, 1);
   }
 
-  // ── Guarda todos los anexos en el backend ──────────────────
 // ── Guarda todos los anexos en el backend ──────────────────
   guardar(): void {
     if (!this.idApelacion) {
@@ -159,7 +155,7 @@ agregarAnexo(): void {
     const payload = {
       idApelacion: this.idApelacion,
       anexos: this.anexos.map(a => {
-        // 1. Creamos la estructura base (sin 'otroAnexo')
+        // Creamos la estructura base
         const anexoFormateado: any = {
           idAnexo:   a.idAnexo,
           cantidad:  a.cantidad,
@@ -167,7 +163,7 @@ agregarAnexo(): void {
           monto:     a.esValor ? a.monto : null
         };
 
-        // 2. Si el idAnexo es -1, le inyectamos la propiedad 'otroAnexo'
+        // Si el idAnexo es -1, le inyectamos la propiedad 'otroAnexo'
         if (a.idAnexo === -1) {
           anexoFormateado.otroAnexo = a.otroAnexo;
         }

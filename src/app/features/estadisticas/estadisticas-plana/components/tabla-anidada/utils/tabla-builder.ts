@@ -1,6 +1,6 @@
 import { ChartSlice, TableRowRich } from '../../../models/estadisticas';
 
-// ── Tipos internos para la estructura jerárquica del facade ───────────────────
+// ── Tipos internos para la estructura jerárquica del facade
 
 interface TipoData   { total: number; }
 interface ApeData    { total: number; tipos: Record<string, TipoData>; }
@@ -9,7 +9,7 @@ interface MesData    { total: number; nomenclaturas: Record<string, NomData>; }
 interface AnioData   { total: number; meses: Record<string, MesData>; }
 interface SalaData   { sala: string;  anios: Record<string, AnioData>; }
 
-// ── API pública ───────────────────────────────────────────────────────────────
+// ── API pública
 
 export function buildTableRows(data: SalaData[]): { rows: TableRowRich[]; totalGeneral: number } {
   const rows: TableRowRich[] = [];
@@ -32,7 +32,7 @@ export function buildTableRows(data: SalaData[]): { rows: TableRowRich[]; totalG
   return { rows, totalGeneral };
 }
 
-// ── Nivel Sala ────────────────────────────────────────────────────────────────
+// ── Nivel Sala
 
 function _salaChart(salaData: SalaData): ChartSlice[] {
   return Object.entries(salaData.anios).map(
@@ -65,7 +65,7 @@ function _buildSalaRows(salaData: SalaData): { rows: TableRowRich[]; totalGenera
   return { rows, totalGeneral };
 }
 
-// ── Nivel Año ─────────────────────────────────────────────────────────────────
+// ── Nivel Año
 
 function _buildAnioRows(sala: string, anioStr: string, anioData: AnioData): TableRowRich[] {
   const rows: TableRowRich[] = [];
@@ -99,7 +99,7 @@ function _buildAnioRows(sala: string, anioStr: string, anioData: AnioData): Tabl
   return rows;
 }
 
-// ── Nivel Mes ─────────────────────────────────────────────────────────────────
+// ── Nivel Mes
 
 function _buildMesRows(sala: string, anioStr: string, mesStr: string, mesData: MesData): TableRowRich[] {
   const rows: TableRowRich[] = [];
@@ -133,7 +133,7 @@ function _buildMesRows(sala: string, anioStr: string, mesStr: string, mesData: M
   return rows;
 }
 
-// ── Nivel Nomenclatura ────────────────────────────────────────────────────────
+// ── Nivel Nomenclatura
 
 function _buildNomRows(
   sala: string, anioStr: string, mesStr: string, nomStr: string, nomData: NomData
@@ -170,7 +170,7 @@ function _buildNomRows(
   return rows;
 }
 
-// ── Nivel Apelación ───────────────────────────────────────────────────────────
+// ── Nivel Apelación
 
 function _buildApeRows(
   sala: string, anioStr: string, mesStr: string,

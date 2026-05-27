@@ -3,10 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BusquedaProfService } from '../data/busquedaprof.service';
 import { CatalogoItem } from '../../../../core/models/catalogo-global.model';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Facade
-// ─────────────────────────────────────────────────────────────────────────────
-
 @Injectable({
 providedIn: 'root'
 }
@@ -17,13 +13,11 @@ export class CatalogosFacade {
   private readonly apelacionService = inject(BusquedaProfService);
   private readonly destroyRef       = inject(DestroyRef);
 
-  // ── Estado público (signals) ────────────────────────────────────────────────
+  // ── Estado público (signals)
   readonly salas          = signal<CatalogoItem[]>([]);
   readonly nomenclaturas  = signal<CatalogoItem[]>([]);
   readonly apelaciones = signal<CatalogoItem[]>([]);
   readonly cargando       = signal(false);
-
-  // ── Carga ───────────────────────────────────────────────────────────────────
 
   cargar(): void {
     this.cargando.set(true);

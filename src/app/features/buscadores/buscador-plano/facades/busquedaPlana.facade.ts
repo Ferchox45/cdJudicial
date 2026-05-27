@@ -28,7 +28,7 @@ export class BusquedaPlanaFacade {
 
   readonly form = signal<searchFormPlana>({ ...FORM_VACIO });
 
-  // ── Estado ────────────────────────────────────────────────────────────
+  // ── Estado
   readonly buscando   = signal(false);
   readonly exportando = signal(false);
   readonly generando  = signal(false);
@@ -38,7 +38,7 @@ export class BusquedaPlanaFacade {
   private readonly _paginacion = signal({ total: 0, page: 1, limit: 10 });
   private readonly _porPagina  = signal(10);
 
-  // ── Computed ──────────────────────────────────────────────────────────
+  // ── Computed
   readonly porPagina       = computed(() => this._porPagina());
   readonly paginaActual    = computed(() => this._paginacion().page);
   readonly totalResultados = computed(() => this._paginacion().total);
@@ -46,7 +46,7 @@ export class BusquedaPlanaFacade {
     Math.ceil(this._paginacion().total / this._paginacion().limit) || 1
   );
 
-  // ── Búsqueda ──────────────────────────────────────────────────────────
+  // ── Búsqueda
   buscar(): void {
     if (!BusquedaPlanoMapper.tieneCriterios(this.form())) {
       this.modal.info('Criterios requeridos', 'Debes ingresar al menos un criterio de búsqueda.');
@@ -84,7 +84,7 @@ export class BusquedaPlanaFacade {
     this.modal.error('Error de búsqueda', 'Ocurrió un error al intentar conectar con el servidor.');
   }
 
-  // ── Paginación ────────────────────────────────────────────────────────
+  // ── Paginación
   irPagina(pagina: number): void {
     if (pagina < 1 || pagina > this.totalPaginas()) return;
 
@@ -103,7 +103,7 @@ export class BusquedaPlanaFacade {
     this._ejecutarBusqueda(1, false);
   }
 
-  // ── Exportar Excel ────────────────────────────────────────────────────
+  // ── Exportar Excel
   exportarExcel(): void {
     if (!BusquedaPlanoMapper.tieneCriterios(this.form())) {
       this.modal.info('Criterios requeridos', 'Debes ingresar al menos un criterio para exportar.');
@@ -121,7 +121,7 @@ export class BusquedaPlanaFacade {
       });
   }
 
-  // ── Exportar PDF ──────────────────────────────────────────────────────
+  // ── Exportar PDF
   exportarPdf(): void {
     if (!BusquedaPlanoMapper.tieneCriterios(this.form())) {
       this.modal.info('Criterios requeridos', 'Debes ingresar al menos un criterio para exportar.');
@@ -139,7 +139,7 @@ export class BusquedaPlanaFacade {
       });
   }
 
-  // ── Descarga genérica ─────────────────────────────────────────────────
+  // ── Descarga genérica
   private descargarArchivo(blob: Blob, extension: 'xlsx' | 'pdf'): void {
     const fecha  = new Date().toISOString().slice(0, 10);
     const url    = URL.createObjectURL(blob);
@@ -150,7 +150,7 @@ export class BusquedaPlanaFacade {
     URL.revokeObjectURL(url);
   }
 
-  // ── Limpiar ───────────────────────────────────────────────────────────
+  // ── Limpiar
   limpiar(): void {
     this.form.set({ ...FORM_VACIO });
     this.resultados.set([]);

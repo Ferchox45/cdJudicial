@@ -4,11 +4,11 @@ import { Observable, tap } from 'rxjs';
 import { LoginRequest, LoginResponse } from '../models/auth.model';
 
 @Injectable({
-  providedIn: 'root' // Disponible globalmente o puedes limitarlo a la feature ruta
+  providedIn: 'root'
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private readonly API_URL = 'https://pruebas.tribunaloaxaca.gob.mx/permisos/api/AuthJWT/Login';
+  private readonly API_URL = '';
 
   // Signal para exponer el token actual de forma reactiva a la app
   public token = signal<string | null>(localStorage.getItem('access_token'));

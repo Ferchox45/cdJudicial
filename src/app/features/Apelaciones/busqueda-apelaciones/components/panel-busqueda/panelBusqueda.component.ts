@@ -16,8 +16,6 @@ export class PanelBusquedaComponent {
   readonly catalogos = inject(CatalogosFacade);
   readonly busqueda  = inject(BusquedaFacade);
 
-  // Expone una copia mutable local del form para que ngModel funcione
-  // y emite hacia arriba cuando cambia
   get form(): SearchForm { return this.busqueda.form(); }
 
   updateForm(field: keyof SearchForm, value: string): void {

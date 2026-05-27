@@ -1,7 +1,4 @@
 import { searchFormHistorico, BusquedaHistoricoDTO } from "../models/buscador-historico.model";
-
-
-
 export class BusquedaHistoricoMapper {
 
 static toDTO(form: searchFormHistorico): BusquedaHistoricoDTO {

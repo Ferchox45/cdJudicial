@@ -11,7 +11,6 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
-  // Inyección de dependencias (AuthService eliminado)
   private fb = inject(FormBuilder);
   private router = inject(Router);
 
@@ -45,11 +44,9 @@ export class LoginComponent {
 
     const { usuario, contrasena } = this.loginForm.value;
 
-    // Simulamos un retraso de red de 1.5 segundos para que se vea el spinner
     setTimeout(() => {
       this.isLoading.set(false);
 
-      // Validación estática (Puedes cambiar estas credenciales por las que prefieras)
       if (usuario === 'admin' && contrasena === 'admin') {
         this.router.navigate(['/inicio']);
       } else {

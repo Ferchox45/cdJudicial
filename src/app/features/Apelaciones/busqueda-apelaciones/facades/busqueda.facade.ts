@@ -51,7 +51,7 @@ export class BusquedaFacade {
     Math.ceil(this._paginacion().total / this._paginacion().limit) || 1
   );
 
-  // ── Búsqueda ──────────────────────────────────────────────────────────
+  // Metodo Buscar
   buscar(): void {
     if (!BusquedaApelacionesMapper.tieneCriterios(this.form())) {
       this.modal.info('Criterios requeridos', 'Debes ingresar al menos un criterio de búsqueda.');
@@ -115,13 +115,13 @@ export class BusquedaFacade {
     this.ejecutarBusqueda(1, false);
   }
 
-  // ── Detalle de fila ───────────────────────────────────────────────────
+  // Detalle de fila
   seleccionarFila(r: Resultado): void {
     const actual = this._filaSeleccionada();
     this._filaSeleccionada.set(actual === r ? null : r);
   }
 
-  // ── Exportar Excel ────────────────────────────────────────────────────
+  // Exportar Excel
   exportar(): void {
     if (!BusquedaApelacionesMapper.tieneCriterios(this.form())) {
       this.modal.info('Criterios requeridos', 'Debes ingresar al menos un criterio para exportar.');

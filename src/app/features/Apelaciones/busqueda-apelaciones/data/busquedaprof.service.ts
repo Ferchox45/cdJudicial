@@ -15,7 +15,7 @@ export class BusquedaProfService {
   apiEndpoint = environment.apiUrl;
   /**
    * Genera y descarga un Excel basado en los filtros proporcionados.
-   * @param filtros Objeto con los parámetros de búsqueda (ej. { folioOficialia: '0198/2026', otroFiltro: 'valor' })
+   * @param filtros Objeto con los parámetros de búsqueda (ej.: folioOficialia: '0198/2026')
    */
     getCatalogoBusqueda(): Observable<CatalogoBusqueda> {
       const call$ = this.http.get<{ data: CatalogoBusqueda }>(`${this.apiEndpoint}/api/busquedas/filtros`)
@@ -40,7 +40,7 @@ export class BusquedaProfService {
 
     return this.http.get(`${this.apiEndpoint}/api/busquedas/exportar-excel`, {
       params: params,
-      responseType: 'blob' // ¡Crucial para poder descargar el archivo correctamente!
+      responseType: 'blob'
     });
   }
 
@@ -52,7 +52,7 @@ buscarApelaciones(
   let httpParams = new HttpParams()
     .set('page', page)
     .set('limit', limit);
-
+  //Filtra dinámicamente nulos o vacíos
   Object.entries(params).forEach(([key, value]) => {
     if (value !== null && value !== undefined && value !== '') {
       httpParams = httpParams.set(key, String(value));
@@ -61,6 +61,7 @@ buscarApelaciones(
 
   return this.http.get<ApiResponseBusqProf>(`${this.apiEndpoint}/api/busquedas/`, { params: httpParams })
     .pipe(
+      //Mapea la respuesta cruda del API a la interfaz de la UI.
       map(response => ({
         resultados: response.data.apelaciones ?? [],
         paginacion: {
@@ -74,7 +75,7 @@ buscarApelaciones(
 
   exportarPdf(filtros: any): Observable<Blob> {
   let params = new HttpParams();
-
+//Convierte el objeto de filtros en la query string de la petición HTTP
   if (filtros) {
     Object.keys(filtros).forEach(key => {
       const valor = filtros[key];
@@ -83,12 +84,13 @@ buscarApelaciones(
       }
     });
   }
-
+  // El 'responseType: blob' es estrictamente obligatorio
+  // para que Angular no intente parsear el archivo PDF como si fuera JSON
   return this.http.get(`${this.apiEndpoint}/api/busquedas/exportar-pdf`, {
     params: params,
     responseType: 'blob'
   });
 }
 
-  }
+}
 

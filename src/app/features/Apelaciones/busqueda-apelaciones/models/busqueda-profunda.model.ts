@@ -76,7 +76,7 @@ export interface BusquedaDTO {
 
 export interface ApiResponseBusqProf{
   data: {
-    apelaciones: Resultado[];   // viene con ñ del backend
+    apelaciones: Resultado[];
     total: number;
     page:  number;
     limit: number;

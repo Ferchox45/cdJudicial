@@ -18,7 +18,7 @@ export class ApelacionApiService {
   private cache = inject(CacheService);
   private apiEndpoint = environment.apiUrl;
 
-  // ── Catálogos con Caché ──────────────────────────────────────
+  // Catálogos con Caché
 
   getCatalogoCaptura(materia: string): Observable<CapturaApelacionCatalogos> {
     const call$ = this.http
@@ -34,7 +34,7 @@ export class ApelacionApiService {
     );
   }
 
-  // ── Métodos sin Caché ────────────────────────────────────────
+  // Métodos sin Caché
 
   getLocalidades(idMunicipio: number): Observable<any[]> {
     return this.http
@@ -67,7 +67,7 @@ export class ApelacionApiService {
       .pipe(timeout(15000));
   }
 
-  // ── Invalidación de Caché ────────────────────────────────────
+  // Invalidación de Caché
 
   invalidarCatalogos(): void {
     this.cache.delete(`${CACHE_KEYS_APELACION.CAPTURA}_penal`);

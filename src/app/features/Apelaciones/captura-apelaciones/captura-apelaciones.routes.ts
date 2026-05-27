@@ -3,16 +3,18 @@ import { anexosGuard } from '../anexos/guards/anexos.guard'; // Ajusta la ruta s
 
 export const CAPTURA_APELACIONES_ROUTES: Routes = [
   {
-    path: '', // Ruta base: se carga cuando entras a /capturaApelacion
+    path: '', // Ruta base
     loadComponent: () => import('./captura-apelacones.component').then(m => m.CapturaApelacionesComponent)
   },
   {
-    path: 'anexos', // Ruta hija: se carga cuando entras a /capturaApelacion/anexos
+  // Ruta hija
+    path: 'anexos',
     loadComponent: () => import('../anexos/anexos.component').then(m => m.AnexosComponent),
     data: { breadcrumb: 'Anexos' },
     canActivate: [anexosGuard]
   },
   {
+    //Ruta hija
     path: 'busquedaApelacion',
     loadComponent: () => import('../busqueda-apelaciones/busquedaApelaciones.component').then(m => m.BusquedaApelacionesComponent),
     data: { breadcrumb: 'Búsqueda de Apelación' }

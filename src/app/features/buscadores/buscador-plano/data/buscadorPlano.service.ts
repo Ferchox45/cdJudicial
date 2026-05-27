@@ -49,7 +49,7 @@ export class BuscadorPlanoService {
     }
     return this.http.get(`${this.apiEndpoint}/api/busquedas/plano/exportar-excel`, {
       params: params,
-      responseType: 'blob' // ¡Crucial para poder descargar el archivo correctamente!
+      responseType: 'blob'
     });
   }
 
@@ -69,7 +69,7 @@ export class BuscadorPlanoService {
 
       return this.http.get(`${this.apiEndpoint}/api/busquedas/plano/exportar-pdf`, {
         params: params,
-        responseType: 'blob' // ¡Crucial para poder descargar el archivo correctamente!
+        responseType: 'blob'
       });
     }
 }
