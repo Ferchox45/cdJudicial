@@ -1,7 +1,7 @@
 <aside class="flex flex-row justify-evenly items-center w-full py-2
              md:flex-col md:gap-2 md:w-20 md:py-0 md:sticky md:top-20 md:self-start">
 
-  @for (action of actions; track action) {
+  @for (action of actions; track action.id) {
     <button
       type="button"
     class="flex flex-col items-center justify-center gap-1.5
