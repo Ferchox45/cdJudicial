@@ -1,0 +1,67 @@
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal, TemplateRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { PaginacionComponent } from '../paginacion/paginacion.component';
+import { TablaColumna } from './models/tabla-columna.model';
+
+@Component({
+  selector: 'app-table-reutilizable',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, PaginacionComponent],
+  templateUrl: './tablaReutilizable.component.html',
+})
+export class TablaReutilizableComponent {
+  readonly columns = input<TablaColumna[]>([]);
+  readonly data = input<any[]>([]);
+  readonly paginaActual = input.required<number>();
+  readonly totalPaginas = input.required<number>();
+  readonly totalResultados = input.required<number>();
+  readonly porPagina = input.required<number>();
+  readonly titulo = input('Resultados de Búsqueda');
+  readonly mostrarColumnSelector = input(true);
+  readonly filaSeleccionada = input<any>(null);
+  readonly expandedTemplate = input<TemplateRef<any>>();
+
+  readonly paginaCambio = output<number>();
+  readonly limitCambio = output<number>();
+  readonly rowClick = output<any>();
+  readonly toggleAbierto = output<boolean>();
+
+  abierto = true;
+  menuColumnasAbierto = false;
+
+  columnas = signal<TablaColumna[]>([]);
+  columnasVisibles = computed(() => this.columnas().filter(c => c.visible));
+
+  constructor() {
+    effect(() => {
+      const cols = this.columns();
+      if (cols.length > 0 && this.columnas().length === 0) {
+        this.columnas.set(cols.map(c => ({...c})));
+      }
+    });
+  }
+
+  toggle(): void {
+    this.abierto = !this.abierto;
+    this.toggleAbierto.emit(this.abierto);
+  }
+
+  toggleMenuColumnas(): void {
+    this.menuColumnasAbierto = !this.menuColumnasAbierto;
+  }
+
+  toggleColumna(field: string): void {
+    this.columnas.update(cols =>
+      cols.map(c => c.field === field ? { ...c, visible: !c.visible } : c)
+    );
+  }
+
+  mostrarTodas(): void {
+    this.columnas.update(cols => cols.map(c => ({ ...c, visible: true })));
+  }
+
+  ocultarTodas(): void {
+    this.columnas.update(cols => cols.map(c => ({ ...c, visible: false })));
+  }
+}

@@ -1,24 +1,28 @@
-// panel-resultados-historico.component.ts
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { BuscarFacade } from '../../facades/buscar.facade';
-import { PaginacionComponent } from '../../../../../shared/components/paginacion/paginacion.component';
+import { TablaReutilizableComponent } from '../../../../../shared/components/table-reutilizable/tablaReutilizable.component';
+import { TablaColumna } from '../../../../../shared/components/table-reutilizable/models/tabla-columna.model';
 
 @Component({
   selector: 'app-panel-resultados-historico',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaginacionComponent],
+  imports: [TablaReutilizableComponent],
   templateUrl: './panelResultadoHistorico.component.html',
 })
 export class PanelResultadosHistoricoComponent {
-  readonly buscarFacade = inject (BuscarFacade);
-  abierto = true;
-  toggle(): void { this.abierto = !this.abierto; }
+  readonly buscarFacade = inject(BuscarFacade);
 
-  cambiarPorPagina(event: Event): void {
-  const select = event.target as HTMLSelectElement;
-  this.buscarFacade.cambiarPorPagina(Number(select.value));
-}
-
+  readonly columnas: TablaColumna[] = [
+    { field: 'juzgado', label: 'Juzgado', visible: true },
+    { field: 'expedienteCausa', label: 'Exp / Causa', visible: true },
+    { field: 'toca', label: 'Toca', visible: true },
+    { field: 'sala', label: 'Sala', visible: true },
+    { field: 'fechaRecepcionApelacion', label: 'Fecha de Recepción de Apelación', visible: true },
+    { field: 'fechaApelacion', label: 'Fecha de Apelación', visible: true },
+    { field: 'imputado', label: 'Imputado', visible: true },
+    { field: 'victima', label: 'Víctima', visible: true },
+    { field: 'delito', label: 'Delito', visible: true },
+  ];
 }

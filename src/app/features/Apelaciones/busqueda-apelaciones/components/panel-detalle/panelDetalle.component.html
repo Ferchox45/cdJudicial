@@ -1,154 +1,142 @@
+<div class="flex flex-col">
 
-<div class="mx-2 md:mx-4 my-2 md:my-3 border border-gray-200 rounded-md overflow-hidden bg-white shadow-sm md:shadow-none">
-
-  <div class="flex overflow-x-auto border-b border-gray-200 px-2 md:px-6 hide-scrollbar">
-    <button type="button"
-      class="flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 -mb-px cursor-pointer
-             bg-transparent border-x-0 border-t-0 transition whitespace-nowrap"
-      [class.text-forest]="tabActiva() === 'partes'"
-      [class.font-bold]="tabActiva() === 'partes'"
-      [class.border-b-bronze]="tabActiva() === 'partes'"
-      [class.text-gray-500]="tabActiva() !== 'partes'"
-      [class.border-b-transparent]="tabActiva() !== 'partes'"
-      (click)="setTab('partes')">
-      <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"
-          stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+  <!-- TABS -->
+  <div class="flex border-b border-sand px-3 md:px-4 pt-2">
+        <button
+      class="flex items-center gap-1.5 px-3 py-1.5 text-[10px] md:text-xs font-bold uppercase tracking-wider border-b-2 transition-colors"
+      [class]="tabActivo === 'partes'
+        ? 'border-strong-coffee text-strong-coffee'
+        : 'border-transparent text-grey hover:text-strong-coffee'"
+      (click)="tabActivo = 'partes'">
+      <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </svg>
-      Partes Involucradas
+      Partes
+      @if (fila().partes.length) {
+        <span class="ml-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold leading-none"
+          [class]="tabActivo === 'partes' ? 'bg-sand text-strong-coffee' : 'bg-beige text-grey'">
+          {{ fila().partes.length }}
+        </span>
+      }
     </button>
 
-    <button type="button"
-      class="flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 -mb-px cursor-pointer
-             bg-transparent border-x-0 border-t-0 transition whitespace-nowrap"
-      [class.text-forest]="tabActiva() === 'anexos'"
-      [class.font-bold]="tabActiva() === 'anexos'"
-      [class.border-b-bronze]="tabActiva() === 'anexos'"
-      [class.text-gray-500]="tabActiva() !== 'anexos'"
-      [class.border-b-transparent]="tabActiva() !== 'anexos'"
-      (click)="setTab('anexos')">
-      <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-          stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <button
+      class="flex items-center gap-1.5 px-3 py-1.5 text-[10px] md:text-xs font-bold uppercase tracking-wider border-b-2 transition-colors"
+      [class]="tabActivo === 'anexos'
+        ? 'border-strong-coffee text-strong-coffee'
+        : 'border-transparent text-grey hover:text-strong-coffee'"
+      (click)="tabActivo = 'anexos'">
+      <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </svg>
-      Anexos Adjuntos
+      Anexos
+      @if (fila().anexos.length) {
+        <span class="ml-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold leading-none"
+          [class]="tabActivo === 'anexos' ? 'bg-sand text-strong-coffee' : 'bg-beige text-grey'">
+          {{ fila().anexos.length }}
+        </span>
+      }
     </button>
   </div>
 
-  <!-- ── Tab: Partes  ── -->
-  @if (tabActiva() === 'partes') {
-    <div class="bg-gray-50/50 md:bg-transparent p-2 md:p-0">
-      <table class="w-full text-left md:text-center border-collapse">
+  <!-- TAB: PARTES -->
+@if (tabActivo === 'partes') {
+    @if (fila().partes.length > 0) {
+      <table class="w-full border-collapse">
         <thead class="hidden md:table-header-group">
-          <tr class="bg-sand border-b border-gray-200">
-            <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider">Parte</th>
-            <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider">Nombre Completo</th>
-            <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider">Dirección</th>
-            <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider text-center">Menor</th>
-            <th class="px-5 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wider text-center">Sexo</th>
+          <tr class="bg-gray-50/60 border-b border-gray-200/80">
+            <th class="px-4 py-1.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Tipo Parte</th>
+            <th class="px-3 py-1.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Nombre Completo</th>
+            <th class="px-3 py-1.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Dirección</th>
+            <th class="px-3 py-1.5 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Sexo</th>
+            <th class="px-3 py-1.5 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Menor</th>
           </tr>
         </thead>
-        <tbody class="block md:table-row-group divide-y md:divide-y-0 divide-gray-100 bg-white">
+        <tbody class="block md:table-row-group divide-y divide-gray-100/80">
           @for (p of fila().partes; track $index) {
-            <tr class="block md:table-row hover:bg-gray-50/80
-                       border border-gray-200 md:border-b md:border-x-0 md:border-t-0
-                       mb-3 md:mb-0 rounded-lg md:rounded-none">
-
-              <td class="flex justify-between items-center md:table-cell px-4 py-2.5 md:py-4 border-b border-gray-100 md:border-none">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden">Parte:</span>
-                <span class="text-sm font-semibold text-gray-900 leading-tight">{{ p.tipoParte }}</span>
-              </td>
-
-              <td class="flex flex-col items-end md:table-cell px-4 py-2.5 md:py-4 border-b border-gray-100 md:border-none">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden w-full text-left mb-1">Nombre Completo:</span>
-                <span class="text-sm text-gray-600 font-medium text-right md:text-center">{{ p.nombre }}</span>
-              </td>
-
-              <td class="flex flex-col items-end md:table-cell px-4 py-2.5 md:py-4 border-b border-gray-100 md:border-none">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden w-full text-left mb-1">Dirección:</span>
-                <span class="text-sm text-gray-500 max-w-[80%] md:max-w-xs truncate text-right md:text-center">{{ p.direccion || 'No registrada' }}</span>
-              </td>
-
-              <td class="flex justify-between items-center md:table-cell px-4 py-2.5 md:py-4 border-b border-gray-100 md:border-none md:text-center">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden">Es Menor:</span>
-                @if (p.menorEdad) {
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">SÍ</span>
-                } @else {
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">NO</span>
-                }
-              </td>
-
-              <td class="flex justify-between items-center md:table-cell px-4 py-2.5 md:py-4 md:text-center bg-gray-50 md:bg-transparent rounded-b-lg md:rounded-none">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden">Sexo:</span>
-                <span class="inline-block px-3 py-1 text-xs font-semibold rounded-lg bg-white md:bg-gray-100 border md:border-none text-gray-600 uppercase">{{ p.sexo }}</span>
-              </td>
-
-            </tr>
-          } @empty {
             <tr class="block md:table-row">
-              <td colspan="5" class="block md:table-cell px-6 py-8 text-center text-gray-400 italic text-sm">
-                No hay partes registradas en este expediente.
+              <td class="block md:table-cell px-4 py-1.5 text-sm truncate">
+                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Tipo: </span>
+                <span class="font-semibold text-gray-800">{{ p.tipoParte }}</span>
+              </td>
+              <td class="block md:table-cell px-3 md:px-3 py-1 md:py-1.5 text-sm truncate">
+                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Nombre: </span>
+                <span class="text-gray-700">{{ p.nombre }}</span>
+              </td>
+
+              <td class="hidden md:table-cell px-3 py-1.5 text-sm text-gray-400 truncate" [title]="p.direccion">{{ p.direccion || '—' }}</td>
+
+              <td class="block md:table-cell px-3 md:px-3 py-1 md:py-1.5 text-sm md:text-center">
+                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Sexo: </span>
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-600 uppercase leading-none">
+                  {{ p.sexo || 'N/E' }}
+                </span>
+              </td>
+              <td class="block md:table-cell px-3 md:px-3 py-1 md:py-1.5 text-sm md:text-center">
+                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Menor: </span>
+                @if (p.menorEdad) {
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-green-100 text-green-800 leading-none">SÍ</span>
+                } @else {
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 leading-none">NO</span>
+                }
               </td>
             </tr>
           }
         </tbody>
       </table>
-    </div>
+    } @else {
+      <p class="text-xs text-gray-400 italic px-4 py-2">No hay partes registradas.</p>
+    }
   }
 
-  <!-- ── Tab: Anexos ── -->
-  @if (tabActiva() === 'anexos') {
-    <div class="bg-gray-50/50 md:bg-transparent p-2 md:p-0">
-      <table class="w-full text-left md:text-center border-collapse">
+  <!-- TAB: ANEXOS -->
+  @if (tabActivo === 'anexos') {
+    @if (fila().anexos.length > 0) {
+      <table class="w-full border-collapse">
         <thead class="hidden md:table-header-group">
-          <tr class="bg-sand border-b border-gray-200">
-            <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wide">Cantidad</th>
-            <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wide">Anexo</th>
-            <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wide text-center">Es Valor</th>
-            <th class="px-6 py-4 text-xs font-bold text-strong-coffee uppercase tracking-wide text-right">Monto</th>
+          <tr class="bg-gray-50/60 border-b border-gray-200/80">
+            <th class="px-3 py-1.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Cant.</th>
+            <th class="px-3 py-1.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Descripción</th>
+            <th class="px-3 py-1.5 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider">Valor</th>
+            <th class="px-3 py-1.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">Monto</th>
           </tr>
         </thead>
-        <tbody class="block md:table-row-group divide-y md:divide-y-0 divide-gray-100 bg-white">
+        <tbody class="block md:table-row-group divide-y divide-gray-100/80">
           @for (a of fila().anexos; track $index) {
-            <tr class="block md:table-row hover:bg-gray-50/80
-                       border border-gray-200 md:border-b md:border-x-0 md:border-t-0
-                       mb-3 md:mb-0 rounded-lg md:rounded-none">
-
-              <td class="flex justify-between items-center md:table-cell px-4 py-2.5 md:py-4 border-b border-gray-100 md:border-none">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden">Cantidad:</span>
-                <span class="text-sm font-bold text-gray-700">{{ a.cantidad }}</span>
+            <tr class="block md:table-row">
+              <td class="block md:table-cell px-4 py-1.5 text-sm">
+                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Cantidad: </span>
+                <span class="font-bold text-gray-800 tabular-nums">{{ a.cantidad }}</span>
               </td>
-
-              <td class="flex flex-col items-end md:table-cell px-4 py-2.5 md:py-4 border-b border-gray-100 md:border-none">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden w-full text-left mb-1">Descripción de Anexo:</span>
-                <span class="text-sm text-gray-700 text-right md:text-center">{{ a.descripcion }}</span>
+              <td class="block md:table-cell px-3 py-1 md:py-1.5 text-sm">
+                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Descripción: </span>
+                <span class="text-gray-700">{{ a.descripcion }}</span>
               </td>
-
-              <td class="flex justify-between items-center md:table-cell px-4 py-2.5 md:py-4 border-b border-gray-100 md:border-none md:text-center">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden">Es Valor:</span>
+              <td class="block md:table-cell px-3 py-1 md:py-1.5 text-sm md:text-center">
+                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Valor: </span>
                 @if (a.esValor) {
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">SÍ</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-800 leading-none">SÍ</span>
                 } @else {
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">NO</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 leading-none">NO</span>
                 }
               </td>
-
-              <td class="flex justify-between items-center md:table-cell px-4 py-3 md:py-4 md:text-right bg-gray-50 md:bg-transparent rounded-b-lg md:rounded-none">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 md:hidden">Monto:</span>
-                <span class="text-sm text-gray-700 font-semibold md:font-normal">${{ a.monto | number:'1.2-2' }}</span>
-              </td>
-
-            </tr>
-          } @empty {
-            <tr class="block md:table-row">
-              <td colspan="4" class="block md:table-cell px-6 py-8 text-center text-gray-400 italic text-sm">
-                Sin anexos registrados.
+              <td class="block md:table-cell px-3 py-1 md:py-1.5 text-sm md:text-right">
+                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Monto: </span>
+                <span class="font-semibold text-gray-800 tabular-nums">
+                  @if (a.esValor && a.monto != null) {
+                    ${{ a.monto | number:'1.2-2' }}
+                  } @else {
+                    <span class="text-gray-400 font-normal">—</span>
+                  }
+                </span>
               </td>
             </tr>
           }
         </tbody>
       </table>
-    </div>
+    } @else {
+      <p class="text-xs text-gray-400 italic px-4 py-2">Sin anexos registrados.</p>
+    }
   }
 
 </div>

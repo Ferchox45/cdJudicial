@@ -112,11 +112,7 @@ export interface ChartSlice {
   value: number;
 }
 
-export interface TablaColumna {
-  field: string;
-  label: string;
-  visible: boolean;
-}
+export { type TablaColumna } from '../../../../shared/components/table-reutilizable/models/tabla-columna.model';
 
 // models/estadisticas.ts  — agrega esto al final
 

@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://78wsv7z5-1234.usw3.devtunnels.ms',
+  apiUrl: 'https://76h36xm6-1234.usw3.devtunnels.ms',
 };
 
 
