@@ -1,11 +1,12 @@
 // paginacion.component.ts
-import { Component, input, output, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input, output, computed } from '@angular/core';
+
 
 @Component({
   selector: 'app-paginacion',
   standalone: true,
-  imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [],
   templateUrl: './paginacion.component.html',
 })
 export class PaginacionComponent {

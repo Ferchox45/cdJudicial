@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { input, output } from '@angular/core';
 @Component({
   selector: 'app-menulateral',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './menu-lateral.component.html',
   imports: [RouterLink, RouterLinkActive],
 })

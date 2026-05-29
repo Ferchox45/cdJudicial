@@ -6,14 +6,14 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Parte, RelacionBusqueda} from '../../models/busqueda-rap.model';
 
 @Component({
   selector: 'app-panel-relaciones',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './panel-relaciones.component.html',
 })

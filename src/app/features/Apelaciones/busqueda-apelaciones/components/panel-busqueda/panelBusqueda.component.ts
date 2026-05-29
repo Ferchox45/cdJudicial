@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { CatalogosFacade } from '../../facades/catalogos.facade';
 import { BusquedaFacade } from '../../facades/busqueda.facade';
@@ -8,7 +8,8 @@ import { SearchForm } from '../../models/busqueda-profunda.model';
 @Component({
   selector:    'app-panel-busqueda',
   standalone:  true,
-  imports:     [CommonModule, FormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormsModule],
   templateUrl: './panelBusqueda.component.html',
 })
 export class PanelBusquedaComponent {

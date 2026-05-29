@@ -1,7 +1,7 @@
 import { GraficaTotalesComponent } from './components/graficas-plana/graficaPlana.component';
 import { TablaResultadosComponent } from './components/tabla-resultados/tablaResultados.component';
 import { PanelBusquedaEstadisticaComponent } from './components/panel-busquedaPlana/panelBusquedaEstadistica.component';
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import { BusquedaEstadisticaFacade } from './facades/busquedaEstadistica.facade';
 import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/Action-siderbar/action-siderbar.component';
 import { TablaAnidadaComponent } from './components/tabla-anidada/tablaAnidada.component';
@@ -11,6 +11,7 @@ import { TableRow, ChartSlice } from './models/estadisticas';
 @Component({
   selector: 'app-estadisticas-plana',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PanelBusquedaEstadisticaComponent, TablaResultadosComponent, GraficaTotalesComponent, ActionSidebarComponent, TablaAnidadaComponent],
   templateUrl: './estadisticasPlana.component.html',
 })

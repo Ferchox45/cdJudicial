@@ -1,13 +1,14 @@
 // panel-resultados-historico.component.ts
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
 import { BuscarFacade } from '../../facades/buscar.facade';
 import { PaginacionComponent } from '../../../../../shared/components/paginacion/paginacion.component';
 
 @Component({
   selector: 'app-panel-resultados-historico',
   standalone: true,
-  imports: [CommonModule, PaginacionComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [PaginacionComponent],
   templateUrl: './panelResultadoHistorico.component.html',
 })
 export class PanelResultadosHistoricoComponent {

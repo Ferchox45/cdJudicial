@@ -1,5 +1,5 @@
-import { Component, inject, input, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+
 import { BreadcrumbService } from '../../data/breadcrumb.service';
 import { RouterModule } from '@angular/router';
 
@@ -12,7 +12,8 @@ export interface BreadcrumbItem {
 @Component({
   selector: 'app-main-header',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterModule],
   templateUrl: './header.component.html',
 })
 export class MainHeaderComponent {

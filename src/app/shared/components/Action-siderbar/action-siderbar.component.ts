@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SpinnerComponent } from '../spinner/spinner.component';
 
@@ -16,6 +16,7 @@ export interface SidebarAction {
 @Component({
   selector: 'app-action-sidebar',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, SpinnerComponent],
   templateUrl: './action-siderbar.component.html',
 })

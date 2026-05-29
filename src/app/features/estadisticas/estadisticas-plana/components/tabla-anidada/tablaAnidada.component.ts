@@ -1,5 +1,5 @@
-import { Component, inject, computed, output, input, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, computed, output, input, signal } from '@angular/core';
+
 import { BusquedaEstadisticaFacade } from '../../facades/busquedaEstadistica.facade';
 import { TableRow, ChartSlice, TableRowRich } from '../../models/estadisticas';
 import { buildTableRows }   from './utils/tabla-builder';
@@ -9,7 +9,8 @@ import { buildKey, NivelColapso } from './utils/tabla-keys';
 @Component({
   selector: 'app-tabla-anidada',
   standalone: true,
-  imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [],
   templateUrl: './tablaAnidada.component.html',
 })
 export class TablaAnidadaComponent {

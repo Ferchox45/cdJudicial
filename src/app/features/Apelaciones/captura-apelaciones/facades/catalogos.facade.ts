@@ -1,6 +1,6 @@
-import { Injectable, inject, ApplicationConfig } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { Subject, switchMap, tap, takeUntil, of } from 'rxjs';  // añadir imports
+import { Subject, switchMap, tap, takeUntil, of } from 'rxjs';
 import { CapturaApelacionCatalogos } from '../models/catalogo-apelaciones.model';
 import { mapearDelitosDisponibles } from '../utils/captura-apelaciones.mapper';
 import { DelitoDisponible } from '../models/apelacion-aux.model';
@@ -13,38 +13,36 @@ export class CatalogosFacade {
   private apelacionService = inject(ApelacionApiService);
   private destroy$ = new Subject<void>();
 
-  // Estado público
-  materias:         CatalogoItem[] = [];
-  apelaciones:      CatalogoItem[] = [];
-  tiposApelaciones: CatalogoItem[] = [];
-  tiposEscritos:    CatalogoItem[] = [];
-  juzgados:         CatalogoItem[] = [];
-  magistrados:      CatalogoItem[] = [];
-  localidades:      CatalogoItem[] = [];
-  municipios:       CatalogoItem[] = [];
-  etnias:           CatalogoItem[] = [];
-  delitos:          CatalogoItem[] = [];
-  tiposPartes:      CatalogoItem[] = [];
-  sexos:            CatalogoItem[] = [];
-  folioTentativo    = '';
+  readonly materias = signal<CatalogoItem[]>([]);
+  readonly apelaciones = signal<CatalogoItem[]>([]);
+  readonly tiposApelaciones = signal<CatalogoItem[]>([]);
+  readonly tiposEscritos = signal<CatalogoItem[]>([]);
+  readonly juzgados = signal<CatalogoItem[]>([]);
+  readonly magistrados = signal<CatalogoItem[]>([]);
+  readonly localidades = signal<CatalogoItem[]>([]);
+  readonly municipios = signal<CatalogoItem[]>([]);
+  readonly etnias = signal<CatalogoItem[]>([]);
+  readonly delitos = signal<CatalogoItem[]>([]);
+  readonly tiposPartes = signal<CatalogoItem[]>([]);
+  readonly sexos = signal<CatalogoItem[]>([]);
+  readonly folioTentativo = signal('');
 
-  cargando            = false;
-  cargandoLocalidades = false;
-  error: string | null = null;
-  timeoutMsg = false;
+  readonly cargando = signal(false);
+  readonly cargandoLocalidades = signal(false);
+  readonly error = signal<string | null>(null);
+  readonly timeoutMsg = signal(false);
 
   onDelitosLisros?: (delitos: DelitoDisponible[]) => void;
   onError?:        (msg: string) => void;
 
-  // Carga principal de catálogos
   cargar(form: FormGroup, materia: string): void {
-    this.cargando   = true;
-    this.error      = null;
-    this.timeoutMsg = false;
+    this.cargando.set(true);
+    this.error.set(null);
+    this.timeoutMsg.set(false);
     this.setControlesDisabled(form, true);
 
     const timer = setTimeout(() => {
-      if (this.cargando) this.timeoutMsg = true;
+      if (this.cargando()) this.timeoutMsg.set(true);
     }, 5000);
 
     this.apelacionService.getCatalogoCaptura(materia).subscribe({
@@ -52,13 +50,13 @@ export class CatalogosFacade {
         clearTimeout(timer);
         this.asignarCatalogos(data);
         this.setControlesDisabled(form, false);
-        this.onDelitosLisros?.(mapearDelitosDisponibles(this.delitos));
+        this.onDelitosLisros?.(mapearDelitosDisponibles(this.delitos()));
       },
         error: () => {
         clearTimeout(timer);
-        this.error    = 'No se pudo conectar con el servidor. Reintentando...';
-        this.cargando = false;
-        this.onError?.(this.error);
+        this.error.set('No se pudo conectar con el servidor. Reintentando...');
+        this.cargando.set(false);
+        this.onError?.(this.error() ?? 'Error desconocido');
         setTimeout(() => {
           this.apelacionService.invalidarCatalogos();
           this.cargar(form, materia);
@@ -67,16 +65,14 @@ export class CatalogosFacade {
     });
   }
 
-  // Carga las localidades del municipio seleccionado
-escucharMunicipio(form: FormGroup, markForCheck?: () => void): void {
+escucharMunicipio(form: FormGroup): void {
   form.get('municipioId')?.valueChanges
     .pipe(
       takeUntil(this.destroy$),
       tap(() => {
-        this.localidades = [];
-        this.cargandoLocalidades = true;
+        this.localidades.set([]);
+        this.cargandoLocalidades.set(true);
         form.get('localidadId')?.setValue(null, { emitEvent: false });
-        markForCheck?.();  // ← notifica al componente que limpió
       }),
       switchMap(municipioId =>
         municipioId
@@ -86,44 +82,37 @@ escucharMunicipio(form: FormGroup, markForCheck?: () => void): void {
     )
     .subscribe({
       next: localidades => {
-        this.localidades = localidades;
-        this.cargandoLocalidades = false;
-        markForCheck?.();  // ← notifica que llegaron los datos
+        this.localidades.set(localidades);
+        this.cargandoLocalidades.set(false);
       },
       error: () => {
-        this.cargandoLocalidades = false;
-        markForCheck?.();
+        this.cargandoLocalidades.set(false);
       }
     });
 }
 
-  // Limpieza del facade
   destruir(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  // asignar los catálogos a las variables públicas para que el componente los pueda usar
   private asignarCatalogos(data: CapturaApelacionCatalogos): void {
-    this.materias         = data.materias;
-    this.folioTentativo   = data.folioTentativo;
-    this.apelaciones      = data.apelaciones;
-    this.tiposApelaciones = data.tiposApelaciones;
-    this.tiposEscritos    = data.tiposEscritos;
-    this.juzgados         = data.juzgados;
-    this.magistrados      = data.magistrados;
-    this.municipios       = data.municipios;
-    this.etnias           = data.etnias ?? [];
-    this.delitos          = data.delitos;
-    this.folioTentativo   = data.folioTentativo;
-    this.tiposPartes      = data.tiposPartes || [];
-    this.sexos            = data.sexos || [];
-    this.cargando         = false;
-    this.timeoutMsg       = false;
+    this.materias.set(data.materias);
+    this.folioTentativo.set(data.folioTentativo);
+    this.apelaciones.set(data.apelaciones);
+    this.tiposApelaciones.set(data.tiposApelaciones);
+    this.tiposEscritos.set(data.tiposEscritos);
+    this.juzgados.set(data.juzgados);
+    this.magistrados.set(data.magistrados);
+    this.municipios.set(data.municipios);
+    this.etnias.set(data.etnias ?? []);
+    this.delitos.set(data.delitos);
+    this.tiposPartes.set(data.tiposPartes || []);
+    this.sexos.set(data.sexos || []);
+    this.cargando.set(false);
+    this.timeoutMsg.set(false);
   }
 
-  // habilita o deshabilita los campos del formulario mientras se cargan los catálogos
-  // para evitar que el usuario interactúe con ellos antes de tiempo
   private setControlesDisabled(form: FormGroup, disabled: boolean): void {
     ['materiaId', 'apelacionId', 'tipoApelacionId', 'tipoEscritoId',
      'juzgadoId', 'municipioId', 'localidadId'].forEach((campo) => {

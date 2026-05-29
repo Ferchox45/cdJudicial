@@ -7,9 +7,8 @@ import {
   OnInit,
   OnDestroy,
   inject,
-  ChangeDetectorRef,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Subject, takeUntil, filter, distinctUntilChanged } from 'rxjs';
 import { CatalogoItem } from '../../../../../core/models/catalogo-global.model';
@@ -19,14 +18,13 @@ import { SpinnerComponent } from '../../../../../shared/components/spinner/spinn
 @Component({
   selector: 'app-panel-identificacion',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SpinnerComponent],
+  imports: [ReactiveFormsModule, SpinnerComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './panel-formulario.component.html',
 })
 export class PanelIdentificacionComponent implements OnInit, OnDestroy {
 
   public catalogosFacade = inject(CatalogosFacade);
-  private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   @Input() form!: FormGroup;
@@ -49,7 +47,6 @@ export class PanelIdentificacionComponent implements OnInit, OnDestroy {
   @Output() toggleEvt = new EventEmitter<void>();
   @Output() buscarEvt = new EventEmitter<void>();
 
-// Mapa fijo basado en lo que devuelve tu API
 private readonly MATERIA_MAP: Record<number, string> = {
   5: 'penal',
   6: 'indigena',
@@ -57,7 +54,7 @@ private readonly MATERIA_MAP: Record<number, string> = {
 
 ngOnInit(): void {
   this.catalogosFacade.cargar(this.form, 'penal');
-  this.catalogosFacade.escucharMunicipio(this.form, () => this.cdr.markForCheck());
+  this.catalogosFacade.escucharMunicipio(this.form);
   this.form.get('materiaId')?.valueChanges
     .pipe(
       filter(id => !!id && !!this.MATERIA_MAP[id]),

@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { BusquedaRapida, Parte, RelacionBusqueda } from '../models/busqueda-rap.model';
 import { ApelacionApiService } from '../data/captura-apelacion.service';
@@ -29,13 +29,11 @@ export class BusquedaFacade {
 
   private apelacionService = inject(ApelacionApiService);
 
-  // Estado público
-  buscando        = false;
-  busquedaExitosa = false;
-  bloquearBtn     = true;
-  bloquearSeccion = false;
+  readonly buscando = signal(false);
+  readonly busquedaExitosa = signal(false);
+  readonly bloquearBtn = signal(true);
+  readonly bloquearSeccion = signal(false);
 
-  // Callbacks para notificar al padre
   onExito?:  (resultado: ResultadoBusqueda) => void;
   onError?:  (msg: string) => void;
   onNuevo?:  () => void;
@@ -48,26 +46,26 @@ export class BusquedaFacade {
       return;
     }
 
-    this.buscando = true;
-    this.busquedaExitosa = false;
+    this.buscando.set(true);
+    this.busquedaExitosa.set(false);
 
     this.apelacionService.buscarPorFolio(folio).subscribe({
       next: (data: BusquedaRapida) => {
-        this.buscando = false;
+        this.buscando.set(false);
 
         if (!data) {
-          this.busquedaExitosa = false;
+          this.busquedaExitosa.set(false);
           form.reset();
           form.patchValue({ busquedaRapida: folio });
           return;
         }
 
-        this.busquedaExitosa = true;
+        this.busquedaExitosa.set(true);
         this.cargarEnFormulario(form, data, delitosDisponibles);
       },
       error: () => {
-        this.buscando = false;
-        this.busquedaExitosa = false;
+        this.buscando.set(false);
+        this.busquedaExitosa.set(false);
         this.onError?.(
           `No se encontró ninguna apelación con el folio "${folio}".
            Por favor, verifique el folio e intente de nuevo.`
@@ -80,20 +78,20 @@ export class BusquedaFacade {
 
   resetNuevo(form: FormGroup): void {
     this.habilitarCampos(form);
-    this.busquedaExitosa = false;
+    this.busquedaExitosa.set(false);
     this.onNuevo?.();
   }
 
   bloquearCampos(form: FormGroup): void {
     CAMPOS_BUSQUEDA.forEach((c) => form.get(c)?.disable({ emitEvent: false }));
-    this.bloquearBtn     = false;
-    this.bloquearSeccion = true;
+    this.bloquearBtn.set(false);
+    this.bloquearSeccion.set(true);
   }
 
   habilitarCampos(form: FormGroup): void {
     CAMPOS_BUSQUEDA.forEach((c) => form.get(c)?.enable({ emitEvent: false }));
-    this.bloquearBtn     = true;
-    this.bloquearSeccion = false;
+    this.bloquearBtn.set(true);
+    this.bloquearSeccion.set(false);
   }
 
   actualizarValidadoresPorMateria(form: FormGroup, esIndigena: boolean): void {

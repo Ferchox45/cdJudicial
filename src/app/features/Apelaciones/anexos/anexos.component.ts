@@ -1,4 +1,4 @@
-import { Component, OnInit, inject,  ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AnexoApiService } from './data/anexos.service';
@@ -12,33 +12,31 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
 @Component({
   selector: 'app-anexos',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, SpinnerComponent],
   templateUrl: './anexos.component.html',
 })
 export class AnexosComponent implements OnInit {
 
   private apelacionService = inject(AnexoApiService);
-  private cdr              = inject(ChangeDetectorRef);
   private contextoService  = inject(ApelacionContextService);
   private modalService     = inject(ModalService);
-  // ── Estado ─────────────────────────────────────────────────
-  cargando = false;
-  error: string | null = null;
-  guardando = false;
-  errorGuardado: string | null = null;
-  exitoGuardado: string | null = null;
-  anexosGuardados = false;
 
+  readonly cargando = signal(false);
+  readonly error = signal<string | null>(null);
+  readonly guardando = signal(false);
+  readonly errorGuardado = signal<string | null>(null);
+  readonly exitoGuardado = signal<string | null>(null);
+  readonly anexosGuardados = signal(false);
 
-  // ── Datos ──────────────────────────────────────────────────
   folioTramite: string | null = null;
   sala: string | null = null;
   idApelacion: number | null = null;
-  tiposAnexo:  CatalogoItem[] = [];
-  anexos:      Anexo[]        = [];
+  readonly tiposAnexo = signal<CatalogoItem[]>([]);
+  readonly anexos = signal<Anexo[]>([]);
 
   nuevoAnexo = {
-    idAnexo:    null,
+    idAnexo:    null as number | null,
     tipo:       '',
     cantidad:   1,
     tieneMonto: false,
@@ -46,7 +44,6 @@ export class AnexosComponent implements OnInit {
     otroAnexo:  '',
   };
 
-  // ── Detecta si el tipo seleccionado es "OTRO"
   get esOtro(): boolean {
     return this.nuevoAnexo.idAnexo === -1;
   }
@@ -60,27 +57,21 @@ export class AnexosComponent implements OnInit {
       setTimeout(() => this.onBack(), 3000);
       return;
     }
-    // Si todo está bien, cargamos los catálogos
     this.cargarAnexos();
   }
 
-  // ── Carga los catalogos ─────────────────────────────────────────
 cargarAnexos(): void {
-    this.cargando = true;
-    this.error    = null;
+    this.cargando.set(true);
+    this.error.set(null);
 
     this.apelacionService.getCatalogoAnexo().subscribe({
       next: (data) => {
-        console.log('Tipos de anexo cargados:', data.anexo);
-        this.tiposAnexo = data.anexo;
-        this.cargando   = false;
-        this.cdr.detectChanges();
+        this.tiposAnexo.set(data.anexo);
+        this.cargando.set(false);
       },
-      error: (err) => {
-        console.error('❌ Error:', err);
-        this.error    = 'No se pudieron cargar los tipos de anexo.';
-        this.cargando = false;
-        this.cdr.detectChanges();
+      error: () => {
+        this.error.set('No se pudieron cargar los tipos de anexo.');
+        this.cargando.set(false);
         setTimeout(() => {
           this.apelacionService.invalidarAnexos();
           this.cargarAnexos();
@@ -89,27 +80,22 @@ cargarAnexos(): void {
     });
   }
 
-  // ── Sincroniza descripción cuando cambia el select ─────────
   onTipoChange(id: number): void {
     if (id === -1) {
       this.nuevoAnexo.tipo = 'Otro Anexo';
     } else {
-      const found = this.tiposAnexo.find(t => t.id === id);
+      const found = this.tiposAnexo().find(t => t.id === id);
       this.nuevoAnexo.tipo = found?.descripcion ?? '';
-      // Si no es OTRO, limpia el campo libre
       this.nuevoAnexo.otroAnexo = '';
     }
-    console.log('Tipo seleccionado:', this.nuevoAnexo.tipo);
   }
 
-  // ── Agrega anexo a la lista ────────────────────────────────
 agregarAnexo(): void {
     if (!this.nuevoAnexo.idAnexo) {
       this.modalService.error('Error', 'Debes seleccionar un tipo de anexo.');
       return;
     }
 
-    // Si es "Otro", el campo no puede estar vacío
     if (this.esOtro && (!this.nuevoAnexo.otroAnexo || this.nuevoAnexo.otroAnexo.trim() === '')) {
       this.modalService.error('Error', 'Debes especificar el nombre del nuevo anexo.');
       return;
@@ -124,9 +110,7 @@ agregarAnexo(): void {
       otroAnexo: this.esOtro ? this.nuevoAnexo.otroAnexo.trim() : '',
     };
 
-    console.log('Anexo agregado a la lista:', anexo);
-    this.anexos.push(anexo);
-    // Reset del formulario (incluyendo el ID)
+    this.anexos.update(list => [...list, anexo]);
     this.nuevoAnexo = {
       idAnexo: null,
       tipo: '',
@@ -137,25 +121,22 @@ agregarAnexo(): void {
   }
 
   eliminarAnexo(index: number): void {
-    console.log('Eliminando anexo en índice:', index, this.anexos[index]);
-    this.anexos.splice(index, 1);
+    this.anexos.update(list => list.filter((_, i) => i !== index));
   }
 
-// ── Guarda todos los anexos en el backend ──────────────────
   guardar(): void {
     if (!this.idApelacion) {
       this.modalService.error('Error crítico', 'Se perdió el ID de la apelación.');
       return;
     }
-    if (!this.anexos.length) {
+    if (!this.anexos().length) {
       this.modalService.info('Sin anexos', 'No has agregado ningún anexo para guardar.', 'Agregar anexos');
       return;
     }
 
     const payload = {
       idApelacion: this.idApelacion,
-      anexos: this.anexos.map(a => {
-        // Creamos la estructura base
+      anexos: this.anexos().map(a => {
         const anexoFormateado: any = {
           idAnexo:   a.idAnexo,
           cantidad:  a.cantidad,
@@ -163,7 +144,6 @@ agregarAnexo(): void {
           monto:     a.esValor ? a.monto : null
         };
 
-        // Si el idAnexo es -1, le inyectamos la propiedad 'otroAnexo'
         if (a.idAnexo === -1) {
           anexoFormateado.otroAnexo = a.otroAnexo;
         }
@@ -172,21 +152,18 @@ agregarAnexo(): void {
       })
     };
 
-    console.log('Payload guardar anexos:', payload);
-
-    this.guardando = true;
+    this.guardando.set(true);
 
     this.apelacionService.guardarAnexos(payload)
       .pipe(finalize(() => {
-        setTimeout(() => this.guardando = false);
+        this.guardando.set(false);
       }))
       .subscribe({
         next: () => {
-          this.anexosGuardados = true;
+          this.anexosGuardados.set(true);
           this.modalService.success('Guardado correctamente','Anexos guardados correctamente.');
         },
         error: (err) => {
-          console.error('Error al guardar anexos:', err.error);
           const msg = err?.error?.message ?? 'Error al guardar los anexos.';
           this.modalService.error('Error', msg);
         }

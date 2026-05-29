@@ -1,4 +1,4 @@
-import { Component, input, computed, ElementRef, viewChild, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, computed, ElementRef, viewChild, effect } from '@angular/core';
 import { ChartSlice } from '../../models/estadisticas';
 import { drawDona, getDonaImageBase64 } from './utils/dona.painter';
 import { getChartColor } from './utils/grafica-colors';
@@ -6,6 +6,7 @@ import { getChartColor } from './utils/grafica-colors';
 @Component({
   selector: 'app-grafica-totales',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './graficaPlana.component.html',
 })
 export class GraficaTotalesComponent {

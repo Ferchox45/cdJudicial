@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { CatalogosFacade } from '../../../../apelaciones/busqueda-apelaciones/facades/catalogos.facade';
 import { BusquedaPlanaFacade } from '../../facades/busquedaPlana.facade';
@@ -8,7 +8,8 @@ import { searchFormPlana } from '../../models/buscador-plano.model';
 @Component({
   selector: 'app-panel-busqueda-plano',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormsModule],
   templateUrl: './panelPlano.component.html',
 })
 export class PanelBusquedaPlanoComponent {

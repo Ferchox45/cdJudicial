@@ -1,5 +1,5 @@
 
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/Action-siderbar/action-siderbar.component';
@@ -8,7 +8,7 @@ import { PanelPartesComponent } from './components/panel-partes/panel-partes.com
 import { PanelRelacionesComponent } from './components/panel-relaciones/panel-relaciones.component';
 import { ModalAnexosComponent } from './components/modal-anexo/modal-anexo.component';
 import { Parte, RelacionBusqueda } from './models/busqueda-rap.model';
-import { CatalogosFacade,} from './facades/catalogos.facade';
+import { CatalogosFacade } from './facades/catalogos.facade';
 import { GuardarFacade} from './facades/guardar.facade';
 import { BusquedaFacade } from './facades/busqueda.facade';
 import { Router } from '@angular/router';
@@ -19,6 +19,7 @@ import { ModalService } from '../../../shared/components/modal-custom/services/m
 @Component({
   selector: 'app-captura-apelacion',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CatalogosFacade, BusquedaFacade, GuardarFacade],
   imports: [
     CommonModule, ReactiveFormsModule,
@@ -30,45 +31,37 @@ import { ModalService } from '../../../shared/components/modal-custom/services/m
 })
 export class CapturaApelacionesComponent implements OnInit, OnDestroy {
 
-  // ── Facades
   cat = inject(CatalogosFacade);
   bus = inject(BusquedaFacade);
   grd = inject(GuardarFacade);
   private router = inject(Router);
   private fb  = inject(FormBuilder);
-  private cdr = inject(ChangeDetectorRef);
   private modal = inject(ModalService);
 
-  // ── UI
   identificacionOpen = true;
   partesOpen         = true;
   datosGeneralesOpen = true;
   relacionesFinalesOpen = false;
   activeTab: 'partes' | 'relaciones' = 'partes';
-  fechaActual = new Date();
+  fechaActual = signal(new Date);
 
-  // ── Modales
   mostrarModalAnexos = signal(false);
   folioGuardado      = signal('');
   salaGuardada       = signal('');
 
-  // ── Formularios
   form!:      FormGroup;
   parteForm!: FormGroup;
 
-  // ── Estado de partes / relaciones
   partes:     Parte[]            = [];
   relaciones: RelacionBusqueda[] = [];
-  delitosDisponibles: DelitoDisponible[] = [];
+  delitosDisponibles = signal<DelitoDisponible[]>([]);
   procesadoSeleccionado: Parte | null = null;
   ofendidoSeleccionado:  Parte | null = null;
   busquedaDelitoTexto = new FormControl('');
   mostrarFormParte    = false;
 
-  // Señal para el spinner al momento de guardar
   guardando = signal(false);
 
-// ── Sidebar
   get sidebarActions(): SidebarAction[] {
     const isSaving = this.guardando();
     return [
@@ -81,28 +74,23 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
 
   private intervalId?: ReturnType<typeof setInterval>;
 
-  // Getters
   get esIndigena(): boolean {
     const id = this.form.get('materiaId')?.value;
-    const desc = this.cat.materias.find(m => m.id === id)?.descripcion ?? '';
+    const desc = this.cat.materias().find(m => m.id === id)?.descripcion ?? '';
     return desc.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() === 'indigena'
   }
   get procesados()       { return this.partes.filter(p => p.roleOrigin === 'procesado'); }
   get ofendidos()        { return this.partes.filter(p => p.roleOrigin === 'ofendido');  }
   get delitosFiltrados() {
     const q = this.busquedaDelitoTexto.value?.trim().toLowerCase() ?? '';
-    return q ? this.delitosDisponibles.filter(d => d.delito.toLowerCase().includes(q)) : this.delitosDisponibles;
+    const dd = this.delitosDisponibles();
+    return q ? dd.filter(d => d.delito.toLowerCase().includes(q)) : dd;
   }
 
-  // Lifecycle
   ngOnInit(): void {
     this.buildForm();
     this.wireCallbacks();
     this.cat.cargar(this.form, 'penal');
-    this.intervalId = setInterval(() => {
-    this.fechaActual = new Date();
-    this.cdr.detectChanges();
-    }, 1000);
     this.form.get('materiaId')!.valueChanges.subscribe(() =>
       this.bus.actualizarValidadoresPorMateria(this.form, this.esIndigena)
     );
@@ -110,14 +98,12 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void { clearInterval(this.intervalId); }
 
-  // Callbacks de facades
 private wireCallbacks(): void {
-  this.cat.onDelitosLisros = (d) => { this.delitosDisponibles = d; this.cdr.detectChanges(); };
+  this.cat.onDelitosLisros = (d) => { this.delitosDisponibles.set(d); };
   this.cat.onError = (m) => this.modal.error('Error', m);
 
   this.bus.onExito = ({ partes, relaciones, delitosDisponibles }) => {
-    this.partes = partes; this.relaciones = relaciones; this.delitosDisponibles = delitosDisponibles;
-    this.cdr.detectChanges();
+    this.partes = partes; this.relaciones = relaciones; this.delitosDisponibles.set(delitosDisponibles);
   };
   this.bus.onError = (m) => this.modal.error('Error', m);
   this.bus.onNuevo = () => this.limpiarEstadoCaptura();
@@ -141,7 +127,6 @@ private wireCallbacks(): void {
   };
 }
 
-  // Formulario
   private buildForm(): void {
     this.form = this.fb.group({
       busquedaRapida:      [''],
@@ -162,7 +147,6 @@ private wireCallbacks(): void {
     });
   }
 
-// Acciones sidebar
   handleAction(id: string): void {
     const actions: Record<string, () => void> = {
       nuevo:   () => { this.bus.resetNuevo(this.form); this.form.reset(); },
@@ -170,7 +154,7 @@ private wireCallbacks(): void {
         this.guardando.set(true);
         this.grd.guardar(
           this.form, this.relaciones, this.partes,
-          this.cat.sexos, this.cat.tiposPartes, this.folioGuardado, this.salaGuardada,
+          this.cat.sexos(), this.cat.tiposPartes(), this.folioGuardado, this.salaGuardada,
           () => {
             this.guardando.set(false);
             this.modal.info('Advertencia', 'Por favor, complete los campos obligatorios.');
@@ -182,7 +166,16 @@ private wireCallbacks(): void {
     actions[id]?.();
   }
 
-  // ── Partes
+  actualizarFecha = effect((LimpiarFechaHora)=>{
+    const interval = setInterval(()=>{
+      this.fechaActual.set(new Date());
+    },1000);
+
+  LimpiarFechaHora(()=>{
+    clearInterval(interval);
+     })
+  });
+
   agregarParte(): void {
     this.parteForm.reset({ nombre: '', sexo: '', tipoParte: '', direccion: '', esMenor: false });
     this.mostrarFormParte = true;
@@ -191,20 +184,17 @@ private wireCallbacks(): void {
     if (this.parteForm.invalid) return;
     this.partes = [...this.partes, buildNuevaParte(this.parteForm.value)];
     this.mostrarFormParte = false;
-    this.cdr.detectChanges();
   }
 
-  // ── Relaciones
   agregarRelacionDesdePanel(): void {
     if (!this.procesadoSeleccionado || !this.ofendidoSeleccionado) return;
     this.relaciones = [...this.relaciones, buildNuevaRelacion(
       this.procesadoSeleccionado, this.ofendidoSeleccionado,
-      this.delitosDisponibles.filter(d => d.seleccionado)
+      this.delitosDisponibles().filter(d => d.seleccionado)
     )];
-    this.delitosDisponibles    = this.delitosDisponibles.map(d => ({ ...d, seleccionado: false }));
+    this.delitosDisponibles.set(this.delitosDisponibles().map(d => ({ ...d, seleccionado: false })));
     this.procesadoSeleccionado = null; this.ofendidoSeleccionado = null;
     this.relacionesFinalesOpen = true;
-    this.cdr.detectChanges();
   }
 
   eliminarDelitoDeRelacion(e: { relId: string; delitoId: number | string }): void {
@@ -214,21 +204,19 @@ private wireCallbacks(): void {
   }
 
   toggleDelito(d: DelitoDisponible): void {
-    this.delitosDisponibles = this.delitosDisponibles.map(x => x.id === d.id ? { ...x, seleccionado: !x.seleccionado } : x);
+    this.delitosDisponibles.update(dd => dd.map(x => x.id === d.id ? { ...x, seleccionado: !x.seleccionado } : x));
   }
 
-  seleccionarProcesado(p: Parte): void { this.procesadoSeleccionado = this.procesadoSeleccionado?.id === p.id ? null : p; this.cdr.detectChanges(); }
-  seleccionarOfendido(p: Parte):  void { this.ofendidoSeleccionado  = this.ofendidoSeleccionado?.id  === p.id ? null : p; this.cdr.detectChanges(); }
+  seleccionarProcesado(p: Parte): void { this.procesadoSeleccionado = this.procesadoSeleccionado?.id === p.id ? null : p; }
+  seleccionarOfendido(p: Parte):  void { this.ofendidoSeleccionado  = this.ofendidoSeleccionado?.id  === p.id ? null : p; }
 
-  // Limpieza de estado post-guardado
   private limpiarEstadoCaptura(): void {
     this.partes                = [];
     this.relaciones            = [];
     this.procesadoSeleccionado = null;
     this.ofendidoSeleccionado  = null;
-    this.delitosDisponibles    = this.delitosDisponibles.map(d => ({ ...d, seleccionado: false }));
+    this.delitosDisponibles.update(dd => dd.map(d => ({ ...d, seleccionado: false })));
     this.busquedaDelitoTexto.setValue('');
-    this.cdr.detectChanges();
   }
   private actualizarFolioTentativo(materia?: string): void {
   const materiaStr = materia || (this.esIndigena ? 'indigena' : 'penal');

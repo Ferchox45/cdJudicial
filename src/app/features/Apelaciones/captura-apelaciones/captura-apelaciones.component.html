@@ -8,7 +8,7 @@
 
   <div class="flex flex-col items-center md:items-end text-sm mt-2 md:mt-0">
     <p class="text-strong-coffee opacity-80 font-semibold m-0">Fecha y Hora de Captura</p>
-    <p class="font-bold text-emerald-800 m-0">{{ fechaActual | date:'dd/MM/yyyy | HH:mm:ss' }}</p>
+    <p class="font-bold text-emerald-800 m-0">{{ fechaActual() | date:'dd/MM/yyyy | HH:mm:ss' }}</p>
   </div>
 
 </div>
@@ -19,23 +19,23 @@
       <!-- Panel identificación -->
       <app-panel-identificacion
         [form]="form"
-        [folioTentativo]="cat.folioTentativo"
-        [cargando]="cat.cargando"
-        [buscando]="bus.buscando"
-        [busquedaExitosa]="bus.busquedaExitosa"
+        [folioTentativo]="cat.folioTentativo()"
+        [cargando]="cat.cargando()"
+        [buscando]="bus.buscando()"
+        [busquedaExitosa]="bus.busquedaExitosa()"
         [esIndigena]="esIndigena"
         [abierto]="identificacionOpen"
-        [materias]="cat.materias"
-        [apelaciones]="cat.apelaciones"
-        [tiposApelaciones]="cat.tiposApelaciones"
-        [tiposEscritos]="cat.tiposEscritos"
-        [juzgados]="cat.juzgados"
-        [magistrados]="cat.magistrados"
-        [municipios]="cat.municipios"
-        [localidades]="cat.localidades"
-        [etnias]="cat.etnias"
+        [materias]="cat.materias()"
+        [apelaciones]="cat.apelaciones()"
+        [tiposApelaciones]="cat.tiposApelaciones()"
+        [tiposEscritos]="cat.tiposEscritos()"
+        [juzgados]="cat.juzgados()"
+        [magistrados]="cat.magistrados()"
+        [municipios]="cat.municipios()"
+        [localidades]="cat.localidades()"
+        [etnias]="cat.etnias()"
         (toggleEvt)="identificacionOpen = !identificacionOpen"
-        (buscarEvt)="bus.buscar(form, delitosDisponibles)"
+        (buscarEvt)="bus.buscar(form, delitosDisponibles())"
       />
 
       <!-- Panel partes/relaciones -->
@@ -75,9 +75,9 @@
               [partes]="partes"
               [parteForm]="parteForm"
               [mostrarFormParte]="mostrarFormParte"
-              [sexos]="cat.sexos"
-              [tiposPartes]="cat.tiposPartes"
-              [bloquearBtn]="bus.bloquearBtn"
+              [sexos]="cat.sexos()"
+              [tiposPartes]="cat.tiposPartes()"
+              [bloquearBtn]="bus.bloquearBtn()"
               (toggleMenorEvt)="$event.menorEdad = !$event.menorEdad"
               (seleccionarEvt)="$event.seleccionada = !$event.seleccionada"
               (agregarParteEvt)="agregarParte()"
@@ -97,8 +97,8 @@
               [ofendidoSeleccionado]="ofendidoSeleccionado"
               [datosGeneralesOpen]="datosGeneralesOpen"
               [relacionesFinalesOpen]="relacionesFinalesOpen"
-              [bloquearSeccion]="bus.bloquearSeccion"
-              [bloquearBtn]="bus.bloquearBtn"
+              [bloquearSeccion]="bus.bloquearSeccion()"
+              [bloquearBtn]="bus.bloquearBtn()"
               (seleccionarProcesadoEvt)="seleccionarProcesado($event)"
               (seleccionarOfendidoEvt)="seleccionarOfendido($event)"
               (marcarTodosProcesadosEvt)="procesadoSeleccionado = procesados[0]"

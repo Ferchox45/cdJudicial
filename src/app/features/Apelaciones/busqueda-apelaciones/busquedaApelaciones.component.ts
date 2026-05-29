@@ -1,5 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+
 import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/Action-siderbar/action-siderbar.component';
 import { PanelBusquedaComponent } from './components/panel-busqueda/panelBusqueda.component';
 import { PanelResultadosComponent } from './components/panel-resultado/panelResultado.component';
@@ -9,12 +9,12 @@ import { CatalogosFacade } from './facades/catalogos.facade';
 @Component({
   selector:    'app-busqueda-apelaciones',
   standalone:  true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ActionSidebarComponent,
     PanelBusquedaComponent,
-    PanelResultadosComponent,
-  ],
+    PanelResultadosComponent
+],
   templateUrl: './busquedaApelaciones.component.html',
   providers: [BusquedaFacade, CatalogosFacade],
 })

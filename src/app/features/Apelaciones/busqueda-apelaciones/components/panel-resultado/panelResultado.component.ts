@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
 import { BusquedaFacade } from '../../facades/busqueda.facade';
 import { PanelDetalleComponent } from '../panel-detalle/panelDetalle.component';
 import { Resultado } from '../../models/busqueda-profunda.model';
@@ -8,7 +8,8 @@ import { PaginacionComponent } from '../../../../../shared/components/paginacion
 @Component({
   selector:    'app-panel-resultados',
   standalone:  true,
-  imports:     [CommonModule, PanelDetalleComponent, PaginacionComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [PanelDetalleComponent, PaginacionComponent],
   templateUrl: './panelResultado.component.html',
 })
 export class PanelResultadosComponent {

@@ -221,9 +221,9 @@
                       focus:outline-none focus:ring-1 focus:ring-emerald-500
                       disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
                 <option [ngValue]="null">
-                  {{ catalogosFacade.cargandoLocalidades ? 'Cargando...' : 'Seleccione...' }}
+                  {{ catalogosFacade.cargandoLocalidades() ? 'Cargando...' : 'Seleccione...' }}
                 </option>
-                @for (item of catalogosFacade.localidades; track item.id) {
+                @for (item of catalogosFacade.localidades(); track item.id) {
                   <option [ngValue]="item.id">{{ item.descripcion }}</option>
                 }
               </select>

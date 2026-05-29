@@ -1,6 +1,6 @@
 // historico-apelaciones.component.ts
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
 import { ActionSidebarComponent } from '../../../shared/components/Action-siderbar/action-siderbar.component';
 import { PanelBusquedaHistoricoComponent } from './components/panel-busqueda-historico/panelBusquedaHistorico.component';
 import { PanelResultadosHistoricoComponent } from './components/panel-resultados-historico/panelResultadoHistorico.component';
@@ -10,12 +10,12 @@ import { BuscarFacade } from './facades/buscar.facade';
 @Component({
   selector: 'app-buscador-historico',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ActionSidebarComponent,
     PanelBusquedaHistoricoComponent,
-    PanelResultadosHistoricoComponent,
-  ],
+    PanelResultadosHistoricoComponent
+],
   templateUrl: './buscadorHistorico.component.html',
 
 })

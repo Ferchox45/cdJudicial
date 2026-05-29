@@ -1,6 +1,6 @@
 // panel-busqueda-historico.component.ts
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
 import { CatalogoFacade } from '../../facades/catalogo.facade';
 import { BuscarFacade } from '../../facades/buscar.facade';
 import { FormsModule } from '@angular/forms';
@@ -8,7 +8,8 @@ import { searchFormHistorico } from '../../models/buscador-historico.model';
 @Component({
   selector: 'app-panel-busqueda-historico',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormsModule],
   templateUrl: './panelBusquedaHistorico.component.html',
 })
 

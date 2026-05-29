@@ -1,12 +1,13 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
 import { BusquedaPlanaFacade } from '../../facades/busquedaPlana.facade';
 import { PaginacionComponent } from '../../../../../shared/components/paginacion/paginacion.component';
 
 @Component({
   selector: 'app-panel-resultados-plano',
   standalone: true,
-  imports: [CommonModule, PaginacionComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [PaginacionComponent],
   templateUrl: './panelResultadosPlano.component.html',
 })
 export class PanelResultadosPlanoComponent {

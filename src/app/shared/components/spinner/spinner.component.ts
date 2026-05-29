@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+
 
 export type SpinnerSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type SpinnerColor = 'white' | 'emerald' | 'forest' | 'gray' | 'current';
@@ -7,7 +7,8 @@ export type SpinnerColor = 'white' | 'emerald' | 'forest' | 'gray' | 'current';
 @Component({
   selector: 'app-spinner',
   standalone: true,
-  imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [],
   templateUrl: './spinner.component.html',
 })
 export class SpinnerComponent {

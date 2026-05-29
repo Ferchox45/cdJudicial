@@ -5,14 +5,14 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { Parte } from '../../models/busqueda-rap.model';
 import { CatalogoItem } from '../../../../../core/models/catalogo-global.model';
 @Component({
   selector: 'app-panel-partes',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./panel.partes.component.html",
 })

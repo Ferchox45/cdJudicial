@@ -8,95 +8,99 @@
         stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
         <path stroke-linecap="round" stroke-linejoin="round"
           d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Zm3.75 11.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/>
+        </svg>
+        <h2 class="text-sm font-bold text-white uppercase tracking-wide m-0">Resultados de Búsqueda</h2>
+      </div>
+      <svg class="w-4 h-4 text-white transition-transform duration-200"
+        [class.rotate-180]="!abierto"
+        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
       </svg>
-      <h2 class="text-sm font-bold text-white uppercase tracking-wide m-0">Resultados de Búsqueda</h2>
     </div>
-    <svg class="w-4 h-4 text-white transition-transform duration-200"
-      [class.rotate-180]="!abierto"
-      fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-    </svg>
+
+    @if (abierto) {
+      <div class="w-full overflow-x-auto">
+        <table class="w-full border-collapse text-center min-w-68.75">
+          <thead>
+            <tr class="bg-sand border-b border-gray-200">
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio Oficialia</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio de Apelacion</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio de Apelacion Anterior</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio de Oficio</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Tramite</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fojas</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Expediente Acumulado</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Reposicion</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Expediente / Causa</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fecha Auto</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fecha y Hora de Recepción</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fecha y Hora de Ingreso al Juzgado</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Observaciones</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Asunto</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Lugar de los Hechos</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Sala</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Sala Anterior</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Juzgado</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Magistrado</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Nomenclatura</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Apelacion</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Tipo de Apelacion</th>
+              <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Tipo de Escrito</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of busquedaPlanaFacade.resultados(); track item) {
+              <tr class="border-b border-gray-100 cursor-pointer transition-colors hover:bg-cream"
+                >
+                <td class="px-4 py-3.5 text-sm text-forest font-semibold whitespace-nowrap">{{ item.folioOficialia }}</td>
+                <td class="px-4 py-3.5 text-sm text-forest font-semibold whitespace-nowrap">{{ item.folioApelacion }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap font-medium">{{ item.folioApelacionAnterior }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.folioOficio }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ item.tramite }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ item.fojas }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ item.expedienteAcumulado }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ item.esReposicion ? 'SI' : 'NO' }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.expedienteCausa }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.fechaAuto }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.fechaHoraRecepcion }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.fechaHoraIngresoJuz}}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.observaciones }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.asunto }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.lugarHechos }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.sala }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.salaAnterior }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.juzgado }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.magistrado }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.nomenclatura }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.apelacion }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.tipoApelacion }}</td>
+                <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.tipoEscrito }}</td>
+              </tr>
+            }
+
+            <!-- Estado vacío -->
+            @if (busquedaPlanaFacade.resultados().length === 0 && !busquedaPlanaFacade.buscando()) {
+              <tr>
+                <td colspan="9" class="px-5 py-10 text-center text-gray-400 italic text-sm">
+                  No se encontraron resultados. Ajuste los filtros e intente de nuevo.
+                </td>
+              </tr>
+            }
+
+          </tbody>
+        </table>
+      </div>
+
+      @if (busquedaPlanaFacade.totalResultados() > 0) {
+        <app-paginacion
+          [paginaActual]="busquedaPlanaFacade.paginaActual()"
+          [totalPaginas]="busquedaPlanaFacade.totalPaginas()"
+          [totalResultados]="busquedaPlanaFacade.totalResultados()"
+          [porPagina]="busquedaPlanaFacade.porPagina()"
+          (paginaCambio)="busquedaPlanaFacade.irPagina($event)"
+          (limitCambio)="busquedaPlanaFacade.cambiarPorPagina($event)" />
+      }
+
+
+    }
   </div>
-
-  @if (abierto) {
-        <div class="w-full overflow-x-auto">
-  <table class="w-full border-collapse text-center min-w-68.75">
-    <thead>
-      <tr class="bg-sand border-b border-gray-200">
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio Oficialia</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio de Apelacion</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio de Apelacion Anterior</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Folio de Oficio</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Tramite</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fojas</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Expediente Acumulado</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Reposicion</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Expediente / Causa</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fecha Auto</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fecha y Hora de Recepción</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Fecha y Hora de Ingreso al Juzgado</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Observaciones</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Asunto</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Lugar de los Hechos</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Sala</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Sala Anterior</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Juzgado</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Magistrado</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Nomenclatura</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Apelacion</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Tipo de Apelacion</th>
-        <th class="px-4 py-4 text-xs font-bold text-black uppercase tracking-wide whitespace-nowrap">Tipo de Escrito</th>
-      </tr>
-    </thead>
-    <tbody>
-    <tr class="border-b border-gray-100 cursor-pointer transition-colors hover:bg-cream"
-              *ngFor="let item of busquedaPlanaFacade.resultados()">
-          <td class="px-4 py-3.5 text-sm text-forest font-semibold whitespace-nowrap">{{ item.folioOficialia }}</td>
-          <td class="px-4 py-3.5 text-sm text-forest font-semibold whitespace-nowrap">{{ item.folioApelacion }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap font-medium">{{ item.folioApelacionAnterior }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.folioOficio }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ item.tramite }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ item.fojas }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ item.expedienteAcumulado }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 whitespace-nowrap">{{ item.esReposicion ? 'SI' : 'NO' }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.expedienteCausa }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.fechaAuto }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.fechaHoraRecepcion }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.fechaHoraIngresoJuz}}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.observaciones }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.asunto }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.lugarHechos }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.sala }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.salaAnterior }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.juzgado }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.magistrado }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.nomenclatura }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.apelacion }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.tipoApelacion }}</td>
-          <td class="px-4 py-3.5 text-sm text-gray-700 min-w-62.5">{{ item.tipoEscrito }}</td>
-        </tr>
-
-        <!-- Estado vacío -->
-                  <tr *ngIf="busquedaPlanaFacade.resultados().length === 0 && !busquedaPlanaFacade.buscando()">
-
-          <td colspan="9" class="px-5 py-10 text-center text-gray-400 italic text-sm">
-            No se encontraron resultados. Ajuste los filtros e intente de nuevo.
-          </td>
-        </tr>
-
-    </tbody>
-  </table>
-</div>
-
-    <app-paginacion
-      *ngIf="busquedaPlanaFacade.totalResultados() > 0"
-      [paginaActual]="busquedaPlanaFacade.paginaActual()"
-      [totalPaginas]="busquedaPlanaFacade.totalPaginas()"
-      [totalResultados]="busquedaPlanaFacade.totalResultados()"
-      [porPagina]="busquedaPlanaFacade.porPagina()"
-      (paginaCambio)="busquedaPlanaFacade.irPagina($event)"
-      (limitCambio)="busquedaPlanaFacade.cambiarPorPagina($event)" />
-
-
-  }
-</div>

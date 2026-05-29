@@ -1,13 +1,14 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+
 import { BusquedaEstadisticaFacade } from '../../facades/busquedaEstadistica.facade';
 import { PaginacionComponent } from '../../../../../shared/components/paginacion/paginacion.component';
 import { TablaColumna } from '../../models/estadisticas';
 @Component({
   selector: 'app-tabla-resultados',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tablaResultados.component.html',
-  imports: [CommonModule, PaginacionComponent],
+  imports: [PaginacionComponent],
 })
 export class TablaResultadosComponent {
 readonly busquedaEstadisticas = inject(BusquedaEstadisticaFacade);

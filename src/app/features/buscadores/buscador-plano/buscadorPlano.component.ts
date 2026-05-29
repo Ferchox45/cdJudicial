@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
 import { ActionSidebarComponent } from '../../../shared/components/Action-siderbar/action-siderbar.component';
 import { PanelBusquedaPlanoComponent } from './components/panel-buscador-plano/panlePlano.component';
 import { PanelResultadosPlanoComponent } from './components/panel-resultados-plano/panelResultadosPlano.component';
@@ -10,12 +10,12 @@ import { BusquedaPlanaFacade } from './facades/busquedaPlana.facade';
 @Component({
   selector: 'app-buscador-plano',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ActionSidebarComponent,
     PanelBusquedaPlanoComponent,
-    PanelResultadosPlanoComponent,
-  ],
+    PanelResultadosPlanoComponent
+],
   templateUrl: './buscadorPlano.component.html',
 })
 export class BuscadorPlanoComponent {

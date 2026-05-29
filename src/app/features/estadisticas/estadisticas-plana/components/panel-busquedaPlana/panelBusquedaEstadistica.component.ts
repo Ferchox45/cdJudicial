@@ -1,4 +1,4 @@
-import { Component, inject, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { searchFormPlanaEstadistica } from '../../models/estadisticas';
 import { BusquedaEstadisticaFacade } from '../../facades/busquedaEstadistica.facade';
@@ -7,6 +7,7 @@ import { CatalogosFacade } from '../../../../apelaciones/busqueda-apelaciones/fa
 @Component({
   selector: 'app-panel-busqueda-estadistica',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule],
   templateUrl: './panelBusquedaEstadistica.component.html',
 })
