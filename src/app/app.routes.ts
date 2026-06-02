@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
 import { DashboardLayoutComponent } from './features/dashboard/components/dashboardmain/dashboard.component';
+import { authGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
   // 1. REDIRECCIÓN INICIAL
   {
     path: '',
-    redirectTo: 'inicio',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
 
@@ -19,7 +20,7 @@ export const routes: Routes = [
   {
     path: '',
     component: DashboardLayoutComponent,
-    // Aquí es donde en el futuro añadirías tu: canActivate: [authGuard]
+    canActivate: [authGuard],
     children: [
       {
         path: 'inicio',
@@ -51,7 +52,7 @@ export const routes: Routes = [
   // 4. WILDCARD (Ruta no encontrada)
   {
     path: '**',
-    redirectTo: 'inicio',
+    redirectTo: 'login',
     pathMatch: 'full'
   }
 ];

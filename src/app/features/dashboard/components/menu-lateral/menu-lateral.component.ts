@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../../auth/services/auth.service';
+
 @Component({
   selector: 'app-menulateral',
   standalone: true,
@@ -9,9 +11,12 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 
 export class MenulateralComponent {
-// Recibe si debe estar abierto desde el Padre
-  isOpen = input(false);
+  private auth = inject(AuthService);
 
-  // Emite un evento al Padre cuando un enlace o el overlay es presionado
+  isOpen = input(false);
   closeMenu = output<void>();
+
+  logout() {
+    this.auth.logout().subscribe();
+  }
 }

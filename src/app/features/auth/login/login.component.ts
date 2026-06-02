@@ -1,58 +1,54 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, SpinnerComponent],
+  imports: [FormsModule, SpinnerComponent],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
-  private fb = inject(FormBuilder);
+  private auth = inject(AuthService);
   private router = inject(Router);
 
-  public loginForm: FormGroup;
-
-  // Signals de estado
-  public isLoading = signal<boolean>(false);
-  public showPassword = signal<boolean>(false);
-  public errorMessage = signal<string | null>(null);
-
-  constructor() {
-    this.loginForm = this.fb.group({
-      usuario: ['', Validators.required],
-      contrasena: ['', Validators.required],
-      recordarme: [false]
-    });
-  }
+  usuario = '';
+  contrasenia = '';
+  error = signal<string | null>(null);
+  isLoading = signal(false);
+  showPassword = signal(false);
 
   togglePassword() {
-    this.showPassword.update(value => !value);
+    this.showPassword.update(v => !v);
   }
 
-  onSubmit() {
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
+  login() {
+    if (!this.usuario || !this.contrasenia) {
+      this.error.set('Todos los campos son obligatorios');
       return;
     }
 
     this.isLoading.set(true);
-    this.errorMessage.set(null);
+    this.error.set(null);
 
-    const { usuario, contrasena } = this.loginForm.value;
-
-    setTimeout(() => {
-      this.isLoading.set(false);
-
-      if (usuario === 'admin' && contrasena === 'admin') {
+    this.auth.login(this.usuario, this.contrasenia).subscribe({
+      next: () => {
+        this.isLoading.set(false);
         this.router.navigate(['/inicio']);
-      } else {
-        this.errorMessage.set('Usuario o contraseña incorrectos.');
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        if (err.status === 401) {
+          this.error.set('Usuario o contraseña incorrectos');
+        } else {
+          const body = err.error;
+          const msg = body?.message || body?.error || body?.mensaje || '';
+          this.error.set(msg || 'Error al iniciar sesión');
+        }
       }
-    }, 1500);
+    });
   }
 }

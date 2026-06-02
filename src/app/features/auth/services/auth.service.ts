@@ -1,36 +1,80 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-import { LoginRequest, LoginResponse } from '../models/auth.model';
+import { Injectable, signal, inject } from '@angular/core';
+import { HttpClient, HttpBackend } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { switchMap, tap, of, finalize } from 'rxjs';
+import { LoginResponse } from '../models/auth.model';
+import { environment } from '../../../../environments/environment';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private http = inject(HttpClient);
-  private readonly API_URL = '';
+  API = environment.apiUrl;
+  private router = inject(Router);
+  private http: HttpClient;
 
-  // Signal para exponer el token actual de forma reactiva a la app
-  public token = signal<string | null>(localStorage.getItem('access_token'));
+  private accessToken = signal<string | null>(null);
+  readonly accessToken$ = toObservable(this.accessToken);
+  readonly isAuthenticated = signal(false);
+  readonly initialized = signal(false);
 
-  login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.API_URL, credentials).pipe(
-      tap(response => {
-        // Si la respuesta es exitosa y contiene el token, lo guardamos
-        if (response.data && response.data.access_token) {
-          localStorage.setItem('access_token', response.data.access_token);
-          this.token.set(response.data.access_token);
+  constructor(httpBackend: HttpBackend) {
+    this.http = new HttpClient(httpBackend);
+    this.tryRestoreSession();
+  }
 
-          if (response.data.refresh_token) {
-            localStorage.setItem('refresh_token', response.data.refresh_token);
+  private tryRestoreSession() {
+    this.http.post<LoginResponse>(`${this.API}/api/auth/refresh`, {}, { withCredentials: true })
+      .pipe(
+        finalize(() => this.initialized.set(true))
+      )
+      .subscribe({
+        next: (res) => {
+          if (res?.data?.access_token) {
+            this.accessToken.set(res.data.access_token);
+            this.isAuthenticated.set(true);
           }
+        },
+        error: () => {
+          this.isAuthenticated.set(false);
         }
-      })
+      });
+  }
+
+  login(usuario: string, contrasenia: string) {
+    return this.http.post<LoginResponse | null>(`${this.API}/api/auth/login`, { usuario, contrasenia }, { withCredentials: true })
+      .pipe(
+        switchMap((res) => {
+          if (res?.data?.access_token) {
+            this.accessToken.set(res.data.access_token);
+            this.isAuthenticated.set(true);
+            return of(true);
+          }
+          return this.refresh();
+        }),
+      );
+  }
+
+  refresh() {
+    return this.http.post<LoginResponse>(`${this.API}/api/auth/refresh`, {}, { withCredentials: true })
+      .pipe(tap((res) => {
+        if (res?.data?.access_token) {
+          this.accessToken.set(res.data.access_token);
+          this.isAuthenticated.set(true);
+        }
+      }));
+  }
+
+  logout() {
+    return this.http.post(`${this.API}/api/auth/logout`, {}, { withCredentials: true }).pipe(
+      tap(() => {
+        this.accessToken.set(null);
+        this.isAuthenticated.set(false);
+        this.router.navigate(['/login']);
+      }),
     );
   }
-  logout() {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    this.token.set(null);
+
+  getToken(): string | null {
+    return this.accessToken();
   }
 }
