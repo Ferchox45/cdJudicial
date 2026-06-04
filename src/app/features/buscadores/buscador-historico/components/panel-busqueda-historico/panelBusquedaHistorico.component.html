@@ -42,7 +42,7 @@
             <input
               id="expCausa"
               name="expCausa"
-              [ngModel]="Form.expedienteCausa"
+              [ngModel]="form.expedienteCausa"
               (ngModelChange)="updateForm('expedienteCausa', $event)"
               type="text"
               placeholder="Ej. 123/2024"
@@ -56,7 +56,7 @@
             <input
               id="toca"
               name="toca"
-              [ngModel]="Form.toca"
+              [ngModel]="form.toca"
               (ngModelChange)="updateForm('toca', $event)"
               type="text"
               placeholder="Número de toca"
@@ -68,7 +68,7 @@
           <div class="flex flex-col gap-1.5">
             <label for="sala" class="text-xs font-bold text-gray-700">Sala</label>
             <select id="sala" name="sala"
-              [ngModel]="Form.idSala"
+              [ngModel]="form.idSala"
               (ngModelChange)="updateForm('idSala', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
@@ -106,7 +106,7 @@
             <label for="fechaRecIni" class="text-xs font-bold text-gray-700">Fecha Rec. Inicial</label>
             <input
               id="fechaRecIni"
-              [ngModel]="Form.fechaRecepcionInicial"
+              [ngModel]="form.fechaRecepcionInicial"
               (ngModelChange)="updateForm('fechaRecepcionInicial', $event)"
               type="date"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
@@ -117,7 +117,7 @@
             <label for="fechaRecFin" class="text-xs font-bold text-gray-700">Fecha Rec. Final</label>
             <input
               id="fechaRecFin"
-              [ngModel]="Form.fechaRecepcionFinal"
+              [ngModel]="form.fechaRecepcionFinal"
               (ngModelChange)="updateForm('fechaRecepcionFinal', $event)"
               type="date"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
@@ -128,7 +128,7 @@
             <label for="fechaApeIni" class="text-xs font-bold text-gray-700">Fecha Ape. Inicial</label>
             <input
               id="fechaApeIni"
-              [ngModel]="Form.fechaApelacionInicial"
+              [ngModel]="form.fechaApelacionInicial"
               (ngModelChange)="updateForm('fechaApelacionInicial', $event)"
               type="date"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
@@ -139,7 +139,7 @@
             <label for="fechaApeFin" class="text-xs font-bold text-gray-700">Fecha Ape. Final</label>
             <input
               id="fechaApeFin"
-              [ngModel]="Form.fechaApelacionFinal"
+              [ngModel]="form.fechaApelacionFinal"
               (ngModelChange)="updateForm('fechaApelacionFinal', $event)"
               type="date"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
@@ -171,7 +171,7 @@
               id="imputado"
               type="text"
               placeholder="Nombre del imputado"
-              [ngModel]="Form.imputado"
+              [ngModel]="form.imputado"
               (ngModelChange)="updateForm('imputado', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
                      transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"/>
@@ -184,7 +184,7 @@
               id="victima"
               type="text"
               placeholder="Nombre de la víctima"
-              [ngModel]="Form.victima"
+              [ngModel]="form.victima"
               (ngModelChange)="updateForm('victima', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
                      transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"/>
@@ -197,7 +197,7 @@
               id="delito"
               type="text"
               placeholder="Tipo de delito"
-              [ngModel]="Form.delito"
+              [ngModel]="form.delito"
               (ngModelChange)="updateForm('delito', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white
                      transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"/>

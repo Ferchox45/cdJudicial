@@ -1,4 +1,4 @@
-export interface searchFormPlana{
+export interface SearchFormPlana{
   folioOficialia: string | null;
   folioApelacion: string | null;
   idSala: string | null;

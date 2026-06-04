@@ -1,9 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/internal/Observable';
-import { map } from 'rxjs/internal/operators/map';
+import { Observable, map } from 'rxjs';
 import { ResultadoBusquedaPlanaEstadistica, ApiResponseEstadisticas,
-  searchFormPlanaEstadistica, PagedResult, ReporteAgrupado,
+  SearchFormPlanaEstadistica, PagedResult, ReporteAgrupado,
   ApiResponseAgrupada} from '../models/estadisticas';
 import { BusquedaEstadisticaMapper } from '../util/estadisticasPlana.mapper';
 import { environment } from '../../../../../environments/environment';
@@ -13,7 +12,7 @@ private http = inject(HttpClient);
 apiEndpoint = environment.apiUrl;
 
 buscarEstadistica(
-  form: searchFormPlanaEstadistica,
+  form: SearchFormPlanaEstadistica,
   page: number,
   limit: number
 ): Observable<PagedResult> {
@@ -53,7 +52,7 @@ private mapItem(item: any): ResultadoBusquedaPlanaEstadistica {
 }
 
 buscarAgrupada(
-    form: searchFormPlanaEstadistica
+    form: SearchFormPlanaEstadistica
   ): Observable<ResultadoBusquedaPlanaEstadistica[]> {
 
     const dto = BusquedaEstadisticaMapper.toDTO(form);
@@ -123,19 +122,13 @@ exportarExcel(filtros: any, imagenBase64: string | null = null): Observable<Blob
     imagenBase64, // null si no hay gráfica activa, el back lo maneja
   };
 
-  console.log('📡 [SERVICIO] exportarExcel POST:', {
-    filtros,
-    tieneImagen: !!imagenBase64,
-    longitud: imagenBase64?.length ?? 0,
-  });
-
   return this.http.post(`${this.apiEndpoint}/api/estadisticas/exportar`, body, {
     responseType: 'blob',
   });
 }
 
   // Devuelve la jerarquía intacta para la tabla HTML
-buscarAgrupadaJerarquica(form: searchFormPlanaEstadistica): Observable<ReporteAgrupado[]> {
+buscarAgrupadaJerarquica(form: SearchFormPlanaEstadistica): Observable<ReporteAgrupado[]> {
   const dto = BusquedaEstadisticaMapper.toDTO(form);
   let params = new HttpParams();
   Object.entries(dto).forEach(([key, value]) => {

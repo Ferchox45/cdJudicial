@@ -14,7 +14,7 @@
         {{ titulo() }}
       </h2>
       @if (abierto) {
-        <span class="text-xs font-semibold text-[#2d6a4f] bg-white/90 px-2.5 py-0.5 rounded-full">
+        <span class="text-xs font-semibold text-forest bg-white/90 px-2.5 py-0.5 rounded-full">
           {{ totalResultados() }} registros
         </span>
       }
@@ -55,7 +55,7 @@
                 <div class="flex gap-2">
                   <button
                     (click)="mostrarTodas()"
-                    class="text-[0.65rem] font-semibold text-[#2d6a4f] hover:underline cursor-pointer bg-transparent border-0 p-0">
+                    class="text-[0.65rem] font-semibold text-forest hover:underline cursor-pointer bg-transparent border-0 p-0">
                     Todas
                   </button>
                   <span class="text-gray-300 text-xs">|</span>
@@ -75,7 +75,7 @@
                       [checked]="col.visible"
                       (change)="toggleColumna(col.field)"
                       (click)="$event.stopPropagation()"
-                      class="size-4 rounded border-gray-300 text-[#2d6a4f] accent-[#2d6a4f] cursor-pointer shrink-0">
+                      class="size-4 rounded border-gray-300 text-forest accent-forest cursor-pointer shrink-0">
                     <span
                       class="text-sm select-none"
                       [class.text-gray-800]="col.visible"
@@ -91,7 +91,7 @@
         </div>
 
         <p class="text-xs text-gray-400">
-          <span class="font-bold text-[#2d6a4f]">{{ columnasVisibles().length }}</span>
+          <span class="font-bold text-forest">{{ columnasVisibles().length }}</span>
           / {{ columnas().length }} columnas
         </p>
       </div>
@@ -113,7 +113,7 @@
           @for (r of data(); track $index) {
             <tr
               class="border-b border-gray-100 transition-colors hover:bg-emerald-50/40 cursor-pointer"
-              [class.bg-[#eef6f3]]="r === filaSeleccionada()"
+              [class.bg-row-selected]="r === filaSeleccionada()"
               [class.border-b-transparent]="r === filaSeleccionada() && expandedTemplate()"
               (click)="rowClick.emit(r)">
               @for (col of columnasVisibles(); track col.field) {

@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/internal/Observable';
-import { map } from 'rxjs/internal/operators/map';
+import { Observable, map } from 'rxjs';
 import { ApiResponsePlana, PagedResultPlana} from '../models/buscador-plano.model';
 import { environment } from '../../../../../environments/environment';
 

@@ -5,6 +5,7 @@ import { Observable, timeout, map } from 'rxjs';
 import { CacheService } from '../../../../core/services/cache.service';
 import { CapturaApelacionCatalogos } from '../models/catalogo-apelaciones.model';
 import { BusquedaRapida } from '../models/busqueda-rap.model';
+import { ApelacionPayload, ApelacionSaveResponse } from '../models/apelacion-aux.model';
 import { environment } from '../../../../../environments/environment';
 
 export const CACHE_KEYS_APELACION = {
@@ -61,9 +62,9 @@ export class ApelacionApiService {
       .pipe(timeout(15000), map((res) => res.data));
   }
 
-  guardarApelacion(payload: any): Observable<any> {
+  guardarApelacion(payload: ApelacionPayload): Observable<ApelacionSaveResponse> {
     return this.http
-      .post(`${this.apiEndpoint}/api/apelaciones`, payload)
+      .post<ApelacionSaveResponse>(`${this.apiEndpoint}/api/apelaciones`, payload)
       .pipe(timeout(15000));
   }
 

@@ -3,7 +3,7 @@ import { TablaResultadosComponent } from './components/tabla-resultados/tablaRes
 import { PanelBusquedaEstadisticaComponent } from './components/panel-busquedaPlana/panelBusquedaEstadistica.component';
 import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import { BusquedaEstadisticaFacade } from './facades/busquedaEstadistica.facade';
-import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/Action-siderbar/action-siderbar.component';
+import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/action-sidebar/action-sidebar.component';
 import { TablaAnidadaComponent } from './components/tabla-anidada/tablaAnidada.component';
 import { CatalogosFacade } from '../../apelaciones/busqueda-apelaciones/facades/catalogos.facade';
 import { TableRow, ChartSlice } from './models/estadisticas';
@@ -24,15 +24,12 @@ export class EstadisticasPlanaComponent {
   vistaActiva = signal<'resultados' | 'grafica'>('resultados');
   filaActiva = signal<TableRow | null>(null);
 
-  // estadisticas-plana.component.ts
-onFilaSeleccionada(row: TableRow): void {
-  if (row.chartData) {
-    this.buscarEstadisticas.chartActivo.set({ data: row.chartData, title: row.chartTitle ?? '' });
-  }
-}
-
 onCeldaSeleccionada(event: { data: ChartSlice[]; title: string }): void {
   this.buscarEstadisticas.chartActivo.set(event);
+}
+
+onFilaSeleccionada(fila: TableRow): void {
+  this.filaActiva.set(fila);
 }
 
     ngOnInit(): void {

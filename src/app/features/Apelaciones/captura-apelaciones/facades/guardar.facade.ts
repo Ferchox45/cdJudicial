@@ -6,6 +6,18 @@ import { ApelacionContextService } from '../../anexos/data/apelacion-context.ser
 import { buildPayload } from '../utils/captura-apelaciones.mapper';
 import { ApelacionApiService } from '../data/captura-apelacion.service';
 import { CatalogoItem } from '../../../../core/models/catalogo-global.model';
+import { ApelacionSaveResponse } from '../models/apelacion-aux.model';
+
+export interface GuardarConfig {
+  form: FormGroup;
+  relaciones: RelacionBusqueda[];
+  partes: Parte[];
+  sexos: CatalogoItem[];
+  tiposPartes: CatalogoItem[];
+  folioGuardado: WritableSignal<string>;
+  salaGuardada: WritableSignal<string>;
+  onModalInvalido: () => void;
+}
 
 @Injectable()
 export class GuardarFacade {
@@ -21,16 +33,8 @@ export class GuardarFacade {
   onTerminar?: () => void;
   onError?:    (msg: string) => void;
 
-guardar(
-    form: FormGroup,
-    relaciones: RelacionBusqueda[],
-    partes: Parte[],
-    sexos: CatalogoItem[],
-    tiposPartes: CatalogoItem[],
-    folioGuardado: WritableSignal<string>,
-    salaGuardada: WritableSignal<string>,
-    onModalInvalido: () => void
-  ): void {
+guardar(config: GuardarConfig): void {
+    const { form, relaciones, partes, sexos, tiposPartes, folioGuardado, salaGuardada, onModalInvalido } = config;
 
     // Construimos el JSON con lo que sea que tenga el form
     const payload = buildPayload(
@@ -40,7 +44,6 @@ guardar(
       sexos,
       tiposPartes
     );
-    console.log('Payload a enviar al servidor:', payload);
     // Despues validamos. Si es inválido, detenemos el flujo para que NO se envíe al servidor
     if (form.invalid) {
       form.markAllAsTouched();
@@ -50,7 +53,7 @@ guardar(
     // Si todo está bien, mandamos la petición al servidor
     this.guardando = true;
     this.apelacionService.guardarApelacion(payload).subscribe({
-      next: (res: any) => {
+      next: (res: ApelacionSaveResponse) => {
         this.guardando = false;
         if (res.status === 'success') {
           const fol = res.data.folioOficialia;

@@ -20,7 +20,6 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
             return next(newReq);
           }),
           catchError((refreshErr) => {
-      console.error('🚨 EL INTERCEPTOR FALLÓ Y ORDENA LOGOUT', refreshErr); // <-- AÑADE ESTO
       auth.logout().subscribe();
       return throwError(() => refreshErr);
           }),

@@ -1,5 +1,5 @@
 import { CatalogoItem } from "../../../../core/models/catalogo-global.model";
-export interface catBusqHistorica{
+export interface CatalogoBusquedaHistorica{
 salas: CatalogoItem[];
 }
 
@@ -35,7 +35,7 @@ export interface PagedResultHistorico {
   paginacion: PaginacionHistorico;
 }
 
-export interface searchFormHistorico{
+export interface SearchFormHistorico{
   expedienteCausa: string | null;
   toca: string | null;
   idSala: string | null;

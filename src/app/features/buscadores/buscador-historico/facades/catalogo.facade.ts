@@ -20,7 +20,6 @@ export class CatalogoFacade {
       .subscribe({
         next: (cat) => {
           this.salas.set(cat.salas ?? []);
-          console.log(this.salas());
           this.cargando.set(false);
         },
         error: () => {

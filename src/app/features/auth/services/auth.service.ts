@@ -1,7 +1,7 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, DestroyRef } from '@angular/core';
 import { HttpClient, HttpBackend } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap, tap, of, finalize } from 'rxjs';
 import { LoginResponse } from '../models/auth.model';
 import { environment } from '../../../../environments/environment';
@@ -17,6 +17,8 @@ export class AuthService {
   readonly isAuthenticated = signal(false);
   readonly initialized = signal(false);
 
+  private destroyRef = inject(DestroyRef);
+
   constructor(httpBackend: HttpBackend) {
     this.http = new HttpClient(httpBackend);
     this.tryRestoreSession();
@@ -25,6 +27,7 @@ export class AuthService {
   private tryRestoreSession() {
     this.http.post<LoginResponse>(`${this.API}/api/auth/refresh`, {}, { withCredentials: true })
       .pipe(
+        takeUntilDestroyed(this.destroyRef),
         finalize(() => this.initialized.set(true))
       )
       .subscribe({

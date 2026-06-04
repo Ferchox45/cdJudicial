@@ -41,8 +41,7 @@ export class PanelResultadosComponent {
   seleccionar(r: Resultado): void {
     this.busqueda.seleccionarFila(r);
   }
-
   onBack(): void {
-    window.history.back();
+        window.history.back();
   }
 }

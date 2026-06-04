@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 
-import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/Action-siderbar/action-siderbar.component';
+import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/action-sidebar/action-sidebar.component';
 import { PanelBusquedaComponent } from './components/panel-busqueda/panelBusqueda.component';
 import { PanelResultadosComponent } from './components/panel-resultado/panelResultado.component';
 import { BusquedaFacade } from './facades/busqueda.facade';

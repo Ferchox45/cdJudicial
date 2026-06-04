@@ -1,5 +1,5 @@
 <!-- paginacion.component.html -->
-<div class="flex flex-col md:flex-row items-center justify-between px-4 md:px-5 py-4 border-t border-gray-100 bg-[#fafafa] gap-4">
+<div class="flex flex-col md:flex-row items-center justify-between px-4 md:px-5 py-4 border-t border-gray-100 bg-bg-light gap-4">
 
   <!-- Info + selector -->
   <div class="flex items-center gap-4 flex-wrap justify-center">
@@ -44,8 +44,8 @@
           [class.bg-strong-coffee]="p === paginaActual()"
           [class.text-white]="p === paginaActual()"
           [class.border-strong-coffee]="p === paginaActual()"
-          [class.bg-\[#f4f4f5\]]="p !== paginaActual()"
-          [class.border-\[#e4e4e7\]]="p !== paginaActual()"
+          [class.bg-zinc-100]="p !== paginaActual()"
+          [class.border-zinc-200]="p !== paginaActual()"
           [class.text-gray-700]="p !== paginaActual()"
           (click)="irAPagina($any(p))">
           {{ p }}

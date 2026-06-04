@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
   selector: 'app-action-card',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './action.card.component.html',
+  templateUrl: './action-card.component.html',
   imports: [RouterLink]
 })
 export class ActionCardComponent {

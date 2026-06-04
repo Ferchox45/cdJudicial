@@ -1,4 +1,4 @@
-import { ResultadoBusquedaPlana, searchFormPlana, PagedResultPlana } from "../models/buscador-plano.model";
+import { ResultadoBusquedaPlana, SearchFormPlana, PagedResultPlana } from "../models/buscador-plano.model";
 import { Injectable, inject, signal, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BuscadorPlanoService } from "../data/buscadorPlano.service";
@@ -26,7 +26,7 @@ export class BusquedaPlanaFacade {
   private readonly modal           = inject(ModalService);
   private _cache = new Map<number, ResultadoBusquedaPlana[]>();
 
-  readonly form = signal<searchFormPlana>({ ...FORM_VACIO });
+  readonly form = signal<SearchFormPlana>({ ...FORM_VACIO });
 
   // ── Estado
   readonly buscando   = signal(false);

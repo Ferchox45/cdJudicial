@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { searchFormPlanaEstadistica } from '../../models/estadisticas';
+import { SearchFormPlanaEstadistica } from '../../models/estadisticas';
 import { BusquedaEstadisticaFacade } from '../../facades/busquedaEstadistica.facade';
 import { CatalogosFacade } from '../../../../apelaciones/busqueda-apelaciones/facades/catalogos.facade';
 
@@ -19,10 +19,10 @@ export class PanelBusquedaEstadisticaComponent {
   abierto = true;
   toggle(): void { this.abierto = !this.abierto; }
 
-  get Form(): searchFormPlanaEstadistica {
+  get form(): SearchFormPlanaEstadistica {
       return this.buscarEstadisticas.form();
     }
-    updateForm(field: keyof searchFormPlanaEstadistica, value: string): void {
+    updateForm(field: keyof SearchFormPlanaEstadistica, value: string): void {
       this.buscarEstadisticas.form.update(f => ({ ...f, [field]: value }));
     }
 }

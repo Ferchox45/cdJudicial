@@ -44,7 +44,7 @@ export class BreadcrumbService {
         breadcrumbs.push({ label, url: url || '/' });
       }
 
-      return this.createBreadcrumbs(child, url, breadcrumbs);
+      breadcrumbs = this.createBreadcrumbs(child, url, breadcrumbs);
     }
     return breadcrumbs;
   }

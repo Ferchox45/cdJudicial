@@ -11,3 +11,14 @@ export interface Anexo {
 export interface CapturaAnexoCatalogos {
   anexo: CatalogoItem[];
 }
+
+export interface AnexoPayload {
+  idApelacion: number;
+  anexos: Anexo[];
+}
+
+export interface AnexoSaveResponse {
+  status: string;
+  message?: string;
+  data?: unknown;
+}

@@ -5,16 +5,16 @@
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300" (click)="onCancel()"></div>
 
     <!-- Tarjeta del Modal -->
-    <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 md:p-8 text-center transform transition-all duration-300 scale-100 opacity-100">
+    <div [attr.role]="role" [attr.aria-labelledby]="modalId + '-title'" [attr.aria-describedby]="modalId + '-desc'"
+         class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 md:p-8 text-center transform transition-all duration-300 scale-100 opacity-100">
 
       <!-- Botón Cerrar (X) -->
-      <button type="button" (click)="onCancel()"
-              class="absolute top-4 right-4 bg-gray-400 hover:bg-gray-500 text-white rounded-full w-7 h-7 flex items-center justify-center transition-colors focus:outline-none">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-
+      <button type="button" (click)="onCancel()" aria-label="Cerrar modal"
+        class="absolute top-4 right-4 bg-gray-400 hover:bg-gray-500 text-white rounded-full w-7 h-7 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300">
+  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+  </svg>
+</button>
       <!-- Icono Dinámico -->
       <div class="mx-auto flex h-16 w-16 items-center justify-center mb-5 shadow-sm"
            [ngClass]="{
@@ -40,8 +40,8 @@
       </div>
 
       <!-- Textos -->
-      <h3 class="text-xl font-bold text-gray-900 mb-2">{{ title }}</h3>
-      <p class="text-sm text-gray-500 mb-8 leading-relaxed">{{ message }}</p>
+      <h3 [id]="modalId + '-title'" class="text-xl font-bold text-gray-900 mb-2">{{ title }}</h3>
+      <p [id]="modalId + '-desc'" class="text-sm text-gray-500 mb-8 leading-relaxed">{{ message }}</p>
 
       <!-- Botones Dinámicos -->
       @if (type === 'info') {
@@ -66,7 +66,6 @@
           {{ confirmText }}
         </button>
       }
-
     </div>
   </div>
 }

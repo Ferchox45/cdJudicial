@@ -1,6 +1,6 @@
 import { inject, Injectable, signal, computed, DestroyRef } from "@angular/core";
 import { ModalService } from "../../../../shared/components/modal-custom/services/modal.service";
-import { searchFormPlanaEstadistica, PagedResult, ReporteAgrupado, ChartSlice } from "../models/estadisticas";
+import { SearchFormPlanaEstadistica, PagedResult, ReporteAgrupado, ChartSlice } from "../models/estadisticas";
 import { EstadisticaService, } from "../data/estadisticas.service";
 import { ResultadoBusquedaPlanaEstadistica } from "../models/estadisticas";
 import { BusquedaEstadisticaMapper } from "../util/estadisticasPlana.mapper";
@@ -8,7 +8,7 @@ import { CampoAgrupacion, OPCIONES_AGRUPACION, GrupoAgrupado } from "../models/a
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { finalize } from 'rxjs';
 
-export const FORM_VACIO: searchFormPlanaEstadistica = {
+export const FORM_VACIO: SearchFormPlanaEstadistica = {
   idSala: '',
   idNomenclatura: '',
   idApelacion: '',
@@ -30,7 +30,7 @@ export class BusquedaEstadisticaFacade {
   // ── Estado
   readonly buscando      = signal(false);
   readonly exportando    = signal(false);
-  readonly form          = signal<searchFormPlanaEstadistica>({ ...FORM_VACIO });
+  readonly form          = signal<SearchFormPlanaEstadistica>({ ...FORM_VACIO });
   readonly porPagina     = signal(10);
   readonly resultados    = signal<ResultadoBusquedaPlanaEstadistica[]>([]);
   readonly paginaActual    = computed(() => this._paginacion().page);
@@ -72,7 +72,7 @@ private _toggleRecursivo(
     this._ejecutarBusqueda(pagina, false);
   }
 
-    cambiarLimit(limit: number): void {
+    cambiarPorPagina(limit: number): void {
     this.porPagina.set(limit);
     this._limpiarCache();
     this._ejecutarBusqueda(1, false);
@@ -154,11 +154,6 @@ etiquetaCampo(campo: CampoAgrupacion): string {
   }
 
   this.exportando.set(true);
-
-  console.log('[FACADE] exportarExcel:', {
-    tieneImagen: !!imagenBase64,
-    longitud: imagenBase64?.length ?? 0,
-  });
 
   this.busquedaEstadistica.exportarExcel(this.form(), imagenBase64)
     .pipe(

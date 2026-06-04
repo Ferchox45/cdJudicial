@@ -1,5 +1,5 @@
 
-export interface searchFormPlanaEstadistica{
+export interface SearchFormPlanaEstadistica{
 idSala: string | null;
 idNomenclatura: string | null;
 idApelacion: string | null;
@@ -117,57 +117,20 @@ export { type TablaColumna } from '../../../../shared/components/table-reutiliza
 // models/estadisticas.ts  — agrega esto al final
 
 export interface TableRowRich extends TableRow {
-  // Visibilidad
   oculto?: boolean;
 
-  // Colapso por nivel
   salaColapsado?: boolean;
   anioColapsado?: boolean;
   mesColapsado?:  boolean;
   nomColapsado?:  boolean;
   apeColapsado?:  boolean;
 
-  // Rowspans calculados
-  salaRowspan?: number;
-  anioRowspan?: number;
-  mesRowspan?:  number;
-  nomRowspan?:  number;
-  apeRowspan?:  number;
-
-  // Cabeceras de celda
-  sala?: string;
-  anio?: string;
-  mes?:  string;
-  nom?:  string;
-  ape?:  string;
-
-  // Chart data por nivel
-  salaChartData?:  ChartSlice[];
-  anioChartData?:  ChartSlice[];
-  mesChartData?:   ChartSlice[];
-  nomChartData?:   ChartSlice[];
-  apeChartData?:   ChartSlice[];
-  salaChartTitle?: string;
-  anioChartTitle?: string;
-  mesChartTitle?:  string;
-  nomChartTitle?:  string;
-  apeChartTitle?:  string;
-
-  // Subtotales
-  isSubtotal?: boolean;
-  isData?:     boolean;
-  level?:      number;
-  label?:      string;
-  tipo?:       string;
-
-  // Jerarquía interna (para colapso)
   _sala?: string;
   _anio?: string;
   _mes?:  string;
   _nom?:  string;
   _ape?:  string;
 
-  // Spans calculados internos
   _calcSalaSpan?: number;
   _calcAnioSpan?: number;
   _calcMesSpan?:  number;

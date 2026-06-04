@@ -1,7 +1,7 @@
-import { searchFormHistorico, BusquedaHistoricoDTO } from "../models/buscador-historico.model";
+import { SearchFormHistorico, BusquedaHistoricoDTO } from "../models/buscador-historico.model";
 export class BusquedaHistoricoMapper {
 
-static toDTO(form: searchFormHistorico): BusquedaHistoricoDTO {
+static toDTO(form: SearchFormHistorico): BusquedaHistoricoDTO {
 const dto: BusquedaHistoricoDTO = {};
 
 if (form.expedienteCausa?.trim())   dto.expedienteCausa       = form.expedienteCausa.trim();
@@ -19,7 +19,7 @@ return dto;
 
   }
 
-static tieneCriterios(form: searchFormHistorico): boolean {
+static tieneCriterios(form: SearchFormHistorico): boolean {
 return Object.values(form).some(v => v?.toString().trim() !== '');
   }
 }

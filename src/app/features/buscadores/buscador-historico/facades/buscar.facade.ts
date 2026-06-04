@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalService } from '../../../../shared/components/modal-custom/services/modal.service';
-import { ResultadoBusquedaHistorica, searchFormHistorico, PagedResultHistorico} from '../models/buscador-historico.model';
+import { ResultadoBusquedaHistorica, SearchFormHistorico, PagedResultHistorico} from '../models/buscador-historico.model';
 import { BuscadoresService } from '../data/buscadorHistorico.service';
 import { BusquedaHistoricoMapper } from '../utils/buscadorHistorico.mapper';
 import { finalize } from 'rxjs';
@@ -28,7 +28,7 @@ export class BuscarFacade {
   private readonly modal           = inject(ModalService);
   private readonly _cache = new Map<number, ResultadoBusquedaHistorica[]>();
 
-  readonly form = signal<searchFormHistorico>({ ...FORM_VACIO });
+  readonly form = signal<SearchFormHistorico>({ ...FORM_VACIO });
 
   // ── Estado
   readonly buscando   = signal(false);

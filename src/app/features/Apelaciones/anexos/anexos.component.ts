@@ -174,6 +174,7 @@ agregarAnexo(): void {
     this.apelacionService.invalidarAnexos();
     this.cargarAnexos();
   }
+
   onBack(): void {
     window.history.back();
   }

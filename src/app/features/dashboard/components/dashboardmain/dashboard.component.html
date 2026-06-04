@@ -1,4 +1,8 @@
-<div class="flex h-screen bg-[#fafbfc] overflow-hidden">
+<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-forest focus:text-white focus:rounded-lg focus:shadow-lg">
+  Saltar al contenido principal
+</a>
+
+<div class="flex h-screen bg-page-bg overflow-hidden">
 
   <app-menulateral
     [isOpen]="isMobileMenuOpen()"
@@ -9,7 +13,7 @@
     <app-main-header
       (toggleMobileMenu)="isMobileMenuOpen.set(!isMobileMenuOpen())" />
 
-    <main class="flex-1 overflow-y-auto bg-[#f1f4f2]/30 p-4 md:p-6 lg:p-8">
+    <main id="main-content" class="flex-1 overflow-y-auto bg-page-subtle/30 p-4 md:p-6 lg:p-8">
       <div class="max-w-7xl mx-auto w-full h-full">
         <router-outlet />
       </div>

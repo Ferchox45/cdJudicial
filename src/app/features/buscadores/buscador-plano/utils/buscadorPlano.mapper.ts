@@ -1,7 +1,7 @@
-import { searchFormPlana, BusquedaPlanoDTO } from "../models/buscador-plano.model";
+import { SearchFormPlana, BusquedaPlanoDTO } from "../models/buscador-plano.model";
 
 export class BusquedaPlanoMapper {
-static toDTO(form: searchFormPlana): BusquedaPlanoDTO {
+static toDTO(form: SearchFormPlana): BusquedaPlanoDTO {
 
   // Se asignan los valores al DTO solo si no son nulos o vacíos
 const dto: BusquedaPlanoDTO = {};
@@ -17,7 +17,7 @@ if (form.fechaFin)              dto.fechaFin           = form.fechaFin;
 return dto;
   }
 
-static tieneCriterios(form: searchFormPlana): boolean {
+static tieneCriterios(form: SearchFormPlana): boolean {
 return Object.values(form).some(v => v?.toString().trim() !== '');
   }
 }

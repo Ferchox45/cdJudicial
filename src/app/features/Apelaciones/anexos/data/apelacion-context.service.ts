@@ -16,7 +16,7 @@ export class ApelacionContextService {
     this.sala.set(sala);
   }
 
-  // Limpia la memoria cuando se acaban de subir los anezos
+  // Limpia la memoria cuando se acaban de subir los anexos
   limpiarContexto() {
     this.apelacionId.set(null);
     this.folioOficialia.set(null);

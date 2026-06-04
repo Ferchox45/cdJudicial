@@ -1,0 +1,314 @@
+<div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+
+  <div class="bg-forest px-5 py-3.5 flex items-center justify-between cursor-pointer select-none border-b border-forest/20"
+    (click)="toggleEvt.emit()">
+    <div class="flex items-center gap-2.5 text-white">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M3 7h18M3 12h18M3 17h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </svg>
+      <h2 class="text-sm font-bold uppercase tracking-wide m-0">Identificación del Asunto</h2>
+    </div>
+    <svg class="w-4 h-4 text-white transition-transform duration-200" [class.rotate-180]="!abierto"
+      fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    </svg>
+  </div>
+
+  @if (abierto) {
+    <form [formGroup]="form">
+      <div class="p-4 md:p-6 grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+
+        <div class="col-span-1">
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Búsqueda Rápida</label>
+          <div class="flex">
+            <input type="text" formControlName="busquedaRapida"
+              placeholder="Ej. 0001/2021"
+              (keyup.enter)="buscarEvt.emit()"
+              class="flex-1 border border-gray-300 rounded-l-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
+            <button type="button" (click)="buscarEvt.emit()"
+              [disabled]="buscando || cargando"
+              class="bg-emerald-900 text-white px-3 rounded-r-md hover:bg-emerald-800
+                     disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+            @if (buscando) {
+        <app-spinner size="sm" color="white" ariaLabel="Buscando..." />
+      } @else {
+        <svg width="16" height="16" fill="none" stroke="currentColor"
+             stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      }
+    </button>
+  </div>
+  @if (busquedaExitosa) {
+    <p class="text-xs text-emerald-600 mt-1">Datos cargados correctamente</p>
+  }
+        </div>
+        <div class="col-span-1 flex flex-col gap-1.5">
+          <label class="text-xs font-bold text-gray-700">Folio Tentativo</label>
+          <input type="text" readonly [value]="folioTentativo"
+            class="w-full border text-center border-gray-200 rounded-md px-3 py-2 text-sm
+                   text-gray-500 bg-gray-50 cursor-not-allowed"/>
+        </div>
+
+        <!-- Materia y Magistrado (campos compartidos por penal e indígena)-->
+        <div class="col-span-1">
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+            Materia <span class="text-red-500">*</span>
+          </label>
+          <select formControlName="materiaId"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                   focus:outline-none focus:ring-1 focus:ring-emerald-500
+                   disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+            <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+            @for (item of catalogosFacade.materias(); track item.id) {
+              <option [ngValue]="item.id">{{ item.descripcion }}</option>
+            }
+          </select>
+            @if (form.get('materiaId')?.invalid && form.get('materiaId')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
+        </div>
+
+        <div class="col-span-1">
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+            Magistrado Asignado <span class="text-red-500">*</span>
+          </label>
+          <select formControlName="magistradoId"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                   focus:outline-none focus:ring-1 focus:ring-emerald-500
+                   disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+            <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+            @for (item of catalogosFacade.magistrados(); track item.id) {
+              <option [ngValue]="item.id">{{ item.descripcion }}</option>
+            }
+          </select>
+            @if (form.get('magistradoId')?.invalid && form.get('magistradoId')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
+        </div>
+
+        <!-- Campos específicos para apelaciones en materia penal -->
+        @if (!esIndigena) {
+
+          <div class="col-span-1">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+              Apelación <span class="text-red-500">*</span>
+            </label>
+            <select formControlName="apelacionId"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500
+                     disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+              <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+              @for (item of catalogosFacade.apelaciones(); track item.id) {
+                <option [ngValue]="item.id">{{ item.descripcion }}</option>
+              }
+            </select>
+            @if (form.get('apelacionId')?.invalid && form.get('apelacionId')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
+          </div>
+
+          <div class="col-span-1">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Tipo</label>
+            <select formControlName="tipoApelacionId"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500
+                     disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+              <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+              @for (item of catalogosFacade.tiposApelaciones(); track item.id) {
+                <option [ngValue]="item.id">{{ item.descripcion }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="col-span-1">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Expediente / Causa</label>
+            <input type="text" formControlName="expedienteCausa"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
+          </div>
+
+          <div class="col-span-1">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Tipo de Escrito</label>
+            <select formControlName="tipoEscritoId"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500
+                     disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+              <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+              @for (item of catalogosFacade.tiposEscritos(); track item.id) {
+                <option [ngValue]="item.id">{{ item.descripcion }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="col-span-1">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Folio Oficio</label>
+            <input type="text" formControlName="folioOficio" placeholder="Número de folio"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
+          </div>
+
+          <div class="col-span-1">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+              Juzgado de Origen <span class="text-red-500">*</span>
+            </label>
+            <select formControlName="juzgadoId"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500
+                     disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+              <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione juzgado...' }}</option>
+              @for (item of catalogosFacade.juzgados(); track item.id) {
+                <option [ngValue]="item.id">{{ item.descripcion }}</option>
+              }
+            </select>
+            @if (form.get('juzgadoId')?.invalid && form.get('juzgadoId')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
+
+          </div>
+
+          <div class="col-span-1">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Expediente Acumulado</label>
+            <input type="text" formControlName="expedienteAcumulado"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
+          </div>
+
+          <div class="col-span-1">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Fojas</label>
+            <input type="number" formControlName="fojas" placeholder="Cantidad"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
+          </div>
+
+          <div class="col-span-1">
+              <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Fecha Auto</label>
+              <input type="date" formControlName="fechaAuto"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
+          </div>
+
+        }
+        <!-- Campos específicos para apelaciones en materia indígena -->
+        @if (esIndigena) {
+
+          <div class="col-span-1">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+              Municipio <span class="text-red-500">*</span>
+            </label>
+            <select formControlName="municipioId"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500
+                     disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+              <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+              @for (item of catalogosFacade.municipios(); track item.id) {
+                <option [ngValue]="item.id">{{ item.descripcion }}</option>
+              }
+            </select>
+            @if (form.get('municipioId')?.invalid && form.get('municipioId')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
+          </div>
+
+          <div class="col-span-1">
+              <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+                Localidad <span class="text-red-500">*</span>
+              </label>
+              <select formControlName="localidadId"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                      focus:outline-none focus:ring-1 focus:ring-emerald-500
+                      disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+                <option [ngValue]="null">
+                  {{ catalogosFacade.cargandoLocalidades() ? 'Cargando...' : 'Seleccione...' }}
+                </option>
+                @for (item of catalogosFacade.localidades(); track item.id) {
+                  <option [ngValue]="item.id">{{ item.descripcion }}</option>
+                }
+              </select>
+              @if (form.get('localidadId')?.invalid && form.get('localidadId')?.touched) {
+                <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+              }
+            </div>
+
+          <div class="col-span-1">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+              Etnia <span class="text-red-500">*</span>
+            </label>
+            <select formControlName="etniaId"
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500
+                     disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
+              <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+              @for (item of catalogosFacade.etnias(); track item.id) {
+                <option [ngValue]="item.id">{{ item.descripcion }}</option>
+              }
+            </select>
+            @if (form.get('etniaId')?.invalid && form.get('etniaId')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
+          </div>
+
+          @if (form.get('etniaId')?.value === 17) {
+            <div class="col-span-1 md:col-span-3">
+              <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+                Especifique la Etnia <span class="text-red-500">*</span>
+              </label>
+              <input type="text" formControlName="otroEtnia" placeholder="Escriba el nombre de la etnia..."
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+
+                       focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
+          @if (form.get('otroEtnia')?.invalid && form.get('otroEtnia')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
+            </div>
+          }
+
+          <div class="col-span-1 md:col-span-3">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+              Asunto <span class="text-red-500">*</span>
+            </label>
+            <textarea rows="3" formControlName="asunto" placeholder="Describa el asunto..."
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
+            </textarea>
+              @if (form.get('asunto')?.invalid && form.get('asunto')?.touched) {
+              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
+          </div>
+
+          <div class="col-span-1 md:col-span-3">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
+              Lugar de los Hechos <span class="text-red-500">*</span>
+            </label>
+            <textarea rows="3" formControlName="lugarHechos"
+              placeholder="Indique el lugar donde ocurrieron los hechos..."
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                     focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
+            </textarea>
+            @if (form.get('lugarHechos')?.invalid && form.get('lugarHechos')?.touched) {
+            <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
+            }
+          </div>
+        }
+
+        <div class="col-span-1 md:col-span-3 flex items-center justify-start gap-2 pb-1">
+          <input type="checkbox" id="reposicion" formControlName="esReposicion" class="w-4 h-4 accent-emerald-700"/>
+          <label for="reposicion" class="text-sm text-gray-700 cursor-pointer">¿Es Reposición de Procedimiento?</label>
+        </div>
+
+        <div class="col-span-1 md:col-span-3">
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Observaciones Generales</label>
+          <textarea rows="3" formControlName="observaciones"
+            placeholder="Añade cualquier nota u observación importante..."
+            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                   focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
+          </textarea>
+        </div>
+
+      </div>
+    </form>
+  }
+
+</div>

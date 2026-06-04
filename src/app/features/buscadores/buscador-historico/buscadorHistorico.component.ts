@@ -1,10 +1,10 @@
 // historico-apelaciones.component.ts
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { ActionSidebarComponent } from '../../../shared/components/Action-siderbar/action-siderbar.component';
+import { ActionSidebarComponent } from '../../../shared/components/action-sidebar/action-sidebar.component';
 import { PanelBusquedaHistoricoComponent } from './components/panel-busqueda-historico/panelBusquedaHistorico.component';
 import { PanelResultadosHistoricoComponent } from './components/panel-resultados-historico/panelResultadoHistorico.component';
-import { SidebarAction } from '../../../shared/components/Action-siderbar/action-siderbar.component';
+import { SidebarAction } from '../../../shared/components/action-sidebar/action-sidebar.component';
 import { CatalogoFacade } from './facades/catalogo.facade';
 import { BuscarFacade } from './facades/buscar.facade';
 @Component({

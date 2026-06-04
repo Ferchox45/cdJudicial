@@ -32,7 +32,7 @@ export class CatalogosFacade {
   readonly error = signal<string | null>(null);
   readonly timeoutMsg = signal(false);
 
-  onDelitosLisros?: (delitos: DelitoDisponible[]) => void;
+  onDelitosListos?: (delitos: DelitoDisponible[]) => void;
   onError?:        (msg: string) => void;
 
   cargar(form: FormGroup, materia: string): void {
@@ -50,7 +50,7 @@ export class CatalogosFacade {
         clearTimeout(timer);
         this.asignarCatalogos(data);
         this.setControlesDisabled(form, false);
-        this.onDelitosLisros?.(mapearDelitosDisponibles(this.delitos()));
+        this.onDelitosListos?.(mapearDelitosDisponibles(this.delitos()));
       },
         error: () => {
         clearTimeout(timer);

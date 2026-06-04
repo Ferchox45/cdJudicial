@@ -14,7 +14,7 @@ import { CatalogoItem } from '../../../../../core/models/catalogo-global.model';
   standalone: true,
   imports: [ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: "./panel.partes.component.html",
+  templateUrl: "./panel-partes.component.html",
 })
 export class PanelPartesComponent {
 

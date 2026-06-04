@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, timeout, map } from 'rxjs';
 import { CacheService } from '../../../../core/services/cache.service';
-import { CapturaAnexoCatalogos } from '../models/anexo.model';
+import { CapturaAnexoCatalogos, AnexoPayload, AnexoSaveResponse } from '../models/anexo.model';
 import { environment } from '../../../../../environments/environment';
 
 export const CACHE_KEYS_ANEXO = {
@@ -28,11 +28,11 @@ export class AnexoApiService {
     return this.cache.manejarCache(CACHE_KEYS_ANEXO.ANEXO, call$);
   }
 
-  // ── Manda la peticion al servicor para guardar los anezos
+  // ── Manda la peticion al servidor para guardar los anexos
 
-  guardarAnexos(payload: any): Observable<any> {
+  guardarAnexos(payload: AnexoPayload): Observable<AnexoSaveResponse> {
     return this.http
-      .post(`${this.apiEndpoint}/api/apelaciones/anexos`, payload)
+      .post<AnexoSaveResponse>(`${this.apiEndpoint}/api/apelaciones/anexos`, payload)
       .pipe(timeout(15000));
   }
 

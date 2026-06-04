@@ -39,7 +39,7 @@
             <select id="sala" name="sala"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-              [ngModel]="Form.idSala"
+              [ngModel]="form.idSala"
               (ngModelChange)="updateForm('idSala', $event)"
               [disabled]="catalogos.cargando()">
               <option value="">{{ catalogos.cargando() ? 'Cargando...' : 'Seleccione Sala' }}</option>
@@ -55,7 +55,7 @@
             <select id="nomenclatura" name="nomenclatura"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-              [ngModel]="Form.idNomenclatura"
+              [ngModel]="form.idNomenclatura"
               (ngModelChange)="updateForm('idNomenclatura', $event)"
               [disabled]="catalogos.cargando()">
               <option value="">{{ catalogos.cargando() ? 'Cargando...' : 'Seleccione Nomenclatura' }}</option>
@@ -71,7 +71,7 @@
           <select id="apelacion" name="apelacion"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-              [ngModel]="Form.idApelacion"
+              [ngModel]="form.idApelacion"
               (ngModelChange)="updateForm('idApelacion', $event)"
               [disabled]="catalogos.cargando()">
               <option value="">{{ catalogos.cargando() ? 'Cargando...' : 'Seleccione Tipo de Apelación' }}</option>
@@ -102,7 +102,7 @@
             <input id="fechaInicial" type="date" name="fechaInicial"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-              [ngModel]="Form.fechaInicio"
+              [ngModel]="form.fechaInicio"
               (ngModelChange)="updateForm('fechaInicio', $event)"/>
 
           </div>
@@ -111,7 +111,7 @@
             <input id="fechaFinal" type="date" name="fechaFinal"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-              [ngModel]="Form.fechaFin"
+              [ngModel]="form.fechaFin"
               (ngModelChange)="updateForm('fechaFin', $event)"/>
 
           </div>

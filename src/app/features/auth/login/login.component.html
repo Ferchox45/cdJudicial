@@ -23,11 +23,8 @@
         <img src="assets/images/logo-oaxaca.png" alt="Escudo de Oaxaca" class="object-contain w-full h-full">
       </div>
       <h1 class="text-bronze font-bold text-base tracking-wide uppercase text-center">
-        Consejo de la Judicatura
+        Tribunal Superior de Justicia Del Estado de Oaxaca
       </h1>
-      <p class="text-bon-white text-xs tracking-wider mt-1 text-center">
-        Poder Judicial del Estado de Oaxaca
-      </p>
     </div>
 
     <div class="flex-1 flex flex-col justify-center items-center px-6 sm:px-8 py-8">
@@ -52,7 +49,10 @@
               [(ngModel)]="usuario"
               class="w-full pl-10 pr-4 py-3 border border-sage rounded-lg focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest bg-white text-forest placeholder-grey transition-colors"
               placeholder="Usuario"
-              required>
+              required
+              aria-required="true"
+              [attr.aria-invalid]="!!error() && !usuario ? 'true' : null"
+              aria-describedby="error-usuario">
           </div>
 
           <div class="relative">
@@ -67,7 +67,10 @@
               [(ngModel)]="contrasenia"
               class="w-full pl-10 pr-12 py-3 border border-sage rounded-lg focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest bg-white text-forest placeholder-grey transition-colors"
               placeholder="Contraseña"
-              required>
+              required
+              aria-required="true"
+              [attr.aria-invalid]="!!error() && !contrasenia ? 'true' : null"
+              aria-describedby="error-password">
 
             <button type="button" (click)="togglePassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-grey hover:text-forest transition-colors">
               @if (!showPassword()) {
@@ -80,11 +83,11 @@
           </div>
 
           @if (error()) {
-            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm mb-4 flex items-center space-x-2">
+            <div id="error-usuario" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm mb-4 flex items-center space-x-2" role="alert">
               <svg class="w-5 h-5 shrink-0 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
               </svg>
-              <span>{{ error() }}</span>
+              <span id="error-password">{{ error() }}</span>
             </div>
           }
 

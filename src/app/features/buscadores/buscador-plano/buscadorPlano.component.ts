@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { ActionSidebarComponent } from '../../../shared/components/Action-siderbar/action-siderbar.component';
-import { PanelBusquedaPlanoComponent } from './components/panel-buscador-plano/panlePlano.component';
+import { ActionSidebarComponent } from '../../../shared/components/action-sidebar/action-sidebar.component';
+import { PanelBusquedaPlanoComponent } from './components/panel-buscador-plano/panelPlano.component';
 import { PanelResultadosPlanoComponent } from './components/panel-resultados-plano/panelResultadosPlano.component';
-import { SidebarAction } from '../../../shared/components/Action-siderbar/action-siderbar.component';
+import { SidebarAction } from '../../../shared/components/action-sidebar/action-sidebar.component';
 import { CatalogosFacade } from '../../apelaciones/busqueda-apelaciones/facades/catalogos.facade';
 import { BusquedaPlanaFacade } from './facades/busquedaPlana.facade';
 

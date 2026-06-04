@@ -1,4 +1,4 @@
-import { searchFormPlanaEstadistica } from "../models/estadisticas";
+import { SearchFormPlanaEstadistica } from "../models/estadisticas";
 
 export interface BusquedaEstadisticaDTO{
   idSala?: number,
@@ -9,7 +9,7 @@ export interface BusquedaEstadisticaDTO{
 }
 
 export class BusquedaEstadisticaMapper{
-  static toDTO(form: searchFormPlanaEstadistica): BusquedaEstadisticaDTO{
+  static toDTO(form: SearchFormPlanaEstadistica): BusquedaEstadisticaDTO{
   const dto: BusquedaEstadisticaDTO = {};
   if (form.idSala)                 dto.idSala              = Number(form.idSala);
   if (form.idNomenclatura)         dto.idNomenclatura     = Number(form.idNomenclatura);
@@ -19,7 +19,7 @@ export class BusquedaEstadisticaMapper{
   return dto;
   }
 
-  static tieneCriterios(form: searchFormPlanaEstadistica): boolean {
+  static tieneCriterios(form: SearchFormPlanaEstadistica): boolean {
   return Object.values(form).some(v => v?.toString().trim() !== '');
     }
 }

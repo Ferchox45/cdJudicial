@@ -1,0 +1,19 @@
+    <!-- Este componente es un enlace estilizado que se utiliza para mostrar una
+     tarjeta de acción en el dashboard. -->
+<a [routerLink]="ruta()"
+      class="w-full bg-white rounded-xl p-5 md:p-6 flex flex-col items-center text-center gap-3.5
+             transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-gray-200
+              border border-transparent shadow-sm cursor-pointer group outline-none focus:ring-2 focus:ring-forest">
+
+      <div class="w-14 h-14 rounded-2xl border border-gray-100 flex items-center justify-center
+                  text-heading group-hover:bg-sidebar-bg/40 transition-colors">
+        <ng-content></ng-content>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-heading mb-1.5">{{ title() }}</h3>
+        <p class="text-xs text-gray-500 leading-relaxed max-w-[16rem] mx-auto">
+          {{ description() }}
+        </p>
+      </div>
+    </a>

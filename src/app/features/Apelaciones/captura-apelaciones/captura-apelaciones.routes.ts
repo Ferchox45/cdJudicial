@@ -4,7 +4,7 @@ import { anexosGuard } from '../anexos/guards/anexos.guard'; // Ajusta la ruta s
 export const CAPTURA_APELACIONES_ROUTES: Routes = [
   {
     path: '', // Ruta base
-    loadComponent: () => import('./captura-apelacones.component').then(m => m.CapturaApelacionesComponent)
+    loadComponent: () => import('./captura-apelaciones.component').then(m => m.CapturaApelacionesComponent)
   },
   {
   // Ruta hija

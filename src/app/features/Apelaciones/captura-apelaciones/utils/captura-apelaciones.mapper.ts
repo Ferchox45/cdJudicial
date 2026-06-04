@@ -4,7 +4,7 @@ import { BusquedaRapida,
   ParteBusqueda,
   RelacionBusqueda,
 } from '../models/busqueda-rap.model';
-import { ApelacionFormValue, DelitoDisponible } from '../models/apelacion-aux.model';
+import { ApelacionFormValue, ApelacionPayload, DelitoDisponible } from '../models/apelacion-aux.model';
 import { CatalogoItem } from '../../../../core/models/catalogo-global.model';
 
 /** Convierte string ISO → "YYYY-MM-DD" para inputs tipo date */
@@ -126,7 +126,7 @@ export function buildPayload(
   partes: Parte[],
   sexos: CatalogoItem[],
   tiposPartes: CatalogoItem[]
-): object {
+): ApelacionPayload {
   const resolverParte = (parteApi: ParteBusqueda) => {
     const parteLocal = partes.find((p) => p.id === Number(parteApi.id));
 

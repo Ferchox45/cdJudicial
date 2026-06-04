@@ -41,7 +41,7 @@
             id="folioOficialia"
             type="text"
             name="folioOficialia"
-            [ngModel]="Form.folioOficialia"
+            [ngModel]="form.folioOficialia"
             (ngModelChange)="updateForm('folioOficialia', $event)"
 
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
@@ -55,7 +55,7 @@
             <select
             id="sala"
             name="sala"
-            [ngModel]="Form.idSala"
+            [ngModel]="form.idSala"
             (ngModelChange)="updateForm('idSala', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
@@ -74,7 +74,7 @@
             <select
             id="nomenclatura"
             name="nomenclatura"
-            [ngModel]="Form.idNomenclatura"
+            [ngModel]="form.idNomenclatura"
             (ngModelChange)="updateForm('idNomenclatura', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
@@ -94,7 +94,7 @@
             id="folioApelacion"
             type="text"
             name="folioApelacion"
-            [ngModel]="Form.folioApelacion"
+            [ngModel]="form.folioApelacion"
             (ngModelChange)="updateForm('folioApelacion', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
@@ -107,7 +107,7 @@
             <select
             id="apelacion"
             name="apelacion"
-            [ngModel]="Form.idApelacion"
+            [ngModel]="form.idApelacion"
             (ngModelChange)="updateForm('idApelacion', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
@@ -126,7 +126,7 @@
             id="expCausa"
             type="text"
             name="expCausa"
-            [ngModel]="Form.expedienteCausa"
+            [ngModel]="form.expedienteCausa"
             (ngModelChange)="updateForm('expedienteCausa', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
@@ -141,7 +141,7 @@
               id="observacion"
               rows="3"
               name="observacion"
-              [ngModel]="Form.observacion"
+              [ngModel]="form.observacion"
               (ngModelChange)="updateForm('observacion', $event)"
               placeholder="Añade cualquier nota u observación importante..."
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
@@ -169,7 +169,7 @@
             <input id="fechaInicial"
             type="date"
             name="fechaInicial"
-            [ngModel]="Form.fechaInicio"
+            [ngModel]="form.fechaInicio"
             (ngModelChange)="updateForm('fechaInicio', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
@@ -179,7 +179,7 @@
             <label for="fechaFinal" class="text-xs font-bold text-gray-700">Fecha Final</label>
             <input id="fechaFinal"
             type="date" name="fechaFinal"
-            [ngModel]="Form.fechaFin"
+            [ngModel]="form.fechaFin"
             (ngModelChange)="updateForm('fechaFin', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"

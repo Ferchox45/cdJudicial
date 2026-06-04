@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CatalogoFacade } from '../../facades/catalogo.facade';
 import { BuscarFacade } from '../../facades/buscar.facade';
 import { FormsModule } from '@angular/forms';
-import { searchFormHistorico } from '../../models/buscador-historico.model';
+import { SearchFormHistorico } from '../../models/buscador-historico.model';
 @Component({
   selector: 'app-panel-busqueda-historico',
   standalone: true,
@@ -18,11 +18,11 @@ export class PanelBusquedaHistoricoComponent {
   readonly catalogoFacade = inject(CatalogoFacade);
   readonly buscarFacade = inject(BuscarFacade);
 
-  get Form(): searchFormHistorico {
+  get form(): SearchFormHistorico {
     return this.buscarFacade.form();
   }
 
-  updateForm(field: keyof searchFormHistorico, value: string): void {
+  updateForm(field: keyof SearchFormHistorico, value: string): void {
     this.buscarFacade.form.update(f => ({ ...f, [field]: value }));
   }
 
