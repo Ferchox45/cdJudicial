@@ -33,6 +33,7 @@ export class BusquedaFacade {
   readonly busquedaExitosa = signal(false);
   readonly bloquearBtn = signal(true);
   readonly bloquearSeccion = signal(false);
+  readonly apelacionId = signal<number | null>(null);
 
   onExito?:  (resultado: ResultadoBusqueda) => void;
   onError?:  (msg: string) => void;
@@ -113,11 +114,12 @@ export class BusquedaFacade {
     });
   }
 
-private cargarEnFormulario(
+  private cargarEnFormulario(
     form: FormGroup,
     d: BusquedaRapida,
     delitosDisponibles: DelitoDisponible[]
   ): void {
+    this.apelacionId.set(d.id);
     form.patchValue({
       folioTentativo:      d.folioTentativo,
       expedienteCausa:     d.expedienteCausa,

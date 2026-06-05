@@ -130,3 +130,10 @@
   (continuar)="grd.continuarConAnexos(mostrarModalAnexos)"
   (terminar)="grd.terminarSinAnexos(mostrarModalAnexos, form)"
 />
+
+<!-- Modal de certificación -->
+<app-certificacion-modal
+  [visible]="mostrarCertificacion()"
+  [base64]="certBase64()"
+  (close)="mostrarCertificacion.set(false)"
+/>

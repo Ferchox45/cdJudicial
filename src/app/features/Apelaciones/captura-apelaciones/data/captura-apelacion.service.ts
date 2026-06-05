@@ -62,6 +62,14 @@ export class ApelacionApiService {
       .pipe(timeout(15000), map((res) => res.data));
   }
 
+  certificarApelacion(id: number): Observable<{ certificacion: string }> {
+    return this.http
+      .get<{ data: { certificacion: string } }>(
+        `${this.apiEndpoint}/api/apelaciones/${id}/certificacion`
+      )
+      .pipe(timeout(15000), map((res) => res.data));
+  }
+
   guardarApelacion(payload: ApelacionPayload): Observable<ApelacionSaveResponse> {
     return this.http
       .post<ApelacionSaveResponse>(`${this.apiEndpoint}/api/apelaciones`, payload)

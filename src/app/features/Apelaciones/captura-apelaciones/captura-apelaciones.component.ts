@@ -7,6 +7,8 @@ import { PanelIdentificacionComponent } from './components/panel-identificacion/
 import { PanelPartesComponent } from './components/panel-partes/panel-partes.component';
 import { PanelRelacionesComponent } from './components/panel-relaciones/panel-relaciones.component';
 import { ModalAnexosComponent } from './components/modal-anexo/modal-anexo.component';
+import { CertificacionModalComponent } from './components/certificacion-modal/certificacion-modal.component';
+import { ApelacionApiService } from './data/captura-apelacion.service';
 import { Parte, RelacionBusqueda } from './models/busqueda-rap.model';
 import { CatalogosFacade } from './facades/catalogos.facade';
 import { GuardarFacade} from './facades/guardar.facade';
@@ -25,7 +27,7 @@ import { ModalService } from '../../../shared/components/modal-custom/services/m
     CommonModule, ReactiveFormsModule,
     ActionSidebarComponent,
     PanelIdentificacionComponent, PanelPartesComponent, PanelRelacionesComponent,
-    ModalAnexosComponent,
+    ModalAnexosComponent, CertificacionModalComponent,
   ],
   templateUrl: './captura-apelaciones.component.html',
 })
@@ -37,6 +39,7 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private fb  = inject(FormBuilder);
   private modal = inject(ModalService);
+  private apelacionService = inject(ApelacionApiService);
 
   identificacionOpen = true;
   partesOpen         = true;
@@ -46,8 +49,10 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   fechaActual = signal(new Date);
 
   mostrarModalAnexos = signal(false);
-  folioGuardado      = signal('');
-  salaGuardada       = signal('');
+  mostrarCertificacion = signal(false);
+  certBase64          = signal('');
+  folioGuardado       = signal('');
+  salaGuardada        = signal('');
 
   form!:      FormGroup;
   parteForm!: FormGroup;
@@ -69,6 +74,8 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
       { id: 'guardar', label: 'Guardar', icon: 'guardar', loading: isSaving, disabled: isSaving },
       { id: 'buscar',  label: 'Buscar',  icon: 'buscar',  disabled: isSaving },
       { id: 'anexo',   label: 'Anexo',   icon: 'anexo',   disabled: isSaving },
+      { id: 'certificar', label: 'Certificar', icon: 'certificar', disabled: isSaving },
+
     ];
   }
 
@@ -164,6 +171,20 @@ private wireCallbacks(): void {
             this.guardando.set(false);
             this.modal.info('Advertencia', 'Por favor, complete los campos obligatorios.');
           },
+        });
+      },
+      certificar: () => {
+        const id = this.bus.apelacionId();
+        if (!id) {
+          this.modal.info('Aviso', 'Primero realice una búsqueda por folio.');
+          return;
+        }
+        this.apelacionService.certificarApelacion(id).subscribe({
+          next: (res) => {
+            this.certBase64.set(res.certificacion);
+            this.mostrarCertificacion.set(true);
+          },
+          error: () => this.modal.error('Error', 'Error al certificar la apelación.'),
         });
       },
       buscar: () => this.router.navigate(['capturaApelacion/busquedaApelacion']),
