@@ -8,14 +8,14 @@
       </svg>
       <h2 class="text-sm font-bold uppercase tracking-wide m-0">Identificación del Asunto</h2>
     </div>
-    <svg class="w-4 h-4 text-white transition-transform duration-200" [class.rotate-180]="!abierto"
+    <svg class="w-4 h-4 text-white transition-transform duration-200" [class.rotate-180]="!abierto()"
       fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
     </svg>
   </div>
 
-  @if (abierto) {
-    <form [formGroup]="form">
+  @if (abierto()) {
+    <form [formGroup]="form()">
       <div class="p-4 md:p-6 grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
 
         <div class="col-span-1">
@@ -27,10 +27,10 @@
               class="flex-1 border border-gray-300 rounded-l-md px-3 py-2 text-sm
                      focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
             <button type="button" (click)="buscarEvt.emit()"
-              [disabled]="buscando || cargando"
+              [disabled]="buscando() || cargando()"
               class="bg-emerald-900 text-white px-3 rounded-r-md hover:bg-emerald-800
                      disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-            @if (buscando) {
+            @if (buscando()) {
         <app-spinner size="sm" color="white" ariaLabel="Buscando..." />
       } @else {
         <svg width="16" height="16" fill="none" stroke="currentColor"
@@ -41,13 +41,13 @@
       }
     </button>
   </div>
-  @if (busquedaExitosa) {
+  @if (busquedaExitosa()) {
     <p class="text-xs text-emerald-600 mt-1">Datos cargados correctamente</p>
   }
         </div>
         <div class="col-span-1 flex flex-col gap-1.5">
           <label class="text-xs font-bold text-gray-700">Folio Tentativo</label>
-          <input type="text" readonly [value]="folioTentativo"
+          <input type="text" readonly [value]="folioTentativo()"
             class="w-full border text-center border-gray-200 rounded-md px-3 py-2 text-sm
                    text-gray-500 bg-gray-50 cursor-not-allowed"/>
         </div>
@@ -61,12 +61,12 @@
             class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                    focus:outline-none focus:ring-1 focus:ring-emerald-500
                    disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
-            <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+            <option [ngValue]="null">{{ cargando() ? 'Cargando...' : 'Seleccione...' }}</option>
             @for (item of catalogosFacade.materias(); track item.id) {
               <option [ngValue]="item.id">{{ item.descripcion }}</option>
             }
           </select>
-            @if (form.get('materiaId')?.invalid && form.get('materiaId')?.touched) {
+            @if (form().get('materiaId')?.invalid && form().get('materiaId')?.touched) {
               <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
             }
         </div>
@@ -79,18 +79,18 @@
             class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                    focus:outline-none focus:ring-1 focus:ring-emerald-500
                    disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
-            <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+            <option [ngValue]="null">{{ cargando() ? 'Cargando...' : 'Seleccione...' }}</option>
             @for (item of catalogosFacade.magistrados(); track item.id) {
               <option [ngValue]="item.id">{{ item.descripcion }}</option>
             }
           </select>
-            @if (form.get('magistradoId')?.invalid && form.get('magistradoId')?.touched) {
+            @if (form().get('magistradoId')?.invalid && form().get('magistradoId')?.touched) {
               <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
             }
         </div>
 
         <!-- Campos específicos para apelaciones en materia penal -->
-        @if (!esIndigena) {
+        @if (!esIndigena()) {
 
           <div class="col-span-1">
             <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
@@ -100,12 +100,12 @@
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                      focus:outline-none focus:ring-1 focus:ring-emerald-500
                      disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
-              <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+              <option [ngValue]="null">{{ cargando() ? 'Cargando...' : 'Seleccione...' }}</option>
               @for (item of catalogosFacade.apelaciones(); track item.id) {
                 <option [ngValue]="item.id">{{ item.descripcion }}</option>
               }
             </select>
-            @if (form.get('apelacionId')?.invalid && form.get('apelacionId')?.touched) {
+            @if (form().get('apelacionId')?.invalid && form().get('apelacionId')?.touched) {
               <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
             }
           </div>
@@ -116,7 +116,7 @@
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                      focus:outline-none focus:ring-1 focus:ring-emerald-500
                      disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
-              <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+              <option [ngValue]="null">{{ cargando() ? 'Cargando...' : 'Seleccione...' }}</option>
               @for (item of catalogosFacade.tiposApelaciones(); track item.id) {
                 <option [ngValue]="item.id">{{ item.descripcion }}</option>
               }
@@ -136,7 +136,7 @@
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                      focus:outline-none focus:ring-1 focus:ring-emerald-500
                      disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
-              <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+              <option [ngValue]="null">{{ cargando() ? 'Cargando...' : 'Seleccione...' }}</option>
               @for (item of catalogosFacade.tiposEscritos(); track item.id) {
                 <option [ngValue]="item.id">{{ item.descripcion }}</option>
               }
@@ -158,12 +158,12 @@
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                      focus:outline-none focus:ring-1 focus:ring-emerald-500
                      disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
-              <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione juzgado...' }}</option>
+              <option [ngValue]="null">{{ cargando() ? 'Cargando...' : 'Seleccione juzgado...' }}</option>
               @for (item of catalogosFacade.juzgados(); track item.id) {
                 <option [ngValue]="item.id">{{ item.descripcion }}</option>
               }
             </select>
-            @if (form.get('juzgadoId')?.invalid && form.get('juzgadoId')?.touched) {
+            @if (form().get('juzgadoId')?.invalid && form().get('juzgadoId')?.touched) {
               <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
             }
 
@@ -192,7 +192,7 @@
 
         }
         <!-- Campos específicos para apelaciones en materia indígena -->
-        @if (esIndigena) {
+        @if (esIndigena()) {
 
           <div class="col-span-1">
             <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
@@ -202,12 +202,12 @@
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                      focus:outline-none focus:ring-1 focus:ring-emerald-500
                      disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
-              <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+              <option [ngValue]="null">{{ cargando() ? 'Cargando...' : 'Seleccione...' }}</option>
               @for (item of catalogosFacade.municipios(); track item.id) {
                 <option [ngValue]="item.id">{{ item.descripcion }}</option>
               }
             </select>
-            @if (form.get('municipioId')?.invalid && form.get('municipioId')?.touched) {
+            @if (form().get('municipioId')?.invalid && form().get('municipioId')?.touched) {
               <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
             }
           </div>
@@ -227,7 +227,7 @@
                   <option [ngValue]="item.id">{{ item.descripcion }}</option>
                 }
               </select>
-              @if (form.get('localidadId')?.invalid && form.get('localidadId')?.touched) {
+              @if (form().get('localidadId')?.invalid && form().get('localidadId')?.touched) {
                 <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
               }
             </div>
@@ -240,17 +240,17 @@
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                      focus:outline-none focus:ring-1 focus:ring-emerald-500
                      disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
-              <option [ngValue]="null">{{ cargando ? 'Cargando...' : 'Seleccione...' }}</option>
+              <option [ngValue]="null">{{ cargando() ? 'Cargando...' : 'Seleccione...' }}</option>
               @for (item of catalogosFacade.etnias(); track item.id) {
                 <option [ngValue]="item.id">{{ item.descripcion }}</option>
               }
             </select>
-            @if (form.get('etniaId')?.invalid && form.get('etniaId')?.touched) {
+            @if (form().get('etniaId')?.invalid && form().get('etniaId')?.touched) {
               <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
             }
           </div>
 
-          @if (form.get('etniaId')?.value === 17) {
+          @if (form().get('etniaId')?.value === 17) {
             <div class="col-span-1 md:col-span-3">
               <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
                 Especifique la Etnia <span class="text-red-500">*</span>
@@ -259,7 +259,7 @@
                 class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
 
                        focus:outline-none focus:ring-1 focus:ring-emerald-500"/>
-          @if (form.get('otroEtnia')?.invalid && form.get('otroEtnia')?.touched) {
+          @if (form().get('otroEtnia')?.invalid && form().get('otroEtnia')?.touched) {
               <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
             }
             </div>
@@ -273,7 +273,7 @@
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                      focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
             </textarea>
-              @if (form.get('asunto')?.invalid && form.get('asunto')?.touched) {
+              @if (form().get('asunto')?.invalid && form().get('asunto')?.touched) {
               <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
             }
           </div>
@@ -287,7 +287,7 @@
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                      focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
             </textarea>
-            @if (form.get('lugarHechos')?.invalid && form.get('lugarHechos')?.touched) {
+            @if (form().get('lugarHechos')?.invalid && form().get('lugarHechos')?.touched) {
             <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
             }
           </div>

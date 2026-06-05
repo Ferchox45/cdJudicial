@@ -13,7 +13,7 @@
     </thead>
 
     <tbody class="block md:table-row-group">
-      @for (parte of partes; track parte.id) {
+      @for (parte of partes(); track parte.id) {
 
         <tr class="block md:table-row bg-white border border-gray-200 md:border-b md:border-x-0 md:border-t-0 rounded-lg md:rounded-none hover:bg-gray-50 transition-colors mb-4 md:mb-0 shadow-sm md:shadow-none">
 
@@ -74,7 +74,7 @@
 <div class="flex flex-col md:flex-row md:justify-end px-4 py-4 md:py-3 border-t border-gray-100 bg-white">
   <button type="button"
     (click)="agregarParteEvt.emit()"
-    [disabled]="!bloquearBtn"
+    [disabled]="!bloquearBtn()"
     class="flex items-center justify-center gap-2 bg-emerald-900 text-white px-4 py-3 md:py-2 w-full md:w-auto
            rounded-md text-sm font-bold hover:bg-emerald-800 active:scale-95 transition-all
            disabled:opacity-40 disabled:cursor-not-allowed">
@@ -88,7 +88,7 @@
   </button>
 </div>
 
-@if (mostrarFormParte) {
+@if (mostrarFormParte()) {
   <div class="fixed inset-0 z-100 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"
       (click)="cancelarParteEvt.emit()"></div>
@@ -96,7 +96,7 @@
     <div class="relative z-10 w-full max-w-lg bg-white rounded-xl shadow-xl p-5 md:p-6 max-h-[90vh] overflow-y-auto">
       <h2 class="text-lg font-bold mb-4">Agregar Parte</h2>
 
-      <form [formGroup]="parteForm"
+      <form [formGroup]="parteForm()"
             (ngSubmit)="guardarParteEvt.emit()"
             class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -107,7 +107,7 @@
         <select formControlName="sexo"
           class="border px-3 py-2.5 md:py-2 rounded-md text-sm focus:ring-2 focus:ring-forest outline-none">
           <option value="">Seleccione Sexo</option>
-          @for (s of sexos; track s.id) {
+          @for (s of sexos(); track s.id) {
             <option [value]="s.descripcion">{{ s.descripcion }}</option>
           }
         </select>
@@ -115,7 +115,7 @@
         <select formControlName="tipoParte"
           class="border px-3 py-2.5 md:py-2 rounded-md text-sm focus:ring-2 focus:ring-forest outline-none">
           <option value="">Tipo de parte</option>
-          @for (tp of tiposPartes; track tp.id) {
+          @for (tp of tiposPartes(); track tp.id) {
             <option [value]="tp.descripcion">{{ tp.descripcion }}</option>
           }
         </select>

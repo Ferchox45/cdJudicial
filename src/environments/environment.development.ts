@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://collectors-wed-delivered-sea.trycloudflare.com',
+  apiUrl: 'https://encryption-nebraska-fields-notification.trycloudflare.com',
 };
 
 

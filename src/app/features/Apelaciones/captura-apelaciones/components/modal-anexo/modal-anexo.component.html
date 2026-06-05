@@ -1,4 +1,4 @@
-@if (visible) {
+@if (visible()) {
   <div class="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
 
     <!-- Contenedor del Modal -->
@@ -14,13 +14,13 @@
   <p class="text-gray-600 mb-2 text-xs md:text-sm">El registro se ha guardado correctamente bajo el folio de oficialía:</p>
 
   <div class="bg-beige border border-forest/20 rounded-lg p-2.5 mb-3 shadow-inner">
-    <span class="text-xl md:text-2xl font-black text-forest tracking-widest">{{ folio }}</span>
+    <span class="text-xl md:text-2xl font-black text-forest tracking-widest">{{ folio() }}</span>
   </div>
 
   <p class="text-gray-600 mb-2 text-xs md:text-sm">Se asignó a la sala:</p>
 
     <div class="bg-beige border border-forest/20 rounded-lg p-2.5 mb-3 shadow-inner">
-    <span class="text-xl md:text-2xl font-black text-forest tracking-widest">{{ sala }}</span>
+    <span class="text-xl md:text-2xl font-black text-forest tracking-widest">{{ sala() }}</span>
   </div>
 
   <p class="text-xs font-medium text-gray-500 m-0">

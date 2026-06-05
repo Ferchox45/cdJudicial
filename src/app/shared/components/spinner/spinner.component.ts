@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 export type SpinnerSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type SpinnerColor = 'white' | 'emerald' | 'forest' | 'gray' | 'current';
@@ -12,15 +11,15 @@ export type SpinnerColor = 'white' | 'emerald' | 'forest' | 'gray' | 'current';
   templateUrl: './spinner.component.html',
 })
 export class SpinnerComponent {
-  @Input() size: SpinnerSize = 'sm';
+  readonly size = input<SpinnerSize>('sm');
 
   /** Color del trazo */
-  @Input() color: SpinnerColor = 'current';
+  readonly color = input<SpinnerColor>('current');
 
   /** Texto accesible para lectores de pantalla */
-  @Input() ariaLabel = 'Cargando...';
+  readonly ariaLabel = input('Cargando...');
 
-  get sizeClass(): string {
+  readonly sizeClass = computed(() => {
     const map: Record<SpinnerSize, string> = {
       xs: 'h-3 w-3',
       sm: 'h-4 w-4',
@@ -28,10 +27,10 @@ export class SpinnerComponent {
       lg: 'h-6 w-6',
       xl: 'h-8 w-8',
     };
-    return map[this.size];
-  }
+    return map[this.size()];
+  });
 
-  get colorClass(): string {
+  readonly colorClass = computed(() => {
     const map: Record<SpinnerColor, string> = {
       white:   'text-white',
       emerald: 'text-emerald-600',
@@ -39,6 +38,6 @@ export class SpinnerComponent {
       gray:    'text-gray-400',
       current: 'text-current',
     };
-    return map[this.color];
-  }
+    return map[this.color()];
+  });
 }

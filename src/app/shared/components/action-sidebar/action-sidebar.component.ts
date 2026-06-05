@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SpinnerComponent } from '../spinner/spinner.component';
 
@@ -13,6 +13,13 @@ export interface SidebarAction {
   loading?: boolean;
 }
 
+const DEFAULT_ACTIONS: SidebarAction[] = [
+  { id: 'nuevo',   label: 'Nuevo',   icon: 'nuevo',   primary: true },
+  { id: 'guardar', label: 'Guardar', icon: 'guardar' },
+  { id: 'buscar',  label: 'Buscar',  icon: 'buscar'  },
+  { id: 'anexo',   label: 'Anexo',   icon: 'anexo'   },
+];
+
 @Component({
   selector: 'app-action-sidebar',
   standalone: true,
@@ -21,14 +28,9 @@ export interface SidebarAction {
   templateUrl: './action-sidebar.component.html',
 })
 export class ActionSidebarComponent {
-  @Input() actions: SidebarAction[] = [
-    { id: 'nuevo',   label: 'Nuevo',   icon: 'nuevo',   primary: true },
-    { id: 'guardar', label: 'Guardar', icon: 'guardar' },
-    { id: 'buscar',  label: 'Buscar',  icon: 'buscar'  },
-    { id: 'anexo',   label: 'Anexo',   icon: 'anexo'   },
-  ];
+  readonly actions = input<SidebarAction[]>(DEFAULT_ACTIONS);
 
-  @Output() actionClick = new EventEmitter<string>();
+  readonly actionClick = output<string>();
 
   onClick(action: SidebarAction) {
     if (!action.disabled && !action.loading) {

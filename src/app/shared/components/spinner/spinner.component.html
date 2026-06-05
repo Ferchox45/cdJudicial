@@ -1,8 +1,8 @@
 <svg
-  class="animate-spin {{ sizeClass }} {{ colorClass }}"
+  class="animate-spin {{ sizeClass() }} {{ colorClass() }}"
   fill="none"
   viewBox="0 0 24 24"
-  [attr.aria-label]="ariaLabel"
+  [attr.aria-label]="ariaLabel()"
   aria-live="polite"
   role="status"
 >

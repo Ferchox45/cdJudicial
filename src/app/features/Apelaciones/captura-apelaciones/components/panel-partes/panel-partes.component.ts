@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
+  input,
+  output,
 } from '@angular/core';
 
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
@@ -18,16 +17,16 @@ import { CatalogoItem } from '../../../../../core/models/catalogo-global.model';
 })
 export class PanelPartesComponent {
 
-  @Input() partes: Parte[] = [];
-  @Input() parteForm!: FormGroup;
-  @Input() mostrarFormParte = false;
-  @Input() sexos: CatalogoItem[] = [];
-  @Input() tiposPartes: CatalogoItem[] = [];
-  @Input() bloquearBtn = true;
+  readonly partes = input<Parte[]>([]);
+  readonly parteForm = input.required<FormGroup>();
+  readonly mostrarFormParte = input(false);
+  readonly sexos = input<CatalogoItem[]>([]);
+  readonly tiposPartes = input<CatalogoItem[]>([]);
+  readonly bloquearBtn = input(true);
 
-  @Output() toggleMenorEvt    = new EventEmitter<Parte>();
-  @Output() seleccionarEvt    = new EventEmitter<Parte>();
-  @Output() agregarParteEvt   = new EventEmitter<void>();
-  @Output() guardarParteEvt   = new EventEmitter<void>();
-  @Output() cancelarParteEvt  = new EventEmitter<void>();
+  readonly toggleMenorEvt    = output<Parte>();
+  readonly seleccionarEvt    = output<Parte>();
+  readonly agregarParteEvt   = output<void>();
+  readonly guardarParteEvt   = output<void>();
+  readonly cancelarParteEvt  = output<void>();
 }

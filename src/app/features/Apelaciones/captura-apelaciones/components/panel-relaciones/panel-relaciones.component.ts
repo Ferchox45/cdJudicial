@@ -2,9 +2,8 @@ import { DelitoDisponible } from '../../models/apelacion-aux.model';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
+  input,
+  output,
 } from '@angular/core';
 
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -19,26 +18,26 @@ import { Parte, RelacionBusqueda} from '../../models/busqueda-rap.model';
 })
 export class PanelRelacionesComponent {
   // ── Inputs ────────────────────────────────────────────────
-  @Input() procesados: Parte[] = [];
-  @Input() ofendidos:  Parte[] = [];
-  @Input() relaciones: RelacionBusqueda[] = [];
-  @Input() delitosFiltrados: DelitoDisponible[] = [];
-  @Input() busquedaDelitoTexto!: FormControl;
-  @Input() procesadoSeleccionado: Parte | null = null;
-  @Input() ofendidoSeleccionado:  Parte | null = null;
-  @Input() datosGeneralesOpen = true;
-  @Input() relacionesFinalesOpen = false;
-  @Input() bloquearSeccion = false;
-  @Input() bloquearBtn = true;
+  readonly procesados = input<Parte[]>([]);
+  readonly ofendidos  = input<Parte[]>([]);
+  readonly relaciones = input<RelacionBusqueda[]>([]);
+  readonly delitosFiltrados = input<DelitoDisponible[]>([]);
+  readonly busquedaDelitoTexto = input.required<FormControl>();
+  readonly procesadoSeleccionado = input<Parte | null>(null);
+  readonly ofendidoSeleccionado  = input<Parte | null>(null);
+  readonly datosGeneralesOpen = input(true);
+  readonly relacionesFinalesOpen = input(false);
+  readonly bloquearSeccion = input(false);
+  readonly bloquearBtn = input(true);
 
   // ── Outputs ───────────────────────────────────────────────
-  @Output() seleccionarProcesadoEvt   = new EventEmitter<Parte>();
-  @Output() seleccionarOfendidoEvt    = new EventEmitter<Parte>();
-  @Output() marcarTodosProcesadosEvt  = new EventEmitter<void>();
-  @Output() marcarTodosOfendidosEvt   = new EventEmitter<void>();
-  @Output() agregarRelacionEvt        = new EventEmitter<void>();
-  @Output() eliminarDelitoRelacionEvt = new EventEmitter<{ relId: string; delitoId: number | string }>();
-  @Output() toggleDelitoEvt           = new EventEmitter<DelitoDisponible>();
-  @Output() toggleDatosGeneralesEvt   = new EventEmitter<void>();
-  @Output() toggleRelacionesFinalesEvt = new EventEmitter<void>();
+  readonly seleccionarProcesadoEvt   = output<Parte>();
+  readonly seleccionarOfendidoEvt    = output<Parte>();
+  readonly marcarTodosProcesadosEvt  = output<void>();
+  readonly marcarTodosOfendidosEvt   = output<void>();
+  readonly agregarRelacionEvt        = output<void>();
+  readonly eliminarDelitoRelacionEvt = output<{ relId: string; delitoId: number | string }>();
+  readonly toggleDelitoEvt           = output<DelitoDisponible>();
+  readonly toggleDatosGeneralesEvt   = output<void>();
+  readonly toggleRelacionesFinalesEvt = output<void>();
 }
