@@ -21,6 +21,8 @@ export class MainHeaderComponent {
 private breadcrumbService = inject(BreadcrumbService);
 
   toggleMobileMenu = output<void>();
+  toggleSidebar = output<void>();
+  sidebarExpanded = input(false);
   // Usamos el signal del servicio directamente
   breadcrumbs = this.breadcrumbService.breadcrumbs;
 

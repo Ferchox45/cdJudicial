@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://encryption-nebraska-fields-notification.trycloudflare.com',
+  apiUrl: 'https://leaf-parcel-resorts-asn.trycloudflare.com',
 };
 
 

@@ -12,6 +12,17 @@
         </svg>
       </button>
 
+      <button
+        (click)="toggleSidebar.emit()"
+        [attr.aria-label]="sidebarExpanded() ? 'Contraer menú lateral' : 'Expandir menú lateral'"
+        class="hidden md:flex p-1.5 -ml-2 text-gray-600 hover:bg-gray-100 rounded-lg focus:outline-none transition-colors">
+        <svg class="w-6 h-6 transition-transform duration-300"
+             [class.rotate-180]="sidebarExpanded()"
+             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+        </svg>
+      </button>
+
       <img
         src="assets/images/logo-oaxaca.png"
         alt="Logo Poder Judicial Oaxaca"

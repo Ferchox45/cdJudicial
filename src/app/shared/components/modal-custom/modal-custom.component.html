@@ -1,5 +1,5 @@
 @if (show()) {
-  <div class="fixed inset-0 z-9999 flex items-center justify-center p-4">
+  <div cdkTrapFocus [cdkTrapFocus]="show()" class="fixed inset-0 z-9999 flex items-center justify-center p-4">
 
     <!-- Fondo oscuro -->
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300" (click)="onCancel()"></div>
@@ -46,7 +46,7 @@
       <!-- Botones Dinámicos -->
       @if (type() === 'info') {
         <div class="flex gap-3 w-full">
-          <button (click)="onCancel()"
+          <button cdkFocusInitial (click)="onCancel()"
                   class="flex-1 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-100 hover:bg-gray-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300 active:scale-95">
             {{ cancelText() }}
           </button>
@@ -57,7 +57,7 @@
           </button>
         </div>
       } @else {
-        <button (click)="onConfirm()"
+        <button cdkFocusInitial (click)="onConfirm()"
                 class="w-full rounded-xl px-4 py-3 text-sm font-bold text-white shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-95"
                 [ngClass]="{
                   'bg-red-600 hover:bg-red-700 focus:ring-red-600': type() === 'error',

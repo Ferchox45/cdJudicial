@@ -12,5 +12,6 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './dashboard.component.html',
 })
 export class DashboardLayoutComponent {
+  sidebarExpanded = signal(false);
   isMobileMenuOpen = signal(false);
 }
