@@ -1,5 +1,5 @@
 import { Injectable, signal, inject, DestroyRef } from '@angular/core';
-import { HttpClient, HttpBackend, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap, tap, of, finalize, map } from 'rxjs';
@@ -17,7 +17,7 @@ export interface AuthenticatorStatus {
 export class AuthService {
   API = environment.apiUrl;
   private router = inject(Router);
-  private http: HttpClient;
+  private http = inject(HttpClient);
 
   private accessToken = signal<string | null>(null);
   readonly accessToken$ = toObservable(this.accessToken);
@@ -26,13 +26,12 @@ export class AuthService {
 
   private destroyRef = inject(DestroyRef);
 
-  constructor(httpBackend: HttpBackend) {
-    this.http = new HttpClient(httpBackend);
+  constructor() {
     this.tryRestoreSession();
   }
 
   private tryRestoreSession() {
-    this.http.post<LoginResponse>(`${this.API}/api/auth/refresh`, {}, { withCredentials: true })
+    this.http.post<LoginResponse>(`${this.API}/api/auth/refresh`, {})
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.initialized.set(true))
@@ -51,7 +50,7 @@ export class AuthService {
   }
 
   login(usuario: string, contrasenia: string) {
-    return this.http.post<LoginResponse | null>(`${this.API}/api/auth/login`, { usuario, contrasenia }, { withCredentials: true })
+    return this.http.post<LoginResponse | null>(`${this.API}/api/auth/login`, { usuario, contrasenia })
       .pipe(
         switchMap((res) => {
           if (res?.data?.access_token) {
@@ -65,16 +64,14 @@ export class AuthService {
 
   checkAuthenticatorStatus() {
     return this.http.get<{ status: string; data: AuthenticatorStatus }>(
-      `${this.API}/api/auth/authenticator/status`,
-      { headers: new HttpHeaders({ Authorization: `Bearer ${this.accessToken()}` }) }
+      `${this.API}/api/auth/authenticator/status`
     );
   }
 
   verifyAuthenticatorCode(codigo: string) {
     return this.http.post<{ status: string; message: string; data: any }>(
       `${this.API}/api/auth/authenticator/verify`,
-      { codigo },
-      { headers: new HttpHeaders({ Authorization: `Bearer ${this.accessToken()}` }) }
+      { codigo }
     );
   }
 
@@ -83,7 +80,7 @@ export class AuthService {
   }
 
   refresh() {
-    return this.http.post<LoginResponse>(`${this.API}/api/auth/refresh`, {}, { withCredentials: true })
+    return this.http.post<LoginResponse>(`${this.API}/api/auth/refresh`, {})
       .pipe(tap((res) => {
         if (res?.data?.access_token) {
           this.accessToken.set(res.data.access_token);
@@ -93,7 +90,7 @@ export class AuthService {
   }
 
   logout() {
-    return this.http.post(`${this.API}/api/auth/logout`, {}, { withCredentials: true }).pipe(
+    return this.http.post(`${this.API}/api/auth/logout`, {}).pipe(
       tap(() => {
         this.accessToken.set(null);
         this.isAuthenticated.set(false);

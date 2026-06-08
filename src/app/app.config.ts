@@ -2,6 +2,7 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
+import { credentialsInterceptor } from './core/auth/credentials.interceptor';
 import { authInterceptor } from './core/auth/auth.interceptor';
 import { refreshInterceptor } from './core/auth/refresh.interceptor';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
@@ -9,7 +10,7 @@ import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(
-      withInterceptors([authInterceptor, refreshInterceptor]),
+      withInterceptors([credentialsInterceptor, authInterceptor, refreshInterceptor]),
     ),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
