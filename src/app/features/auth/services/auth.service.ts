@@ -1,10 +1,17 @@
 import { Injectable, signal, inject, DestroyRef } from '@angular/core';
-import { HttpClient, HttpBackend } from '@angular/common/http';
+import { HttpClient, HttpBackend, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { switchMap, tap, of, finalize } from 'rxjs';
+import { switchMap, tap, of, finalize, map } from 'rxjs';
 import { LoginResponse } from '../models/auth.model';
 import { environment } from '../../../../environments/environment';
+
+export interface AuthenticatorStatus {
+  activo: boolean;
+  encodedSecret: string | null;
+  user: string;
+  lastLoginUTC: string | null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -49,12 +56,30 @@ export class AuthService {
         switchMap((res) => {
           if (res?.data?.access_token) {
             this.accessToken.set(res.data.access_token);
-            this.isAuthenticated.set(true);
             return of(true);
           }
-          return this.refresh();
+          return this.refresh().pipe(map(() => true));
         }),
       );
+  }
+
+  checkAuthenticatorStatus() {
+    return this.http.get<{ status: string; data: AuthenticatorStatus }>(
+      `${this.API}/api/auth/authenticator/status`,
+      { headers: new HttpHeaders({ Authorization: `Bearer ${this.accessToken()}` }) }
+    );
+  }
+
+  verifyAuthenticatorCode(codigo: string) {
+    return this.http.post<{ status: string; message: string; data: any }>(
+      `${this.API}/api/auth/authenticator/verify`,
+      { codigo },
+      { headers: new HttpHeaders({ Authorization: `Bearer ${this.accessToken()}` }) }
+    );
+  }
+
+  finalizarAutenticacion(): void {
+    this.isAuthenticated.set(true);
   }
 
   refresh() {

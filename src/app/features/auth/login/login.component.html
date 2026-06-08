@@ -110,3 +110,112 @@
     </div>
   </div>
 </div>
+
+@if (loginStep() !== 'login') {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+
+      <div class="p-6 md:p-8">
+        @switch (loginStep()) {
+          @case ('setup2fa') {
+            <div class="text-center mb-6">
+              <div class="mx-auto w-14 h-14 bg-forest/10 rounded-2xl flex items-center justify-center mb-4">
+                <svg class="w-7 h-7 text-forest" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-gray-800 mb-1">Configurar Autenticador</h3>
+              <p class="text-sm text-gray-500">Escanea este código QR con Google Authenticator</p>
+            </div>
+
+            <div class="flex justify-center mb-6">
+              @if (qrDataUrl()) {
+                <img [src]="qrDataUrl()" alt="Código QR" class="w-48 h-48 border border-gray-200 rounded-xl p-2">
+              } @else {
+                <div class="w-48 h-48 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 text-sm">
+                  Generando QR...
+                </div>
+              }
+            </div>
+
+            <p class="text-sm text-gray-500 text-center mb-4">Luego ingresa el código generado</p>
+
+            <input
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              maxlength="6"
+              [(ngModel)]="codigo"
+              placeholder="000000"
+              class="w-full text-center text-2xl tracking-[0.5em] font-bold py-3 border border-sage rounded-lg focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest bg-white text-forest placeholder-grey transition-colors"
+            />
+
+            @if (authenticatorError()) {
+              <div class="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm" role="alert">
+                {{ authenticatorError() }}
+              </div>
+            }
+
+            <div class="flex gap-3 mt-6">
+              <button type="button" (click)="cerrarModal2fa()"
+                class="flex-1 px-4 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+              </button>
+              <button type="button" (click)="verificarCodigo()" [disabled]="loading2fa()"
+                class="flex-1 px-4 py-3 text-sm font-bold text-white bg-forest rounded-lg hover:opacity-90 transition-colors disabled:opacity-70 flex items-center justify-center gap-2">
+                @if (!loading2fa()) {
+                  <span>Verificar</span>
+                } @else {
+                  <app-spinner size="md" color="white" ariaLabel="Verificando..." />
+                }
+              </button>
+            </div>
+          }
+
+          @case ('verify2fa') {
+            <div class="text-center mb-6">
+              <div class="mx-auto w-14 h-14 bg-forest/10 rounded-2xl flex items-center justify-center mb-4">
+                <svg class="w-7 h-7 text-forest" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-gray-800 mb-1">Autenticación de dos factores</h3>
+              <p class="text-sm text-gray-500">Ingresa el código de tu Google Authenticator</p>
+            </div>
+
+            <input
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              maxlength="6"
+              [(ngModel)]="codigo"
+              placeholder="000000"
+              class="w-full text-center text-2xl tracking-[0.5em] font-bold py-3 border border-sage rounded-lg focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest bg-white text-forest placeholder-grey transition-colors"
+            />
+
+            @if (authenticatorError()) {
+              <div class="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm" role="alert">
+                {{ authenticatorError() }}
+              </div>
+            }
+
+            <div class="flex gap-3 mt-6">
+              <button type="button" (click)="cerrarModal2fa()"
+                class="flex-1 px-4 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+              </button>
+              <button type="button" (click)="verificarCodigo()" [disabled]="loading2fa()"
+                class="flex-1 px-4 py-3 text-sm font-bold text-white bg-forest rounded-lg hover:opacity-90 transition-colors disabled:opacity-70 flex items-center justify-center gap-2">
+                @if (!loading2fa()) {
+                  <span>Verificar</span>
+                } @else {
+                  <app-spinner size="md" color="white" ariaLabel="Verificando..." />
+                }
+              </button>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+}
