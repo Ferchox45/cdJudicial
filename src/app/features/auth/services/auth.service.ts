@@ -27,7 +27,7 @@ export class AuthService {
   private destroyRef = inject(DestroyRef);
 
   constructor() {
-    this.tryRestoreSession();
+    setTimeout(() => this.tryRestoreSession());
   }
 
   private tryRestoreSession() {
