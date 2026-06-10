@@ -119,15 +119,23 @@
               @for (col of columnasVisibles(); track col.field) {
                 <td
                   class="px-4 py-3 text-sm text-gray-700 whitespace-normal wrap-break-word"
-                  [title]="$any(r)[col.field]">
-                  {{ $any(r)[col.field] ?? '—' }}
+                  [class.!text-center]="col.type === 'checkbox'">
+                  @if (col.type === 'checkbox') {
+                    <input type="checkbox"
+                      [checked]="$any(r)[col.field] ?? false"
+                      (change)="onCheckboxChange(r, col.field, $event)"
+                      (click)="$event.stopPropagation()"
+                      class="size-4 rounded border-gray-300 text-forest accent-forest cursor-pointer">
+                  } @else {
+                    <span [title]="$any(r)[col.field]">{{ $any(r)[col.field] ?? '—' }}</span>
+                  }
                 </td>
               }
             </tr>
             @if (r === filaSeleccionada()) {
               @if (expandedTemplate(); as tmpl) {
                 <tr class="expanded-row">
-                  <td [attr.colspan]="columnasVisibles().length" class="!p-0 border-b border-gray-200 bg-gray-50/30">
+                  <td [attr.colspan]="columnasVisibles().length" class="p-0! border-b border-gray-200 bg-gray-50/30">
                     <ng-container [ngTemplateOutlet]="tmpl" [ngTemplateOutletContext]="{ $implicit: r }" />
                   </td>
                 </tr>

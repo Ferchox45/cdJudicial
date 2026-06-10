@@ -26,6 +26,7 @@ export class TablaReutilizableComponent {
   readonly limitCambio = output<number>();
   readonly rowClick = output<any>();
   readonly toggleAbierto = output<boolean>();
+  readonly selectionChange = output<{ row: any; checked: boolean }>();
 
   abierto = true;
   menuColumnasAbierto = false;
@@ -55,6 +56,12 @@ export class TablaReutilizableComponent {
     this.columnas.update(cols =>
       cols.map(c => c.field === field ? { ...c, visible: !c.visible } : c)
     );
+  }
+
+  onCheckboxChange(row: any, field: string, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    row[field] = checked;
+    this.selectionChange.emit({ row, checked });
   }
 
   mostrarTodas(): void {
