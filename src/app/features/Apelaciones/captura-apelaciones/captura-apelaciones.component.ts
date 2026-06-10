@@ -176,7 +176,11 @@ private wireCallbacks(): void {
       certificar: () => {
         const id = this.bus.apelacionId();
         if (!id) {
-          this.modal.info('Aviso', 'Primero realice una búsqueda por folio.');
+          if (this.bus.busquedaFallida()) {
+            this.modal.info('Aviso', 'Folio no valido');
+          } else {
+            this.modal.info('Aviso', 'Primero realice una búsqueda por folio.');
+          }
           return;
         }
         this.apelacionService.certificarApelacion(id).subscribe({

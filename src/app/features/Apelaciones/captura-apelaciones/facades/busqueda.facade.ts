@@ -31,6 +31,7 @@ export class BusquedaFacade {
 
   readonly buscando = signal(false);
   readonly busquedaExitosa = signal(false);
+  readonly busquedaFallida = signal(false);
   readonly bloquearBtn = signal(true);
   readonly bloquearSeccion = signal(false);
   readonly apelacionId = signal<number | null>(null);
@@ -43,12 +44,14 @@ export class BusquedaFacade {
     const folio = form.get('busquedaRapida')?.value?.trim();
 
     if (!folio) {
+      this.busquedaFallida.set(true);
       this.onError?.('Ingrese un folio para buscar.');
       return;
     }
 
     this.buscando.set(true);
     this.busquedaExitosa.set(false);
+    this.busquedaFallida.set(false);
 
     this.apelacionService.buscarPorFolio(folio).subscribe({
       next: (data: BusquedaRapida) => {
@@ -56,6 +59,8 @@ export class BusquedaFacade {
 
         if (!data) {
           this.busquedaExitosa.set(false);
+          this.busquedaFallida.set(true);
+          this.apelacionId.set(null);
           form.reset();
           form.patchValue({ busquedaRapida: folio });
           return;
@@ -67,6 +72,8 @@ export class BusquedaFacade {
       error: () => {
         this.buscando.set(false);
         this.busquedaExitosa.set(false);
+        this.busquedaFallida.set(true);
+        this.apelacionId.set(null);
         this.onError?.(
           `No se encontró ninguna apelación con el folio "${folio}".
            Por favor, verifique el folio e intente de nuevo.`
@@ -80,6 +87,7 @@ export class BusquedaFacade {
   resetNuevo(form: FormGroup): void {
     this.habilitarCampos(form);
     this.busquedaExitosa.set(false);
+    this.busquedaFallida.set(false);
     this.onNuevo?.();
   }
 
