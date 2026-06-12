@@ -5,6 +5,7 @@ import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap, tap, of, finalize, map } from 'rxjs';
 import { LoginResponse } from '../models/auth.model';
 import { environment } from '../../../../environments/environment';
+import { SessionStateService } from '../../permisos/services/session-state.service';
 
 export interface AuthenticatorStatus {
   activo: boolean;
@@ -18,6 +19,7 @@ export class AuthService {
   API = environment.apiUrl;
   private router = inject(Router);
   private http = inject(HttpClient);
+  private sessionState = inject(SessionStateService);
 
   private accessToken = signal<string | null>(null);
   readonly accessToken$ = toObservable(this.accessToken);
@@ -27,7 +29,7 @@ export class AuthService {
   private destroyRef = inject(DestroyRef);
 
   constructor() {
-    this.tryRestoreSession();
+    setTimeout(() => this.tryRestoreSession());
   }
 
   private tryRestoreSession() {
@@ -94,6 +96,7 @@ export class AuthService {
       tap(() => {
         this.accessToken.set(null);
         this.isAuthenticated.set(false);
+        this.sessionState.reiniciar();
         this.router.navigate(['/login']);
       }),
     );

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { DashboardLayoutComponent } from './features/dashboard/components/dashboardmain/dashboard.component';
 import { authGuard } from './core/auth/auth.guard';
+import { permisosGuard } from './features/permisos/guards/permisos.guard';
 
 export const routes: Routes = [
   // 1. REDIRECCIÓN INICIAL
@@ -16,11 +17,17 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
   },
 
-  // 3. RUTAS PRIVADAS (Dashboard y sub-módulos)
+  // 3. RUTA DE SELECCIÓN DE PERMISOS (standalone, sin layout dashboard)
+  {
+    path: 'seleccion-permisos',
+    loadComponent: () => import('./features/permisos/components/seleccion-permisos/seleccion-permisos.component').then(m => m.SeleccionPermisosComponent)
+  },
+
+  // 4. RUTAS PRIVADAS (Dashboard y sub-módulos)
   {
     path: '',
     component: DashboardLayoutComponent,
-    canActivate: [authGuard],
+    canActivate: [authGuard, permisosGuard],
     children: [
       {
         path: 'inicio',
@@ -45,11 +52,11 @@ export const routes: Routes = [
       {
         path: '',
         loadChildren: () => import('./features/estadisticas/estadisticas-plana/estadisticas.routes').then(m => m.ESTADISTICAS_ROUTES)
-      }
+      },
     ]
   },
 
-  // 4. WILDCARD (Ruta no encontrada)
+  // 5. WILDCARD (Ruta no encontrada)
   {
     path: '**',
     redirectTo: 'login',

@@ -46,23 +46,8 @@ export class LoginComponent {
     this.auth.login(this.usuario, this.contrasenia).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.auth.checkAuthenticatorStatus().subscribe({
-          next: (res) => {
-            if (res.data.activo) {
-              this.loginStep.set('verify2fa');
-            } else if (res.data.encodedSecret) {
-              this.generarQR(res.data.encodedSecret, res.data.user);
-              this.loginStep.set('setup2fa');
-            } else {
-              this.auth.finalizarAutenticacion();
-              this.router.navigate(['/inicio']);
-            }
-          },
-          error: () => {
-            this.auth.finalizarAutenticacion();
-            this.router.navigate(['/inicio']);
-          }
-        });
+        this.auth.finalizarAutenticacion();
+        this.router.navigate(['/seleccion-permisos']);
       },
       error: (err) => {
         this.isLoading.set(false);
@@ -100,7 +85,7 @@ export class LoginComponent {
           next: () => {
         this.loading2fa.set(false);
         this.auth.finalizarAutenticacion();
-        this.router.navigate(['/inicio']);
+        this.router.navigate(['/seleccion-permisos']);
       },
       error: (err) => {
         this.loading2fa.set(false);
