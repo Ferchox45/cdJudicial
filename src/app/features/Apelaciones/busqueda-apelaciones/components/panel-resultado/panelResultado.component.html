@@ -1,4 +1,4 @@
-<div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+<div class="bg-white border border-gray-200 rounded-lg">
 
   <app-table-reutilizable
     [columns]="columnas"
@@ -7,16 +7,16 @@
     [totalPaginas]="busqueda.totalPaginas()"
     [totalResultados]="busqueda.totalResultados()"
     [porPagina]="busqueda.porPagina()"
-    [mostrarColumnSelector]="false"
+    [mostrarColumnSelector]="true"
     [filaSeleccionada]="busqueda.filaSeleccionada()"
     [expandedTemplate]="detalleTmpl"
     (paginaCambio)="busqueda.irPagina($event)"
     (limitCambio)="busqueda.cambiarPorPagina($event)"
     (rowClick)="seleccionar($event)" />
 
-<ng-template #detalleTmpl let-fila>
-  <app-panel-detalle [fila]="fila" />
-</ng-template>
+  <ng-template #detalleTmpl let-fila>
+    <app-panel-detalle [fila]="fila" />
+  </ng-template>
 
   <!-- Botón Atrás -->
   <div class="bg-gray-50 px-4 md:px-8 py-4 flex justify-end border-t border-gray-100">
