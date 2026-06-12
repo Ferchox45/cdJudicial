@@ -40,9 +40,11 @@
         <span class="text-[13px] font-bold text-gray-800 uppercase tracking-wide hidden sm:block">
           {{ userName() }}
         </span>
-        <span class="text-[11px] text-gray-500 hidden md:block">
-          Área: {{ area() }} - OIJ Prueba FEDERAL - Perfil: {{ perfil() }} - SubArea: {{ subArea() }}
-        </span>
+        @if (area() && perfil()) {
+          <span class="text-[11px] text-gray-500 hidden md:block">
+            Área: {{ area()!.area }} - Perfil: {{ perfil()!.descripcion }}
+          </span>
+        }
       </div>
 
       <div class="h-9 w-9 rounded-full bg-gray-300 border border-gray-300 overflow-hidden flex items-center justify-center">
