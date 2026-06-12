@@ -55,10 +55,12 @@
               [class.text-emerald-800]="activeTab === 'partes'" [class.border-b-2]="activeTab === 'partes'"
               [class.border-emerald-800]="activeTab === 'partes'" [class.text-gray-500]="activeTab !== 'partes'"
               (click)="activeTab = 'partes'">Partes</button>
-            <button class="px-6 py-3 text-sm font-semibold transition-colors"
-              [class.text-emerald-800]="activeTab === 'relaciones'" [class.border-b-2]="activeTab === 'relaciones'"
-              [class.border-emerald-800]="activeTab === 'relaciones'" [class.text-gray-500]="activeTab !== 'relaciones'"
-              (click)="activeTab = 'relaciones'">Relaciones</button>
+            @if (!esIndigena) {
+              <button class="px-6 py-3 text-sm font-semibold transition-colors"
+                [class.text-emerald-800]="activeTab === 'relaciones'" [class.border-b-2]="activeTab === 'relaciones'"
+                [class.border-emerald-800]="activeTab === 'relaciones'" [class.text-gray-500]="activeTab !== 'relaciones'"
+                (click)="activeTab = 'relaciones'">Relaciones</button>
+            }
           </div>
 
           @if (activeTab === 'partes') {
@@ -77,7 +79,7 @@
             />
           }
 
-          @if (activeTab === 'relaciones') {
+          @if (!esIndigena && activeTab === 'relaciones') {
             <app-panel-relaciones
               [procesados]="procesados"
               [ofendidos]="ofendidos"

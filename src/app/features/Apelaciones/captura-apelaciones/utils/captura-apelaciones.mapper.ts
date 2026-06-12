@@ -118,7 +118,7 @@ export function sincronizarSeleccionDelitos(
 
 /**
  * Construye el payload para guardar una apelación.
- * Toda la lógica de mapeo vive aquí, fuera del componente.
+ * Nuevo contrato: partes planas y relaciones por índice.
  */
 export function buildPayload(
   raw: ApelacionFormValue,
@@ -127,63 +127,64 @@ export function buildPayload(
   sexos: CatalogoItem[],
   tiposPartes: CatalogoItem[]
 ): ApelacionPayload {
-  const resolverParte = (parteApi: ParteBusqueda) => {
-    const parteLocal = partes.find((p) => p.id === Number(parteApi.id));
+  const esIndigena = raw.materiaId === 6;
 
+  const partesPayload = partes.map((p) => {
     const sexoCat = sexos.find(
-      (s) => s.descripcion.toUpperCase() === parteLocal?.sexo?.toUpperCase()
+      (s) => s.descripcion.toUpperCase() === p.sexo?.toUpperCase()
     );
     const tipoParteCat = tiposPartes.find(
-      (tp) =>
-        tp.descripcion.toUpperCase() === parteLocal?.tipoParte?.toUpperCase()
+      (tp) => tp.descripcion.toUpperCase() === p.tipoParte?.toUpperCase()
     );
 
-    // Fallback si no se encuentra el tipo exacto
-    let idTipoParteDefinitivo = tipoParteCat?.id;
-    if (!idTipoParteDefinitivo) {
-      idTipoParteDefinitivo =
-        parteLocal?.roleOrigin === 'ofendido' ? 1 : 2;
+    let idTipoParte = tipoParteCat?.id;
+    if (!idTipoParte) {
+      idTipoParte = p.roleOrigin === 'ofendido' ? 1 : 2;
     }
 
     return {
-      nombre: parteApi.nombre,
-      idTipoParte: idTipoParteDefinitivo ?? null,
+      nombre: p.nombre,
+      idTipoParte: idTipoParte ?? null,
       idSexo: sexoCat?.id ?? null,
-      direccion: parteLocal?.direccion || null,
-      menorEdad: parteLocal?.menorEdad ?? false,
+      direccion: p.direccion || null,
+      menorEdad: p.menorEdad ?? false,
     };
-  };
+  });
 
   const relacionesPayload = relaciones.map((rel) => ({
-    ofendido: rel.ofendido ? resolverParte(rel.ofendido) : null,
-    procesado: rel.procesado ? resolverParte(rel.procesado) : null,
-    delitoRelaciones: rel.delitosRelacion.map((d) => ({
-      idDelito: Number(d.id),
-    })),
+    idxOfendido: partes.findIndex((p) => p.id === Number(rel.ofendido?.id)),
+    idxProcesado: partes.findIndex((p) => p.id === Number(rel.procesado?.id)),
+    delitos: rel.delitosRelacion.map((d) => Number(d.id)),
   }));
 
-  return {
+  const base: ApelacionPayload = {
     idMateria: raw.materiaId,
-    idApelacion: raw.apelacionId,
-    idTipoApelacion: raw.tipoApelacionId ?? null,
-    idTipoEscrito: raw.tipoEscritoId ?? null,
-    idJuzgado: raw.juzgadoId,
-    idMunicipio: raw.municipioId ?? null,
-    idLocalidad: raw.localidadId ?? null,
-    idMagistrado: raw.magistradoId ?? null,
-    idEtnia: raw.etniaId ?? null,
-    otroEtnia: raw.otroEtnia ?? null,
-    fechaAuto: raw.fechaAuto || null,
-    expedienteCausa: raw.expedienteCausa || null,
-    expedienteAcumulado: raw.expedienteAcumulado || null,
-    folioOficio: raw.folioOficio || null,
-    fojas: raw.fojas ?? null,
-    observaciones: raw.observaciones || null,
-    asunto: raw.asunto || null,
-    lugarHechos: raw.lugarHechos || null,
     esReposicion: raw.esReposicion ?? false,
-    relaciones: relacionesPayload,
+    partes: partesPayload,
   };
+
+  if (esIndigena) {
+    base.idMunicipio = raw.municipioId ?? null;
+    base.idLocalidad = raw.localidadId ?? null;
+    base.idEtnia = raw.etniaId ?? null;
+    base.otroEtnia = raw.otroEtnia ?? null;
+    base.asunto = raw.asunto || null;
+    base.lugarHechos = raw.lugarHechos || null;
+  } else {
+    base.idApelacion = raw.apelacionId;
+    base.idTipoApelacion = raw.tipoApelacionId ?? null;
+    base.idTipoEscrito = raw.tipoEscritoId ?? null;
+    base.idJuzgado = raw.juzgadoId;
+    base.fechaAuto = raw.fechaAuto || null;
+    base.expedienteCausa = raw.expedienteCausa || null;
+    base.expedienteAcumulado = raw.expedienteAcumulado || null;
+    base.folioOficio = raw.folioOficio || null;
+    base.fojas = raw.fojas ?? null;
+    base.observaciones = raw.observaciones || null;
+    base.relaciones = relacionesPayload;
+  }
+
+  return base;
 }
 
 /** Construye una nueva Parte a partir del valor del formulario */

@@ -71,23 +71,7 @@
             }
         </div>
 
-        <div class="col-span-1">
-          <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
-            Magistrado Asignado <span class="text-red-500">*</span>
-          </label>
-          <select formControlName="magistradoId"
-            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
-                   focus:outline-none focus:ring-1 focus:ring-emerald-500
-                   disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
-            <option [ngValue]="null">{{ cargando() ? 'Cargando...' : 'Seleccione...' }}</option>
-            @for (item of catalogosFacade.magistrados(); track item.id) {
-              <option [ngValue]="item.id">{{ item.descripcion }}</option>
-            }
-          </select>
-            @if (form().get('magistradoId')?.invalid && form().get('magistradoId')?.touched) {
-              <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
-            }
-        </div>
+
 
         <!-- Campos específicos para apelaciones en materia penal -->
         @if (!esIndigena()) {

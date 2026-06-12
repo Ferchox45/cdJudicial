@@ -35,37 +35,33 @@ export interface ApelacionPayloadRelacionParte {
   menorEdad: boolean;
 }
 
-export interface ApelacionPayloadRelacionDelito {
-  idDelito: number;
-}
-
-export interface ApelacionPayloadRelacion {
-  ofendido: ApelacionPayloadRelacionParte | null;
-  procesado: ApelacionPayloadRelacionParte | null;
-  delitoRelaciones: ApelacionPayloadRelacionDelito[];
+export interface ApelacionPayloadRelacionNuevo {
+  idxOfendido: number;
+  idxProcesado: number;
+  delitos: number[];
 }
 
 export interface ApelacionPayload {
   idMateria: number | null;
-  idApelacion: number | null;
-  idTipoApelacion: number | null;
-  idTipoEscrito: number | null;
-  idJuzgado: number | null;
-  idMunicipio: number | null;
-  idLocalidad: number | null;
-  idMagistrado: number | null;
-  idEtnia: number | null;
-  otroEtnia: string | null;
-  fechaAuto: string | null;
-  expedienteCausa: string | null;
-  expedienteAcumulado: string | null;
-  folioOficio: string | null;
-  fojas: number | null;
-  observaciones: string | null;
-  asunto: string | null;
-  lugarHechos: string | null;
+  idApelacion?: number | null;
+  idTipoApelacion?: number | null;
+  idTipoEscrito?: number | null;
+  idJuzgado?: number | null;
+  idMunicipio?: number | null;
+  idLocalidad?: number | null;
+  idEtnia?: number | null;
+  otroEtnia?: string | null;
+  fechaAuto?: string | null;
+  expedienteCausa?: string | null;
+  expedienteAcumulado?: string | null;
+  folioOficio?: string | null;
+  fojas?: number | null;
+  observaciones?: string | null;
+  asunto?: string | null;
+  lugarHechos?: string | null;
   esReposicion: boolean;
-  relaciones: ApelacionPayloadRelacion[];
+  partes: ApelacionPayloadRelacionParte[];
+  relaciones?: ApelacionPayloadRelacionNuevo[];
 }
 
 export interface ApelacionSaveResponseData {
