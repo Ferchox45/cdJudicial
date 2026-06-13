@@ -53,6 +53,13 @@ export const routes: Routes = [
         path: '',
         loadChildren: () => import('./features/estadisticas/estadisticas-plana/estadisticas.routes').then(m => m.ESTADISTICAS_ROUTES)
       },
+
+      // --- MÓDULO TURNOS ---
+      {
+        path: 'turnos',
+        data: { breadcrumb: 'Turnar a Sala' },
+        loadChildren: () => import('./features/turnos/turnos.routes').then(m => m.TURNOS_ROUTES),
+      },
     ]
   },
 

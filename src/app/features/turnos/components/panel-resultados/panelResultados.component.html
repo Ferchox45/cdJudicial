@@ -1,0 +1,11 @@
+<app-table-reutilizable
+  [columns]="columnas"
+  [data]="facade.resultados()"
+  [paginaActual]="facade.paginaActual()"
+  [totalPaginas]="facade.totalPaginas()"
+  [totalResultados]="facade.totalResultados()"
+  [porPagina]="facade.porPagina()"
+  [mostrarColumnSelector]="true"
+  (paginaCambio)="facade.irPagina($event)"
+  (limitCambio)="facade.cambiarPorPagina($event)"
+  (selectionChange)="onSelectionChange($event)"/>
