@@ -127,7 +127,9 @@
                       (click)="$event.stopPropagation()"
                       class="size-4 rounded border-gray-300 text-forest accent-forest cursor-pointer">
                   } @else {
-                    <span [title]="$any(r)[col.field]">{{ $any(r)[col.field] ?? '—' }}</span>
+                    <span
+                      [class]="getCellClass(col, r)"
+                      [title]="$any(r)[col.field]">{{ $any(r)[col.field] ?? '—' }}</span>
                   }
                 </td>
               }

@@ -64,6 +64,12 @@ export class TablaReutilizableComponent {
     this.selectionChange.emit({ row, checked });
   }
 
+  getCellClass(col: TablaColumna, row: any): string {
+    if (!col.cellClass) return '';
+    if (typeof col.cellClass === 'string') return col.cellClass;
+    return col.cellClass(row[col.field], row);
+  }
+
   mostrarTodas(): void {
     this.columnas.update(cols => cols.map(c => ({ ...c, visible: true })));
   }

@@ -95,22 +95,31 @@ export class TurnosFacade {
     res: { resultados: TurnoListItemDTO[]; paginacion: { total: number; page: number; limit: number } },
     mostrarModal: boolean,
   ): void {
-    let resultados = res.resultados.map(r => ({
-      ...r,
-      seleccionado: false,
-      _estatus: r.importadoNS ? 'Importado' : 'Pendiente',
-      _fechaTurno: r.fechaHoraIngresoJuz ? r.fechaHoraIngresoJuz.slice(0, 10) : '—',
-    }));
+    let resultados = res.resultados.map(r => {
+      let estatus: string;
+      if (r.importadoNS) {
+        estatus = 'Importado';
+      } else if (r.fechaHoraIngresoJuz) {
+        estatus = 'Turnado';
+      } else {
+        estatus = 'Pendiente';
+      }
 
-    if (this.perfilTipo() === 'comun') {
-      resultados = resultados.filter(r => r.fechaHoraIngresoJuz == null);
-    } else if (this.perfilTipo() === 'oficialia') {
-      resultados = resultados.filter(r => !r.importadoNS);
-    }
+      return {
+        ...r,
+        seleccionado: false,
+        _estatus: estatus,
+        _fechaTurno: r.fechaHoraIngresoJuz ? r.fechaHoraIngresoJuz.slice(0, 10) : '—',
+        _colorEstatus:
+          estatus === 'Pendiente' ? 'bg-gray-100 text-gray-700' :
+          estatus === 'Turnado' ? 'bg-green-100 text-green-700' :
+          'bg-blue-100 text-blue-700',
+      };
+    });
 
     this._cache.set(res.paginacion.page, resultados);
     this.resultados.set(resultados);
-    this._paginacion.set({ ...res.paginacion, total: resultados.length });
+    this._paginacion.set({ ...res.paginacion, total: res.paginacion.total });
 
     if (!mostrarModal) return;
 
