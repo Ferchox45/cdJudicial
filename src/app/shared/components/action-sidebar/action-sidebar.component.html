@@ -101,6 +101,12 @@
                   <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
                 </svg>
               }
+            @if (isIcon(action, 'turnar')) {
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                </svg>
+              }
             }
             <span class="text-2xs font-bold tracking-wide uppercase leading-none truncate w-full text-center">
               {{ action.label }}

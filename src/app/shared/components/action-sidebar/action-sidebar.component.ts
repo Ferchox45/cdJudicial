@@ -8,7 +8,7 @@ export interface SidebarAction {
   icon: 'nuevo' | 'guardar' | 'buscar' |
         'anexo' | 'exportar' | 'limpiar'|
         'reporte'| 'resultado' | 'grafica'
-        | 'certificar';
+        | 'certificar' | 'turnar';
   primary?: boolean;
   disabled?: boolean;
   loading?: boolean;
