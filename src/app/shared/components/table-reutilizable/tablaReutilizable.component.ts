@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal, TemplateRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal, TemplateRef } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
 import { PaginacionComponent } from '../paginacion/paginacion.component';
 import { TablaColumna } from './models/tabla-columna.model';
 
@@ -8,9 +8,12 @@ import { TablaColumna } from './models/tabla-columna.model';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, PaginacionComponent],
+  providers: [DatePipe],
   templateUrl: './tablaReutilizable.component.html',
 })
 export class TablaReutilizableComponent {
+  private readonly datePipe = inject(DatePipe);
+
   readonly columns = input<TablaColumna[]>([]);
   readonly data = input<any[]>([]);
   readonly paginaActual = input.required<number>();
@@ -68,6 +71,17 @@ export class TablaReutilizableComponent {
     if (!col.cellClass) return '';
     if (typeof col.cellClass === 'string') return col.cellClass;
     return col.cellClass(row[col.field], row);
+  }
+
+formatDate(value: string, format: string = 'dd/MM/yyyy HH:mm:ss'): string {
+  if (!value || value === '—' || value === '-') {
+      return '—';
+    }
+    try {
+      return this.datePipe.transform(value, format) ?? value;
+    } catch (error) {
+      return '—';
+    }
   }
 
   mostrarTodas(): void {

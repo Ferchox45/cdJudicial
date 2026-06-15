@@ -25,7 +25,7 @@ export class PanelResultadosComponent {
     { field: 'salaAnterior', label: 'Sala Anterior', visible: true },
     { field: 'apelacion', label: 'Apelación', visible: true },
     { field: 'tipoApelacion', label: 'Tipo de Apelación', visible: true },
-    { field: 'fechaAuto', label: 'Fecha de Auto', visible: true },
+    { field: 'fechaAuto', label: 'Fecha de Auto', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy' },
     { field: 'expedienteCausa', label: 'Exp / Causa', visible: true },
     { field: 'tipoEscrito', label: 'Tipo de Escrito', visible: true },
     { field: 'folioOficio', label: 'Folio de Oficio', visible: true },
@@ -33,9 +33,9 @@ export class PanelResultadosComponent {
     { field: 'expedienteAcumulado', label: 'Expediente Acumulado', visible: true },
     { field: 'juzgado', label: 'Juzgado', visible: true },
     { field: 'magistradoAsignado', label: 'Magistrado Asignado', visible: true },
-    { field: 'fechaHoraRecepcion', label: 'Fecha de Recepcion', visible: true },
+    { field: 'fechaHoraRecepcion', label: 'Fecha de Recepcion', visible: true, type: 'date' },
     { field: 'observaciones', label: 'Observaciones', visible: true },
-    { field: 'fechaHoraIngresoJuz', label: 'Fecha de Ingreso al Juzgado', visible: true },
+    { field: 'fechaHoraIngresoJuz', label: 'Fecha de Ingreso al Juzgado', visible: true, type: 'date' },
   ];
 
   seleccionar(r: Resultado): void {

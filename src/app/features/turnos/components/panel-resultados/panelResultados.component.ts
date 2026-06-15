@@ -18,11 +18,11 @@ export class PanelResultadosTurnosComponent {
     { field: 'folioApelacion', label: 'Folio Apelación', visible: true },
     { field: 'nomenclatura', label: 'Nomenclatura', visible: true },
     { field: 'folioOficio', label: 'Folio de Oficio', visible: true },
-    { field: 'fechaRecepcion', label: 'Fecha de Recepción', visible: true },
-    { field: '_fechaTurno', label: 'Fecha Turno', visible: true },
-    { field: '_estatus', label: 'Estatus', visible: true, cellClass: (v: string, row: any) => row['_colorEstatus'] ?? '' },
+    { field: 'fechaRecepcion', label: 'Fecha de Recepción', visible: true, type: 'date' },
+    { field: '_fechaTurno', label: 'Fecha Turno', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy' },
     { field: 'apelacion', label: 'Apelación', visible: true },
     { field: 'tipoApelacion', label: 'Tipo de Apelación', visible: true },
+    { field: '_estatus', label: 'Estatus', visible: true, cellClass: (v: string, row: any) => row['_colorEstatus'] ?? '' },
     { field: 'seleccionado', label: 'Seleccionar', visible: true, type: 'checkbox' },
   ];
 
