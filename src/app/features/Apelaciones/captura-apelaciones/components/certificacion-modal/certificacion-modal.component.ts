@@ -33,32 +33,51 @@ export class CertificacionModalComponent {
   }
 
   protected imprimir(): void {
-    const win = window.open('', '_blank');
-    if (!win) return;
-    win.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Certificación</title>
-        <style>
-          body {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 11px;
-            padding: 2cm;
-            white-space: pre-wrap;
-            line-height: 1.5;
-            margin: 0;
-          }
-          @media print {
-            body { padding: 1.5cm; }
-          }
-        </style>
-      </head>
-      <body><pre style="font-family:inherit;font-size:inherit;margin:0;white-space:pre-wrap">${this.textoCertificacion}</pre></body>
-      </html>
-    `);
-    win.document.close();
-    win.focus();
-    win.print();
-  }
+  const win = window.open('', '_blank');
+  if (!win) return;
+win.document.write(`
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <style>
+      @page {
+        margin: 1.5cm 2cm;
+        size: letter;
+      }
+      body {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 10px;
+        margin: 0;
+        columns: 2;
+        column-gap: 1.2cm;
+        column-rule: 1px solid #ccc;
+        column-fill: auto;
+      }
+      pre {
+        font-family: inherit;
+        font-size: inherit;
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <pre>${this.escaparHtml(this.textoCertificacion)}</pre>
+  </body>
+  </html>
+`);
+  win.document.close();
+  win.focus();
+  win.print();
+}
+
+private escaparHtml(texto: string): string {
+  return texto
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 }
