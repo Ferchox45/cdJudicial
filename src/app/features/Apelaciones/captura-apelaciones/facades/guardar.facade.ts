@@ -7,6 +7,7 @@ import { buildPayload } from '../utils/captura-apelaciones.mapper';
 import { ApelacionApiService } from '../data/captura-apelacion.service';
 import { CatalogoItem } from '../../../../core/models/catalogo-global.model';
 import { ApelacionSaveResponse } from '../models/apelacion-aux.model';
+import { SessionStateService } from '../../../permisos/services/session-state.service';
 
 export interface GuardarConfig {
   form: FormGroup;
@@ -25,6 +26,7 @@ export class GuardarFacade {
   private apelacionService = inject(ApelacionApiService);
   private contextoService  = inject(ApelacionContextService);
   private router           = inject(Router);
+  private sessionState      = inject(SessionStateService);
 
   guardando = false;
 
@@ -42,7 +44,9 @@ guardar(config: GuardarConfig): void {
       relaciones,
       partes,
       sexos,
-      tiposPartes
+      tiposPartes,
+      this.sessionState.idAreaSistemaUsuario(),
+      this.sessionState.idPantalla()
     );
     // Despues validamos. Si es inválido, detenemos el flujo para que NO se envíe al servidor
     if (form.invalid) {

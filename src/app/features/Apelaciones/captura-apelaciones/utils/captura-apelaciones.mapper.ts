@@ -125,7 +125,9 @@ export function buildPayload(
   relaciones: RelacionBusqueda[],
   partes: Parte[],
   sexos: CatalogoItem[],
-  tiposPartes: CatalogoItem[]
+  tiposPartes: CatalogoItem[],
+  idAreaSistemaUsuario: number | null,
+  idPantalla: number | null
 ): ApelacionPayload {
   const esIndigena = raw.materiaId === 6;
 
@@ -161,6 +163,8 @@ export function buildPayload(
     idMateria: raw.materiaId,
     esReposicion: raw.esReposicion ?? false,
     partes: partesPayload,
+    idAreaSistemaUsuario,
+    idPantalla,
   };
 
   if (esIndigena) {

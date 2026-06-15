@@ -37,6 +37,7 @@ export class SessionStateService {
       const data = JSON.parse(raw);
       if (data.idAreaSistemaUsuario != null) this.idAreaSistemaUsuario.set(data.idAreaSistemaUsuario);
       if (data.idPerfil != null) this.idPerfil.set(data.idPerfil);
+      if (data.idPantalla != null) this.idPantalla.set(data.idPantalla);
       if (data.areaInfo) this.areaInfo.set(data.areaInfo);
       if (data.perfilInfo) this.perfilInfo.set(data.perfilInfo);
       if (data.modulosPantallas) this.modulosPantallas.set(data.modulosPantallas);
@@ -52,6 +53,7 @@ export class SessionStateService {
       JSON.stringify({
         idAreaSistemaUsuario: this.idAreaSistemaUsuario(),
         idPerfil: this.idPerfil(),
+        idPantalla: this.idPantalla(),
         areaInfo: this.areaInfo(),
         perfilInfo: this.perfilInfo(),
         modulosPantallas: this.modulosPantallas(),
@@ -78,6 +80,18 @@ export class SessionStateService {
 
   setPantalla(id: number): void {
     this.idPantalla.set(id);
+    this.guardarSesion();
+  }
+
+  buscarPantallaPorDescripcion(descripcion: string): number | null {
+    for (const modulo of this.modulosPantallas()) {
+      for (const p of modulo.pantallas) {
+        if (p.descripcion === descripcion) {
+          return p.idPantalla;
+        }
+      }
+    }
+    return null;
   }
 
   completar(): void {

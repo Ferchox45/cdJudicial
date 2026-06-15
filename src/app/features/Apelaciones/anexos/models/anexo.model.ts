@@ -15,6 +15,8 @@ export interface CapturaAnexoCatalogos {
 export interface AnexoPayload {
   idApelacion: number;
   anexos: Anexo[];
+  idAreaSistemaUsuario?: number;
+  idPantalla?: number;
 }
 
 export interface AnexoSaveResponse {

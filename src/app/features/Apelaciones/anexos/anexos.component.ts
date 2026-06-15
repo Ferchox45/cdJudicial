@@ -8,6 +8,7 @@ import { Anexo } from './models/anexo.model';
 import { ApelacionContextService } from './data/apelacion-context.service';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
+import { SessionStateService } from '../../permisos/services/session-state.service';
 
 @Component({
   selector: 'app-anexos',
@@ -21,6 +22,7 @@ export class AnexosComponent implements OnInit {
   private apelacionService = inject(AnexoApiService);
   private contextoService  = inject(ApelacionContextService);
   private modalService     = inject(ModalService);
+  private sessionState      = inject(SessionStateService);
 
   readonly cargando = signal(false);
   readonly error = signal<string | null>(null);
@@ -149,7 +151,9 @@ agregarAnexo(): void {
         }
 
         return anexoFormateado;
-      })
+      }),
+      idAreaSistemaUsuario: this.sessionState.idAreaSistemaUsuario() ?? undefined,
+      idPantalla: this.sessionState.idPantalla() ?? undefined,
     };
 
     this.guardando.set(true);

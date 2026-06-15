@@ -62,6 +62,8 @@ export interface ApelacionPayload {
   esReposicion: boolean;
   partes: ApelacionPayloadRelacionParte[];
   relaciones?: ApelacionPayloadRelacionNuevo[];
+  idAreaSistemaUsuario: number | null;
+  idPantalla: number | null;
 }
 
 export interface ApelacionSaveResponseData {
