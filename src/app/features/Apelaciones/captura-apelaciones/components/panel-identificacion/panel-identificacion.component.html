@@ -100,7 +100,7 @@
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
                      focus:outline-none focus:ring-1 focus:ring-emerald-500
                      disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait">
-              <option [ngValue]="null">{{ cargando() ? 'Cargando...' : 'Seleccione...' }}</option>
+              <option [ngValue]="null">{{ catalogosFacade.cargandoTiposApelacion() ? 'Cargando...' : 'Seleccione...' }}</option>
               @for (item of catalogosFacade.tiposApelaciones(); track item.id) {
                 <option [ngValue]="item.id">{{ item.descripcion }}</option>
               }
@@ -276,6 +276,14 @@
             }
           </div>
         }
+
+        <div class="col-span-1 md:col-span-3">
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Magistrados</label>
+          <textarea rows="2" formControlName="magistrados" readonly
+            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-gray-50
+                   focus:outline-none resize-none cursor-not-allowed">
+          </textarea>
+        </div>
 
         <div class="col-span-1 md:col-span-3 flex items-center justify-start gap-2 pb-1">
           <input type="checkbox" id="reposicion" formControlName="esReposicion" class="w-4 h-4 accent-emerald-700"/>

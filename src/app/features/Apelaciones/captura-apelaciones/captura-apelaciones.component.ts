@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import { buildNuevaParte, buildNuevaRelacion } from './utils/captura-apelaciones.mapper';
 import { DelitoDisponible } from './models/apelacion-aux.model';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
+import { SessionStateService } from '../../permisos/services/session-state.service';
 
 @Component({
   selector: 'app-captura-apelacion',
@@ -40,6 +41,7 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   private fb  = inject(FormBuilder);
   private modal = inject(ModalService);
   private apelacionService = inject(ApelacionApiService);
+  private sessionState = inject(SessionStateService);
 
   identificacionOpen = true;
   partesOpen         = true;
@@ -73,7 +75,6 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
       { id: 'nuevo',   label: 'Nuevo',   icon: 'nuevo',   primary: true, disabled: isSaving },
       { id: 'guardar', label: 'Guardar', icon: 'guardar', loading: isSaving, disabled: isSaving },
       { id: 'buscar',  label: 'Buscar',  icon: 'buscar',  disabled: isSaving },
-      { id: 'anexo',   label: 'Anexo',   icon: 'anexo',   disabled: isSaving },
       { id: 'certificar', label: 'Certificar', icon: 'certificar', disabled: isSaving },
 
     ];
@@ -97,11 +98,17 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.buildForm();
     this.wireCallbacks();
-    this.cat.cargar(this.form, 'penal');
+    this.cat.cargar(this.form, 5);
     this.form.get('materiaId')!.valueChanges.subscribe(() => {
       this.bus.actualizarValidadoresPorMateria(this.form, this.esIndigena);
       this.activeTab = 'partes';
     });
+    this.establecerPantalla();
+  }
+
+  private establecerPantalla(): void {
+    const id = this.sessionState.buscarPantallaPorDescripcion('inicio/crear');
+    if (id) this.sessionState.setPantalla(id);
   }
 
   ngOnDestroy(): void { clearInterval(this.intervalId); }
@@ -116,17 +123,17 @@ private wireCallbacks(): void {
   this.bus.onError = (m) => this.modal.error('Error', m);
   this.bus.onNuevo = () => this.limpiarEstadoCaptura();
 
-  this.grd.onExito    = () =>{
+      this.grd.onExito    = () =>{
     this.guardando.set(false);
     this.mostrarModalAnexos.set(true)
-    const materiaActual = this.esIndigena ? 'indigena' : 'penal';
+    const materiaActual = this.esIndigena ? 6 : 5;
     this.actualizarFolioTentativo(materiaActual);
   };
 
   this.grd.onTerminar = () => {
     this.guardando.set(false);
     this.limpiarEstadoCaptura();
-    this.actualizarFolioTentativo('penal');
+    this.actualizarFolioTentativo(5);
   };
 
   this.grd.onError    = (m) => {
@@ -147,6 +154,7 @@ private wireCallbacks(): void {
       otroEtnia:           [null],
       asunto:              [null],   lugarHechos:         [null],
       esReposicion:        [false], observaciones:      [null],
+      magistrados:         [{ value: '', disabled: true }],
       folioTentativo:      [{ value: '', disabled: true }],
     });
     this.parteForm = this.fb.group({
@@ -159,6 +167,15 @@ private wireCallbacks(): void {
     const actions: Record<string, () => void> = {
       nuevo:   () => { this.bus.resetNuevo(this.form); this.form.reset(); },
       guardar: () => {
+        this.form.markAllAsTouched();
+        if (this.form.invalid) {
+          this.modal.info('Advertencia', 'Rellena los campos obligatorios.');
+          return;
+        }
+        if (this.partes.length === 0) {
+          this.modal.info('Partes requeridas', 'Debe agregar al menos una parte antes de guardar la apelación.');
+          return;
+        }
         this.guardando.set(true);
         this.grd.guardar({
           form: this.form,
@@ -249,8 +266,8 @@ private wireCallbacks(): void {
     this.delitosDisponibles.update(dd => dd.map(d => ({ ...d, seleccionado: false })));
     this.busquedaDelitoTexto.setValue('');
   }
-  private actualizarFolioTentativo(materia?: string): void {
-  const materiaStr = materia || (this.esIndigena ? 'indigena' : 'penal');
-  this.cat.cargar(this.form, materiaStr);
+  private actualizarFolioTentativo(materia?: number): void {
+  const materiaNum = materia ?? (this.esIndigena ? 6 : 5);
+  this.cat.cargar(this.form, materiaNum);
   }
 }

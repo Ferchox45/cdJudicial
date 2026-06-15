@@ -55,6 +55,7 @@ export interface BusquedaRapida {
   catLocalidad:       CatalogoItem | null;
   catEtnia:           CatalogoItem | null;
   catMagistrado:      CatalogoItem | null;
+  magistrados?:       string;
   relaciones:      RelacionBusqueda[];
 }
 

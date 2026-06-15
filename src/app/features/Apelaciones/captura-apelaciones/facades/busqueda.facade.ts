@@ -16,6 +16,7 @@ const CAMPOS_BUSQUEDA = [
   'juzgadoId', 'municipioId', 'localidadId', 'magistradoId', 'etniaId',
   'expedienteCausa', 'fechaAuto', 'fojas', 'expedienteAcumulado',
   'folioOficio', 'esReposicion', 'observaciones', 'lugarHechos', 'asunto',
+  'magistrados',
 ];
 
 export interface ResultadoBusqueda {
@@ -145,6 +146,7 @@ export class BusquedaFacade {
       magistradoId:        d.catMagistrado?.id ?? null,
       etniaId:             d.catEtnia?.id ?? null,
       lugarHechos:         d.lugarHechos ?? null,
+      magistrados:         d.magistrados ?? '',
       asunto:              d.asunto ?? null,
       municipioId:         d.catMunicipio?.id ?? null,
       localidadId:         d.catLocalidad?.id ?? null,
