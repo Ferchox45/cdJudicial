@@ -37,23 +37,18 @@ export class PanelIdentificacionComponent implements OnInit {
   readonly toggleEvt = output<void>();
   readonly buscarEvt = output<void>();
 
-  private readonly MATERIA_MAP: Record<number, string> = {
-    5: 'penal',
-    6: 'indigena',
-  };
-
   ngOnInit(): void {
     const form = this.form();
     this.catalogosFacade.escucharMunicipio(form);
+    this.catalogosFacade.escucharApelacion(form);
     form.get('materiaId')?.valueChanges
       .pipe(
-        filter(id => !!id && !!this.MATERIA_MAP[id]),
+        filter(id => !!id),
         distinctUntilChanged(),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(id => {
-        const materia = this.MATERIA_MAP[id];
-        this.catalogosFacade.cargar(form, materia);
+        this.catalogosFacade.cargar(form, id);
       });
   }
 }

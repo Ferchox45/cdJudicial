@@ -21,16 +21,16 @@ export class ApelacionApiService {
 
   // Catálogos con Caché
 
-  getCatalogoCaptura(materia: string): Observable<CapturaApelacionCatalogos> {
+  getCatalogoCaptura(idMateria: number): Observable<CapturaApelacionCatalogos> {
     const call$ = this.http
       .get<{ data: CapturaApelacionCatalogos }>(
         `${this.apiEndpoint}/api/apelaciones/catalogos`,
-        { params: { materia } }
+        { params: { idMateria } }
       )
       .pipe(map((res) => res.data));
 
     return this.cache.manejarCache(
-      `${CACHE_KEYS_APELACION.CAPTURA}_${materia}`,
+      `${CACHE_KEYS_APELACION.CAPTURA}_${idMateria}`,
       call$
     );
   }
@@ -79,8 +79,8 @@ export class ApelacionApiService {
   // Invalidación de Caché
 
   invalidarCatalogos(): void {
-    this.cache.delete(`${CACHE_KEYS_APELACION.CAPTURA}_penal`);
-    this.cache.delete(`${CACHE_KEYS_APELACION.CAPTURA}_indigena`);
+    this.cache.delete(`${CACHE_KEYS_APELACION.CAPTURA}_5`);
+    this.cache.delete(`${CACHE_KEYS_APELACION.CAPTURA}_6`);
   }
 
   invalidarBusqueda(): void {

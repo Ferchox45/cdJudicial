@@ -29,13 +29,14 @@ export class CatalogosFacade {
 
   readonly cargando = signal(false);
   readonly cargandoLocalidades = signal(false);
+  readonly cargandoTiposApelacion = signal(false);
   readonly error = signal<string | null>(null);
   readonly timeoutMsg = signal(false);
 
   onDelitosListos?: (delitos: DelitoDisponible[]) => void;
   onError?:        (msg: string) => void;
 
-  cargar(form: FormGroup, materia: string): void {
+  cargar(form: FormGroup, idMateria: number): void {
     this.cargando.set(true);
     this.error.set(null);
     this.timeoutMsg.set(false);
@@ -45,7 +46,7 @@ export class CatalogosFacade {
       if (this.cargando()) this.timeoutMsg.set(true);
     }, 5000);
 
-    this.apelacionService.getCatalogoCaptura(materia).subscribe({
+    this.apelacionService.getCatalogoCaptura(idMateria).subscribe({
       next: (data: CapturaApelacionCatalogos) => {
         clearTimeout(timer);
         this.asignarCatalogos(data);
@@ -59,7 +60,7 @@ export class CatalogosFacade {
         this.onError?.(this.error() ?? 'Error desconocido');
         setTimeout(() => {
           this.apelacionService.invalidarCatalogos();
-          this.cargar(form, materia);
+          this.cargar(form, idMateria);
         }, 5000);
       },
     });
@@ -91,6 +92,32 @@ escucharMunicipio(form: FormGroup): void {
     });
 }
 
+escucharApelacion(form: FormGroup): void {
+  form.get('apelacionId')?.valueChanges
+    .pipe(
+      takeUntil(this.destroy$),
+      tap(() => {
+        this.tiposApelaciones.set([]);
+        this.cargandoTiposApelacion.set(true);
+        form.get('tipoApelacionId')?.setValue(null, { emitEvent: false });
+      }),
+      switchMap(apelacionId =>
+        apelacionId
+          ? this.apelacionService.getTiposApelacion(apelacionId)
+          : of([])
+      )
+    )
+    .subscribe({
+      next: tipos => {
+        this.tiposApelaciones.set(tipos);
+        this.cargandoTiposApelacion.set(false);
+      },
+      error: () => {
+        this.cargandoTiposApelacion.set(false);
+      },
+    });
+}
+
   destruir(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -100,7 +127,6 @@ escucharMunicipio(form: FormGroup): void {
     this.materias.set(data.materias);
     this.folioTentativo.set(data.folioTentativo);
     this.apelaciones.set(data.apelaciones);
-    this.tiposApelaciones.set(data.tiposApelaciones);
     this.tiposEscritos.set(data.tiposEscritos);
     this.juzgados.set(data.juzgados);
     this.magistrados.set(data.magistrados);
