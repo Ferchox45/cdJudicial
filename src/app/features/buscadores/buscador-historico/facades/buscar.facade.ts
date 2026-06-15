@@ -102,6 +102,8 @@ export class BuscarFacade {
 
   cambiarPorPagina(limit: number): void {
     this._porPagina.set(limit);
+    if (this.resultados().length === 0)
+      return;
     this.limpiarCache();
     this.ejecutarBusqueda(1, false);
   }

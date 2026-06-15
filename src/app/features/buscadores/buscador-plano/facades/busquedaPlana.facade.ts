@@ -99,6 +99,8 @@ export class BusquedaPlanaFacade {
 
   cambiarPorPagina(limit: number): void {
     this._porPagina.set(limit);
+    if (this.resultados().length === 0)
+      return;
     this._limpiarCache();
     this._ejecutarBusqueda(1, false);
   }

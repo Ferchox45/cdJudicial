@@ -109,7 +109,7 @@ export class TurnosFacade {
         ...r,
         seleccionado: false,
         _estatus: estatus,
-        _fechaTurno: r.fechaHoraIngresoJuz ? r.fechaHoraIngresoJuz.slice(0, 10) : '—',
+        _fechaTurno: r.fechaHoraIngresoJuz ?? '—',
         _colorEstatus:
           estatus === 'Pendiente' ? 'bg-gray-100 text-gray-700' :
           estatus === 'Turnado' ? 'bg-green-100 text-green-700' :
@@ -126,7 +126,7 @@ export class TurnosFacade {
     if (resultados.length === 0) {
       this.modal.info('Sin resultados', 'No se encontraron registros con los criterios ingresados.');
     } else {
-      this.modal.success('Búsqueda exitosa', `Se encontraron ${resultados.length} registros.`);
+      this.modal.success('Búsqueda exitosa', `Se encontraron ${res.paginacion.total} registros.`);
     }
   }
 
@@ -148,6 +148,8 @@ export class TurnosFacade {
 
   cambiarPorPagina(limit: number): void {
     this._porPagina.set(limit);
+    if (this.resultados().length === 0)
+      return;
     this._limpiarCache();
     this._ejecutarBusqueda(1, false);
   }
@@ -179,8 +181,9 @@ export class TurnosFacade {
       next: (res) => {
         this.modal.success('Exportación exitosa', res.message);
         this.idsSeleccionados.set([]);
+        const pagina = this._paginacion().page;
         this._limpiarCache();
-        this._ejecutarBusqueda(1, false);
+        this._ejecutarBusqueda(pagina, false);
       },
       error: () => {
         this.modal.error('Error de exportación', 'Ocurrió un error al exportar las apelaciones.');
@@ -203,8 +206,9 @@ export class TurnosFacade {
       next: (res) => {
         this.modal.success('Importación exitosa', res.message);
         this.idsSeleccionados.set([]);
+        const pagina = this._paginacion().page;
         this._limpiarCache();
-        this._ejecutarBusqueda(1, false);
+        this._ejecutarBusqueda(pagina, false);
       },
       error: () => {
         this.modal.error('Error de importación', 'Ocurrió un error al importar las apelaciones.');

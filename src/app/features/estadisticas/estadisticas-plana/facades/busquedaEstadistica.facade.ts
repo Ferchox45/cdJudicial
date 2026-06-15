@@ -74,6 +74,8 @@ private _toggleRecursivo(
 
     cambiarPorPagina(limit: number): void {
     this.porPagina.set(limit);
+    if (this.resultados().length === 0)
+      return;
     this._limpiarCache();
     this._ejecutarBusqueda(1, false);
   }
