@@ -36,6 +36,9 @@ export class BusquedaFacade {
   readonly bloquearBtn = signal(true);
   readonly bloquearSeccion = signal(false);
   readonly apelacionId = signal<number | null>(null);
+  readonly tieneAnexos = signal(false);
+  readonly folioOficialia = signal<string | null>(null);
+  readonly sala = signal<string | null>(null);
 
   onExito?:  (resultado: ResultadoBusqueda) => void;
   onError?:  (msg: string) => void;
@@ -62,6 +65,7 @@ export class BusquedaFacade {
           this.busquedaExitosa.set(false);
           this.busquedaFallida.set(true);
           this.apelacionId.set(null);
+          this.tieneAnexos.set(false);
           form.reset();
           form.patchValue({ busquedaRapida: folio });
           return;
@@ -75,6 +79,7 @@ export class BusquedaFacade {
         this.busquedaExitosa.set(false);
         this.busquedaFallida.set(true);
         this.apelacionId.set(null);
+        this.tieneAnexos.set(false);
         this.onError?.(
           `No se encontró ninguna apelación con el folio "${folio}".
            Por favor, verifique el folio e intente de nuevo.`
@@ -89,6 +94,9 @@ export class BusquedaFacade {
     this.habilitarCampos(form);
     this.busquedaExitosa.set(false);
     this.busquedaFallida.set(false);
+    this.tieneAnexos.set(false);
+    this.folioOficialia.set(null);
+    this.sala.set(null);
     this.onNuevo?.();
   }
 
@@ -129,6 +137,9 @@ export class BusquedaFacade {
     delitosDisponibles: DelitoDisponible[]
   ): void {
     this.apelacionId.set(d.id);
+    this.tieneAnexos.set(Array.isArray(d.anexos) && d.anexos.length > 0);
+    this.folioOficialia.set(d.folioOficilia ?? null);
+    this.sala.set(d.sala ?? null);
     form.patchValue({
       folioTentativo:      d.folioTentativo,
       expedienteCausa:     d.expedienteCausa,

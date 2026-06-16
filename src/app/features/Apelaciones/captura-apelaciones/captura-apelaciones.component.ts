@@ -18,6 +18,7 @@ import { buildNuevaParte, buildNuevaRelacion } from './utils/captura-apelaciones
 import { DelitoDisponible } from './models/apelacion-aux.model';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
 import { SessionStateService } from '../../permisos/services/session-state.service';
+import { ApelacionContextService } from '../anexos/data/apelacion-context.service';
 
 @Component({
   selector: 'app-captura-apelacion',
@@ -42,6 +43,7 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   private modal = inject(ModalService);
   private apelacionService = inject(ApelacionApiService);
   private sessionState = inject(SessionStateService);
+  private contextoService = inject(ApelacionContextService);
 
   identificacionOpen = true;
   partesOpen         = true;
@@ -75,8 +77,8 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
       { id: 'nuevo',   label: 'Nuevo',   icon: 'nuevo',   primary: true, disabled: isSaving },
       { id: 'guardar', label: 'Guardar', icon: 'guardar', loading: isSaving, disabled: isSaving },
       { id: 'buscar',  label: 'Buscar',  icon: 'buscar',  disabled: isSaving },
+      { id: 'anexo',   label: 'Anexos',  icon: 'anexo',   disabled: !this.bus.tieneAnexos() || isSaving },
       { id: 'certificar', label: 'Certificar', icon: 'certificar', disabled: isSaving },
-
     ];
   }
 
@@ -190,6 +192,12 @@ private wireCallbacks(): void {
             this.modal.info('Advertencia', 'Por favor, complete los campos obligatorios.');
           },
         });
+      },
+      anexo: () => {
+        const id = this.bus.apelacionId();
+        if (!id) return;
+        this.contextoService.setContexto(id, this.bus.folioOficialia() ?? '', this.bus.sala() ?? '');
+        this.router.navigate(['/capturaApelacion/anexos']);
       },
       certificar: () => {
         const id = this.bus.apelacionId();

@@ -32,6 +32,17 @@ export interface RelacionBusqueda {
   delitosRelacion: DelitoBusqueda[];
 }
 
+export interface AnexoBusquedaRapida {
+  id: number;
+  descripcion: string;
+  esValor: boolean;
+  monto: string;
+  cantidad: number;
+  orden: number;
+  idApelacion: number;
+  idAnexo: number;
+}
+
 export interface BusquedaRapida {
   id:              number;
   folioOficilia:   string;
@@ -56,6 +67,8 @@ export interface BusquedaRapida {
   catEtnia:           CatalogoItem | null;
   catMagistrado:      CatalogoItem | null;
   magistrados?:       string;
+  sala?:              string;
   relaciones:      RelacionBusqueda[];
+  anexos:          AnexoBusquedaRapida[];
 }
 
