@@ -59,6 +59,10 @@ export class AnexosComponent implements OnInit {
       setTimeout(() => this.onBack(), 3000);
       return;
     }
+    const previos = this.contextoService.anexosPrevios();
+    if (previos.length > 0) {
+      this.anexos.set(previos);
+    }
     this.cargarAnexos();
   }
 

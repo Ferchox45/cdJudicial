@@ -196,7 +196,15 @@ private wireCallbacks(): void {
       anexo: () => {
         const id = this.bus.apelacionId();
         if (!id) return;
-        this.contextoService.setContexto(id, this.bus.folioOficialia() ?? '', this.bus.sala() ?? '');
+        const anexosPrevios = (this.bus.anexos() ?? []).map(a => ({
+          idAnexo: a.idAnexo,
+          cantidad: a.cantidad,
+          tipo: a.descripcion,
+          esValor: a.esValor,
+          monto: a.monto ? Number(a.monto) : null,
+          otroAnexo: '',
+        }));
+        this.contextoService.setContexto(id, this.bus.folioOficialia() ?? '', this.bus.sala() ?? '', anexosPrevios);
         this.router.navigate(['/capturaApelacion/anexos']);
       },
       certificar: () => {

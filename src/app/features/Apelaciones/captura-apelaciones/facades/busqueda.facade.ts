@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { BusquedaRapida, Parte, RelacionBusqueda } from '../models/busqueda-rap.model';
+import { AnexoBusquedaRapida, BusquedaRapida, Parte, RelacionBusqueda } from '../models/busqueda-rap.model';
 import { ApelacionApiService } from '../data/captura-apelacion.service';
 import {
   mapearPartesDesdeRelaciones,
@@ -37,6 +37,7 @@ export class BusquedaFacade {
   readonly bloquearSeccion = signal(false);
   readonly apelacionId = signal<number | null>(null);
   readonly tieneAnexos = signal(false);
+  readonly anexos = signal<AnexoBusquedaRapida[]>([]);
   readonly folioOficialia = signal<string | null>(null);
   readonly sala = signal<string | null>(null);
 
@@ -66,6 +67,7 @@ export class BusquedaFacade {
           this.busquedaFallida.set(true);
           this.apelacionId.set(null);
           this.tieneAnexos.set(false);
+          this.anexos.set([]);
           form.reset();
           form.patchValue({ busquedaRapida: folio });
           return;
@@ -80,6 +82,7 @@ export class BusquedaFacade {
         this.busquedaFallida.set(true);
         this.apelacionId.set(null);
         this.tieneAnexos.set(false);
+        this.anexos.set([]);
         this.onError?.(
           `No se encontró ninguna apelación con el folio "${folio}".
            Por favor, verifique el folio e intente de nuevo.`
@@ -95,6 +98,7 @@ export class BusquedaFacade {
     this.busquedaExitosa.set(false);
     this.busquedaFallida.set(false);
     this.tieneAnexos.set(false);
+    this.anexos.set([]);
     this.folioOficialia.set(null);
     this.sala.set(null);
     this.onNuevo?.();
@@ -138,6 +142,7 @@ export class BusquedaFacade {
   ): void {
     this.apelacionId.set(d.id);
     this.tieneAnexos.set(Array.isArray(d.anexos) && d.anexos.length > 0);
+    this.anexos.set(d.anexos ?? []);
     this.folioOficialia.set(d.folioOficilia ?? null);
     this.sala.set(d.sala ?? null);
     form.patchValue({
