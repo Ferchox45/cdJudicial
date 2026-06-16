@@ -74,5 +74,6 @@ export class TurnosComponent implements OnInit {
     } else {
       this.facade.perfilTipo.set('oficialia');
     }
+    this.facade.limpiar();
   }
 }

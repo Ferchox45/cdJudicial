@@ -13,18 +13,28 @@ import { TablaColumna } from '../../../../shared/components/table-reutilizable/m
 export class PanelResultadosTurnosComponent {
   readonly facade = inject(TurnosFacade);
 
-  readonly columnas: TablaColumna[] = [
-    { field: 'folioOficialia', label: 'Folio Oficialía', visible: true },
-    { field: 'folioApelacion', label: 'Folio Apelación', visible: true },
-    { field: 'nomenclatura', label: 'Nomenclatura', visible: true },
-    { field: 'folioOficio', label: 'Folio de Oficio', visible: true },
-    { field: 'fechaRecepcion', label: 'Fecha de Recepción', visible: true, type: 'date' },
-    { field: '_fechaTurno', label: 'Fecha Turno', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy' },
-    { field: 'apelacion', label: 'Apelación', visible: true },
-    { field: 'tipoApelacion', label: 'Tipo de Apelación', visible: true },
-    { field: '_estatus', label: 'Estatus', visible: true, cellClass: (v: string, row: any) => row['_colorEstatus'] ?? '' },
-    { field: 'seleccionado', label: 'Seleccionar', visible: true, type: 'checkbox' },
-  ];
+  get columnas(): TablaColumna[] {
+    const esComun = this.facade.perfilTipo() === 'comun';
+    const base: TablaColumna[] = [
+      { field: 'folioOficialia', label: 'Folio Oficialía', visible: true },
+      { field: 'folioApelacion', label: 'Folio Apelación', visible: true },
+      { field: 'nomenclatura', label: 'Nomenclatura', visible: true },
+      { field: 'folioOficio', label: 'Folio de Oficio', visible: true },
+      { field: 'fechaRecepcion', label: 'Fecha de Recepción', visible: true, type: 'date' },
+      { field: 'apelacion', label: 'Apelación', visible: true },
+      { field: 'tipoApelacion', label: 'Tipo de Apelación', visible: true },
+      { field: '_estatus', label: 'Estatus', visible: true, cellClass: (v: string, row: any) => row['_colorEstatus'] ?? '' },
+      { field: 'seleccionado', label: 'Seleccionar', visible: true, type: 'checkbox' },
+    ];
+    const fechaCol: TablaColumna = esComun
+      ? { field: 'fechaExportacion', label: 'Fecha Exportación', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy' }
+      : { field: 'fechaImportacion', label: 'Fecha Importación', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy' };
+    return [
+      ...base.slice(0, 5),
+      fechaCol,
+      ...base.slice(5),
+    ];
+  }
 
   onSelectionChange(event: { row: any; checked: boolean }): void {
     const id = event.row.id;
