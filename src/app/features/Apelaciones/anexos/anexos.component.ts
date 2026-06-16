@@ -30,6 +30,7 @@ export class AnexosComponent implements OnInit {
   readonly errorGuardado = signal<string | null>(null);
   readonly exitoGuardado = signal<string | null>(null);
   readonly anexosGuardados = signal(false);
+  readonly readOnly = signal(false);
 
   folioTramite: string | null = null;
   sala: string | null = null;
@@ -62,6 +63,7 @@ export class AnexosComponent implements OnInit {
     const previos = this.contextoService.anexosPrevios();
     if (previos.length > 0) {
       this.anexos.set(previos);
+      this.readOnly.set(true);
     }
     this.cargarAnexos();
   }

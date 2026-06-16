@@ -106,6 +106,7 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
       this.activeTab = 'partes';
     });
     this.establecerPantalla();
+    this.restaurarEstadoBusqueda();
   }
 
   private establecerPantalla(): void {
@@ -123,7 +124,7 @@ private wireCallbacks(): void {
     this.partes = partes; this.relaciones = relaciones; this.delitosDisponibles.set(delitosDisponibles);
   };
   this.bus.onError = (m) => this.modal.error('Error', m);
-  this.bus.onNuevo = () => this.limpiarEstadoCaptura();
+  this.bus.onNuevo = () => { this.limpiarEstadoCaptura(); this.contextoService.clearSearchState(); };
 
       this.grd.onExito    = () =>{
     this.guardando.set(false);
@@ -143,6 +144,73 @@ private wireCallbacks(): void {
     this.modal.error('Error', m);
   };
 }
+
+  private guardarEstadoBusqueda(): void {
+    this.contextoService.saveSearchState({
+      formValues: this.form.getRawValue(),
+      busquedaExitosa: this.bus.busquedaExitosa(),
+      busquedaFallida: this.bus.busquedaFallida(),
+      bloquearBtn: this.bus.bloquearBtn(),
+      bloquearSeccion: this.bus.bloquearSeccion(),
+      apelacionId: this.bus.apelacionId(),
+      tieneAnexos: this.bus.tieneAnexos(),
+      anexos: this.bus.anexos(),
+      folioOficialia: this.bus.folioOficialia(),
+      sala: this.bus.sala(),
+      partes: this.partes,
+      relaciones: this.relaciones,
+      delitosDisponibles: this.delitosDisponibles(),
+      procesadoSeleccionado: this.procesadoSeleccionado,
+      ofendidoSeleccionado: this.ofendidoSeleccionado,
+      busquedaDelitoTexto: this.busquedaDelitoTexto.value ?? '',
+      busquedaRapida: this.form.get('busquedaRapida')?.value ?? '',
+    });
+  }
+
+  private restaurarEstadoBusqueda(): boolean {
+    const s = this.contextoService.getSearchState();
+    if (!s) return false;
+
+    this.form.patchValue(s.formValues);
+    this.partes = s.partes ?? [];
+    this.relaciones = s.relaciones ?? [];
+    this.procesadoSeleccionado = s.procesadoSeleccionado ?? null;
+    this.ofendidoSeleccionado = s.ofendidoSeleccionado ?? null;
+
+    if (s.busquedaDelitoTexto) {
+      this.busquedaDelitoTexto.setValue(s.busquedaDelitoTexto);
+    }
+
+    this.bus.apelacionId.set(s.apelacionId);
+    this.bus.busquedaExitosa.set(s.busquedaExitosa);
+    this.bus.busquedaFallida.set(s.busquedaFallida);
+    this.bus.bloquearBtn.set(s.bloquearBtn);
+    this.bus.bloquearSeccion.set(s.bloquearSeccion);
+    this.bus.tieneAnexos.set(s.tieneAnexos);
+    this.bus.anexos.set(s.anexos ?? []);
+    this.bus.folioOficialia.set(s.folioOficialia);
+    this.bus.sala.set(s.sala);
+
+    const savedIds = new Set(
+      (s.delitosDisponibles ?? [])
+        .filter((d: any) => d.seleccionado)
+        .map((d: any) => d.id)
+    );
+
+    this.cat.onDelitosListos = (delitos) => {
+      this.delitosDisponibles.set(
+        delitos.map(d => ({ ...d, seleccionado: savedIds.has(d.id) }))
+      );
+      if (this.bus.bloquearSeccion()) {
+        this.bus.bloquearCampos(this.form);
+      }
+    };
+
+    this.delitosDisponibles.set(s.delitosDisponibles ?? []);
+
+    this.contextoService.clearSearchState();
+    return true;
+  }
 
   private buildForm(): void {
     this.form = this.fb.group({
@@ -167,7 +235,7 @@ private wireCallbacks(): void {
 
   handleAction(id: string): void {
     const actions: Record<string, () => void> = {
-      nuevo:   () => { this.bus.resetNuevo(this.form); this.form.reset(); },
+      nuevo:   () => { this.bus.resetNuevo(this.form); this.form.reset(); this.contextoService.clearSearchState(); },
       guardar: () => {
         this.form.markAllAsTouched();
         if (this.form.invalid) {
@@ -196,6 +264,7 @@ private wireCallbacks(): void {
       anexo: () => {
         const id = this.bus.apelacionId();
         if (!id) return;
+        this.guardarEstadoBusqueda();
         const anexosPrevios = (this.bus.anexos() ?? []).map(a => ({
           idAnexo: a.idAnexo,
           cantidad: a.cantidad,
@@ -204,7 +273,8 @@ private wireCallbacks(): void {
           monto: a.monto ? Number(a.monto) : null,
           otroAnexo: '',
         }));
-        this.contextoService.setContexto(id, this.bus.folioOficialia() ?? '', this.bus.sala() ?? '', anexosPrevios);
+        const folio = this.bus.folioOficialia() ?? this.form.get('busquedaRapida')?.value ?? '';
+        this.contextoService.setContexto(id, folio, this.bus.sala() ?? '', anexosPrevios);
         this.router.navigate(['/capturaApelacion/anexos']);
       },
       certificar: () => {
