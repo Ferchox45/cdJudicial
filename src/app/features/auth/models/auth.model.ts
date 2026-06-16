@@ -8,3 +8,10 @@ export interface LoginResponse {
   message: string;
   data: { access_token: string } | null;
 }
+
+export interface ProfileResponse {
+  data: {
+    nombre: string;
+    foto: string;
+  };
+}

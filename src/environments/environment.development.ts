@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: '',
+  apiUrl: 'https://directors-benefit-interested-cities.trycloudflare.com',
   baseUrl: '/',
 };
