@@ -18,6 +18,7 @@ export interface GuardarConfig {
   folioGuardado: WritableSignal<string>;
   salaGuardada: WritableSignal<string>;
   onModalInvalido: () => void;
+  esActualizacion?: boolean;
 }
 
 @Injectable()
@@ -36,7 +37,7 @@ export class GuardarFacade {
   onError?:    (msg: string) => void;
 
 guardar(config: GuardarConfig): void {
-    const { form, relaciones, partes, sexos, tiposPartes, folioGuardado, salaGuardada, onModalInvalido } = config;
+    const { form, relaciones, partes, sexos, tiposPartes, folioGuardado, salaGuardada, onModalInvalido, esActualizacion } = config;
 
     // Construimos el JSON con lo que sea que tenga el form
     const payload = buildPayload(
@@ -56,7 +57,10 @@ guardar(config: GuardarConfig): void {
     }
     // Si todo está bien, mandamos la petición al servidor
     this.guardando = true;
-    this.apelacionService.guardarApelacion(payload).subscribe({
+    const request$ = esActualizacion
+      ? this.apelacionService.actualizarApelacion(payload)
+      : this.apelacionService.guardarApelacion(payload);
+    request$.subscribe({
       next: (res: ApelacionSaveResponse) => {
         this.guardando = false;
         if (res.status === 'success') {

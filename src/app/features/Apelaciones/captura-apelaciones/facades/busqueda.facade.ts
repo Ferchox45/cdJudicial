@@ -104,8 +104,7 @@ export class BusquedaFacade {
     this.onNuevo?.();
   }
 
-  bloquearCampos(form: FormGroup): void {
-    CAMPOS_BUSQUEDA.forEach((c) => form.get(c)?.disable({ emitEvent: false }));
+  bloquearCampos(_form: FormGroup): void {
     this.bloquearBtn.set(false);
     this.bloquearSeccion.set(true);
   }

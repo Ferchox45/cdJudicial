@@ -255,6 +255,7 @@ private wireCallbacks(): void {
           tiposPartes: this.cat.tiposPartes(),
           folioGuardado: this.folioGuardado,
           salaGuardada: this.salaGuardada,
+          esActualizacion: !!this.bus.apelacionId(),
           onModalInvalido: () => {
             this.guardando.set(false);
             this.modal.info('Advertencia', 'Por favor, complete los campos obligatorios.');
