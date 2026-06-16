@@ -1,8 +1,7 @@
-<div class="flex flex-col">
+<div class="flex flex-col w-full max-w-full overflow-hidden">
 
-  <!-- TABS -->
   <div class="flex border-b border-sand px-3 md:px-4 pt-2">
-        <button
+    <button
       class="flex items-center gap-1.5 px-3 py-1.5 text-[10px] md:text-xs font-bold uppercase tracking-wider border-b-2 transition-colors"
       [class]="tabActivo === 'partes'
         ? 'border-strong-coffee text-strong-coffee'
@@ -13,7 +12,7 @@
       </svg>
       Partes
       @if (fila().partes.length) {
-        <span class="ml-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold leading-none"
+        <span class="ml-0.5 px-1.5 py-0.5 rounded-full text-2xs font-bold leading-none"
           [class]="tabActivo === 'partes' ? 'bg-sand text-strong-coffee' : 'bg-beige text-grey'">
           {{ fila().partes.length }}
         </span>
@@ -31,7 +30,7 @@
       </svg>
       Anexos
       @if (fila().anexos.length) {
-        <span class="ml-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold leading-none"
+        <span class="ml-0.5 px-1.5 py-0.5 rounded-full text-2xs font-bold leading-none"
           [class]="tabActivo === 'anexos' ? 'bg-sand text-strong-coffee' : 'bg-beige text-grey'">
           {{ fila().anexos.length }}
         </span>
@@ -39,104 +38,101 @@
     </button>
   </div>
 
-  <!-- TAB: PARTES -->
-@if (tabActivo === 'partes') {
-    @if (fila().partes.length > 0) {
-      <table class="w-full border-collapse">
-        <thead class="hidden md:table-header-group">
-          <tr class="bg-gray-50/60 border-b border-gray-200/80">
-            <th class="px-4 py-1.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Tipo Parte</th>
-            <th class="px-3 py-1.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Nombre Completo</th>
-            <th class="px-3 py-1.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Dirección</th>
-            <th class="px-3 py-1.5 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Sexo</th>
-            <th class="px-3 py-1.5 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Menor</th>
-          </tr>
-        </thead>
-        <tbody class="block md:table-row-group divide-y divide-gray-100/80">
-          @for (p of fila().partes; track $index) {
-            <tr class="block md:table-row">
-              <td class="block md:table-cell px-4 py-1.5 text-sm truncate">
-                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Tipo: </span>
-                <span class="font-semibold text-gray-800">{{ p.tipoParte }}</span>
-              </td>
-              <td class="block md:table-cell px-3 md:px-3 py-1 md:py-1.5 text-sm truncate">
-                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Nombre: </span>
-                <span class="text-gray-700">{{ p.nombre }}</span>
-              </td>
+  <div class="min-h-full max-w-full p-3 md:p-4">
 
-              <td class="hidden md:table-cell px-3 py-1.5 text-sm text-gray-400 truncate" [title]="p.direccion">{{ p.direccion || '—' }}</td>
-
-              <td class="block md:table-cell px-3 md:px-3 py-1 md:py-1.5 text-sm md:text-center">
-                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Sexo: </span>
-                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-600 uppercase leading-none">
-                  {{ p.sexo || 'N/E' }}
-                </span>
-              </td>
-              <td class="block md:table-cell px-3 md:px-3 py-1 md:py-1.5 text-sm md:text-center">
-                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Menor: </span>
-                @if (p.menorEdad) {
-                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-green-100 text-green-800 leading-none">SÍ</span>
-                } @else {
-                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 leading-none">NO</span>
-                }
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    } @else {
-      <p class="text-xs text-gray-400 italic px-4 py-2">No hay partes registradas.</p>
+    @if (tabActivo === 'partes') {
+      @if (fila().partes.length > 0) {
+        <div class="w-full overflow-x-scroll border border-gray-200/60 rounded-lg shadow-sm">
+          <table class="w-full border-collapse table-fixed min-w-325">
+            <thead>
+              <tr class="bg-gray-50/60 border-b border-gray-200/80">
+                <th class="px-4 py-2 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Tipo Parte</th>
+                <th class="px-3 py-2 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Nombre Completo</th>
+                <th class="px-3 py-2 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Dirección</th>
+                <th class="px-3 py-2 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Sexo</th>
+                <th class="px-3 py-2 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Menor</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100/80 bg-white">
+              @for (p of fila().partes; track $index) {
+                <tr class="hover:bg-gray-50/40 transition-colors">
+                  <td class="px-4 py-2 text-sm whitespace-nowrap">
+                    <span class="font-semibold text-gray-800">{{ p.tipoParte }}</span>
+                  </td>
+                  <td class="px-3 py-2 text-sm whitespace-nowrap">
+                    <span class="text-gray-700">{{ p.nombre }}</span>
+                  </td>
+                  <td class="px-3 py-2 text-sm text-gray-500 truncate max-w-50" [title]="p.direccion">
+                    {{ p.direccion || '—' }}
+                  </td>
+                  <td class="px-3 py-2 text-sm text-center whitespace-nowrap">
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-600 uppercase leading-none">
+                      {{ p.sexo || 'N/E' }}
+                    </span>
+                  </td>
+                  <td class="px-3 py-2 text-sm text-center whitespace-nowrap">
+                    @if (p.menorEdad) {
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-green-100 text-green-800 leading-none">SÍ</span>
+                    } @else {
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 leading-none">NO</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="text-xs text-gray-400 italic px-2 py-1">No hay partes registradas.</p>
+      }
     }
-  }
 
-  <!-- TAB: ANEXOS -->
-  @if (tabActivo === 'anexos') {
-    @if (fila().anexos.length > 0) {
-      <table class="w-full border-collapse">
-        <thead class="hidden md:table-header-group">
-          <tr class="bg-gray-50/60 border-b border-gray-200/80">
-            <th class="px-3 py-1.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Cant.</th>
-            <th class="px-3 py-1.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Descripción</th>
-            <th class="px-3 py-1.5 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider">Valor</th>
-            <th class="px-3 py-1.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">Monto</th>
-          </tr>
-        </thead>
-        <tbody class="block md:table-row-group divide-y divide-gray-100/80">
-          @for (a of fila().anexos; track $index) {
-            <tr class="block md:table-row">
-              <td class="block md:table-cell px-4 py-1.5 text-sm">
-                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Cantidad: </span>
-                <span class="font-bold text-gray-800 tabular-nums">{{ a.cantidad }}</span>
-              </td>
-              <td class="block md:table-cell px-3 py-1 md:py-1.5 text-sm">
-                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Descripción: </span>
-                <span class="text-gray-700">{{ a.descripcion }}</span>
-              </td>
-              <td class="block md:table-cell px-3 py-1 md:py-1.5 text-sm md:text-center">
-                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Valor: </span>
-                @if (a.esValor) {
-                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-800 leading-none">SÍ</span>
-                } @else {
-                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 leading-none">NO</span>
-                }
-              </td>
-              <td class="block md:table-cell px-3 py-1 md:py-1.5 text-sm md:text-right">
-                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 md:hidden">Monto: </span>
-                <span class="font-semibold text-gray-800 tabular-nums">
-                  @if (a.esValor && a.monto != null) {
-                    ${{ a.monto | number:'1.2-2' }}
-                  } @else {
-                    <span class="text-gray-400 font-normal">—</span>
-                  }
-                </span>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    } @else {
-      <p class="text-xs text-gray-400 italic px-4 py-2">Sin anexos registrados.</p>
+    @if (tabActivo === 'anexos') {
+      @if (fila().anexos.length > 0) {
+        <div class="w-full overflow-x-scroll border border-gray-200/60 rounded-lg shadow-sm">
+          <table class="w-full border-collapse table-fixed min-w-325">
+            <thead>
+              <tr class="bg-gray-50/60 border-b border-gray-200/80">
+                <th class="px-4 py-2 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Cant.</th>
+                <th class="px-3 py-2 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Descripción</th>
+                <th class="px-3 py-2 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Valor</th>
+                <th class="px-3 py-2 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Monto</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100/80 bg-white">
+              @for (a of fila().anexos; track $index) {
+                <tr class="hover:bg-gray-50/40 transition-colors">
+                  <td class="px-4 py-2 text-sm whitespace-nowrap">
+                    <span class="font-bold text-gray-800 tabular-nums">{{ a.cantidad }}</span>
+                  </td>
+                  <td class="px-3 py-2 text-sm whitespace-nowrap">
+                    <span class="text-gray-700">{{ a.descripcion }}</span>
+                  </td>
+                  <td class="px-3 py-2 text-sm text-center whitespace-nowrap">
+                    @if (a.esValor) {
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-800 leading-none">SÍ</span>
+                    } @else {
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 leading-none">NO</span>
+                    }
+                  </td>
+                  <td class="px-3 py-2 text-sm text-right whitespace-nowrap">
+                    <span class="font-semibold text-gray-800 tabular-nums">
+                      @if (a.esValor && a.monto != null) {
+                        ${{ a.monto | number:'1.2-2' }}
+                      } @else {
+                        <span class="text-gray-400 font-normal">—</span>
+                      }
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="text-xs text-gray-400 italic px-2 py-1">Sin anexos registrados.</p>
+      }
     }
-  }
 
+  </div>
 </div>
