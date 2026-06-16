@@ -210,7 +210,9 @@ export function buildNuevaParte(
     menorEdad: formValue.esMenor,
     roleOrigin: formValue.tipoParte.toLowerCase().includes('ofendido')
       ? 'ofendido'
-      : 'procesado',
+      : formValue.tipoParte.toLowerCase().includes('procesado')
+        ? 'procesado'
+        : undefined,
     seleccionada: false,
   };
 }
