@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output } f
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../auth/services/auth.service';
 import { SessionStateService } from '../../../permisos/services/session-state.service';
-import { Pantalla } from '../../../permisos/models/permisos.types';
 
 interface MenuItem {
   ruta: string;

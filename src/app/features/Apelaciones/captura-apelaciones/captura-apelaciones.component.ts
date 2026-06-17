@@ -110,7 +110,7 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   }
 
   private establecerPantalla(): void {
-    const id = this.sessionState.buscarPantallaPorDescripcion('inicio/crear');
+    const id = this.sessionState.buscarPantallaPorDescripcion('/capturaApelacion');
     if (id) this.sessionState.setPantalla(id);
   }
 

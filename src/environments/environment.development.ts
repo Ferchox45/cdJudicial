@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://signals-bathroom-completely-features.trycloudflare.com',
+  apiUrl: 'https://plumbing-strain-leading-considered.trycloudflare.com',
   baseUrl: '/',
 };

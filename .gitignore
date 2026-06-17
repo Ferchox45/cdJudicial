@@ -8,6 +8,7 @@
 /.angular
 /.agents
 /skills-lock.json
+/docs
 
 # Node
 /node_modules
