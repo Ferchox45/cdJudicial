@@ -30,7 +30,7 @@ export interface ApiResponseTurnos {
   status: string;
   message: string;
   data: {
-    data: TurnoListItemDTO[];
+    tocas: TurnoListItemDTO[];
     total: number;
     page: number;
     limit: number;

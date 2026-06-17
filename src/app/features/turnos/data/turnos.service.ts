@@ -41,7 +41,7 @@ export class TurnosService {
       .pipe(
         timeout(15000),
         map((res) => ({
-          resultados: res.data.data ?? [],
+          resultados: res.data.tocas ?? [],
           paginacion: { total: res.data.total, page: res.data.page, limit: res.data.limit },
         }))
       );
