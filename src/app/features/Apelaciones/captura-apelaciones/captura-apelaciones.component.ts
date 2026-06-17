@@ -128,9 +128,16 @@ private wireCallbacks(): void {
 
       this.grd.onExito    = () =>{
     this.guardando.set(false);
-    this.mostrarModalAnexos.set(true)
-    const materiaActual = this.esIndigena ? 6 : 5;
-    this.actualizarFolioTentativo(materiaActual);
+    if (this.bus.apelacionId()) {
+      this.modal.success('Éxito', 'Apelación guardada correctamente.');
+      this.bus.resetNuevo(this.form);
+      this.form.reset();
+      this.limpiarEstadoCaptura();
+    } else {
+      this.mostrarModalAnexos.set(true);
+      const materiaActual = this.esIndigena ? 6 : 5;
+      this.actualizarFolioTentativo(materiaActual);
+    }
   };
 
   this.grd.onTerminar = () => {

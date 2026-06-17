@@ -65,7 +65,7 @@ guardar(config: GuardarConfig): void {
     request$.subscribe({
       next: (res: ApelacionSaveResponse) => {
         this.guardando = false;
-        if (res.status === 'success') {
+        if (res?.status === 'success' && res?.data) {
           const fol = res.data.folioOficialia;
           const sala = res.data.sala;
           folioGuardado.set(fol);
@@ -73,6 +73,10 @@ guardar(config: GuardarConfig): void {
           this.apelacionService.invalidarCatalogos();
           this.contextoService.setContexto(res.data.id, fol, sala);
           this.onExito?.();
+        } else if (esActualizacion && res?.status === 'success') {
+          this.onExito?.();
+        } else {
+          this.onError?.(res?.message || 'Error al guardar la apelación. Intente de nuevo.');
         }
       },
       error: (err) => {
