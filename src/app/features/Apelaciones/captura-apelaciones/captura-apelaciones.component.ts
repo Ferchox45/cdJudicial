@@ -256,6 +256,7 @@ private wireCallbacks(): void {
           folioGuardado: this.folioGuardado,
           salaGuardada: this.salaGuardada,
           esActualizacion: !!this.bus.apelacionId(),
+          idTramite: this.bus.apelacionId() ?? undefined,
           onModalInvalido: () => {
             this.guardando.set(false);
             this.modal.info('Advertencia', 'Por favor, complete los campos obligatorios.');

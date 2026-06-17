@@ -19,6 +19,7 @@ export interface GuardarConfig {
   salaGuardada: WritableSignal<string>;
   onModalInvalido: () => void;
   esActualizacion?: boolean;
+  idTramite?: number;
 }
 
 @Injectable()
@@ -37,7 +38,7 @@ export class GuardarFacade {
   onError?:    (msg: string) => void;
 
 guardar(config: GuardarConfig): void {
-    const { form, relaciones, partes, sexos, tiposPartes, folioGuardado, salaGuardada, onModalInvalido, esActualizacion } = config;
+    const { form, relaciones, partes, sexos, tiposPartes, folioGuardado, salaGuardada, onModalInvalido, esActualizacion, idTramite } = config;
 
     // Construimos el JSON con lo que sea que tenga el form
     const payload = buildPayload(
@@ -47,7 +48,8 @@ guardar(config: GuardarConfig): void {
       sexos,
       tiposPartes,
       this.sessionState.idAreaSistemaUsuario(),
-      this.sessionState.idPantalla()
+      this.sessionState.idPantalla(),
+      idTramite
     );
     // Despues validamos. Si es inválido, detenemos el flujo para que NO se envíe al servidor
     if (form.invalid) {

@@ -127,7 +127,8 @@ export function buildPayload(
   sexos: CatalogoItem[],
   tiposPartes: CatalogoItem[],
   idAreaSistemaUsuario: number | null,
-  idPantalla: number | null
+  idPantalla: number | null,
+  idTramite?: number | null
 ): ApelacionPayload {
   const esIndigena = raw.materiaId === 6;
 
@@ -161,11 +162,17 @@ export function buildPayload(
 
   const base: ApelacionPayload = {
     idMateria: raw.materiaId,
+    idTipoApelacion: null,
     esReposicion: raw.esReposicion ?? false,
-    partes: partesPayload,
     idAreaSistemaUsuario,
     idPantalla,
   };
+
+  if (idTramite) {
+    base.idTramite = idTramite;
+  } else {
+    base.partes = partesPayload;
+  }
 
   if (esIndigena) {
     base.idMunicipio = raw.municipioId ?? null;
@@ -185,7 +192,9 @@ export function buildPayload(
     base.folioOficio = raw.folioOficio || null;
     base.fojas = raw.fojas ?? null;
     base.observaciones = raw.observaciones || null;
-    base.relaciones = relacionesPayload;
+    if (!idTramite) {
+      base.relaciones = relacionesPayload;
+    }
   }
 
   return base;
