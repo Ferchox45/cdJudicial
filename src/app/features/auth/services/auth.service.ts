@@ -117,7 +117,7 @@ export class AuthService {
       .pipe(
         tap((res) => {
           this.userNombre.set(res.data.nombre);
-          this.userFoto.set(`data:image/png;base64,${res.data.foto}`);
+          this.userFoto.set(res.data.foto ? `data:image/png;base64,${res.data.foto}` : null);
         }),
         map(() => undefined),
         catchError(() => of(undefined)),

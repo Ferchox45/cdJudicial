@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { DashboardLayoutComponent } from './features/dashboard/components/dashboardmain/dashboard.component';
 import { authGuard } from './core/auth/auth.guard';
 import { permisosGuard } from './features/permisos/guards/permisos.guard';
+import { seccionesGuard } from './features/permisos/guards/secciones.guard';
 
 export const routes: Routes = [
   // 1. REDIRECCIÓN INICIAL
@@ -28,6 +29,7 @@ export const routes: Routes = [
     path: '',
     component: DashboardLayoutComponent,
     canActivate: [authGuard, permisosGuard],
+    canActivateChild: [seccionesGuard],
     children: [
       {
         path: 'inicio',

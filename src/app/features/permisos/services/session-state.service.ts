@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { ModuloPantalla } from '../models/permisos.types';
+import { ModuloPantalla, Seccion } from '../models/permisos.types';
 
 export interface AreaInfo {
   idArea: number;
@@ -23,6 +23,7 @@ export class SessionStateService {
   areaInfo = signal<AreaInfo | null>(null);
   perfilInfo = signal<PerfilInfo | null>(null);
   modulosPantallas = signal<ModuloPantalla[]>([]);
+  secciones = signal<Seccion[]>([]);
 
   permisosCompletados = signal(false);
 
@@ -41,6 +42,7 @@ export class SessionStateService {
       if (data.areaInfo) this.areaInfo.set(data.areaInfo);
       if (data.perfilInfo) this.perfilInfo.set(data.perfilInfo);
       if (data.modulosPantallas) this.modulosPantallas.set(data.modulosPantallas);
+      if (data.secciones) this.secciones.set(data.secciones);
       this.permisosCompletados.set(true);
     } catch {
       /* ignorar */
@@ -57,6 +59,7 @@ export class SessionStateService {
         areaInfo: this.areaInfo(),
         perfilInfo: this.perfilInfo(),
         modulosPantallas: this.modulosPantallas(),
+        secciones: this.secciones(),
       }),
     );
   }
@@ -76,6 +79,15 @@ export class SessionStateService {
 
   setModulosPantallas(modulos: ModuloPantalla[]): void {
     this.modulosPantallas.set(modulos);
+  }
+
+  setSecciones(secciones: Seccion[]): void {
+    this.secciones.set(secciones);
+    this.guardarSesion();
+  }
+
+  tieneSeccion(descripcion: string): boolean {
+    return this.secciones().some(s => s.descripcion === descripcion && s.activo);
   }
 
   setPantalla(id: number): void {
@@ -106,6 +118,7 @@ export class SessionStateService {
     this.areaInfo.set(null);
     this.perfilInfo.set(null);
     this.modulosPantallas.set([]);
+    this.secciones.set([]);
     this.permisosCompletados.set(false);
     sessionStorage.removeItem(STORAGE_KEY);
   }
