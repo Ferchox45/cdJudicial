@@ -64,6 +64,9 @@ export class TurnosFacade {
     } else {
       this.idsSeleccionados.set([...ids]);
     }
+    this.resultados.update(rows =>
+      rows.map(r => ({ ...r, seleccionado: !todosSeleccionados })),
+    );
   }
 
   buscar(): void {
