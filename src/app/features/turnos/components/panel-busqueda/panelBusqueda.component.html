@@ -40,7 +40,7 @@
               (ngModelChange)="updateForm('idSala', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-              [disabled]="catalogos.cargando()">
+              [disabled]="catalogos.cargando() || facade.perfilTipo() === 'oficialia'">
               <option value="">{{ catalogos.cargando() ? 'Cargando...' : 'Seleccione Sala' }}</option>
               @for (item of catalogos.salas(); track item.id) {
                 <option [value]="item.id">{{ item.descripcion }}</option>
