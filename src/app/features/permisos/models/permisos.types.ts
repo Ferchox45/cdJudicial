@@ -4,17 +4,10 @@ export interface ApiResponse<T> {
   data: T;
 }
 
-export interface AreaUsuarioSistema {
-  idAreaSistema: number;
-  area: string;
-  idArea: number;
-  nombreConexionBd: string | null;
-}
-
 export interface ConfiguracionArea {
   idAreaSistemaUsuario: number;
   perfiles: PerfilUsuario[];
-  subareas: SubArea[];
+  salas: Sala[];
 }
 
 export interface PerfilUsuario {
@@ -22,8 +15,8 @@ export interface PerfilUsuario {
   descripcion: string;
 }
 
-export interface SubArea {
-  idSubArea: number;
+export interface Sala {
+  idSala: number;
   descripcion: string;
 }
 
