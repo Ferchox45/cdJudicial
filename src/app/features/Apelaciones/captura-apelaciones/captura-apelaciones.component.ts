@@ -18,6 +18,7 @@ import { buildNuevaParte, buildNuevaRelacion } from './utils/captura-apelaciones
 import { DelitoDisponible } from './models/apelacion-aux.model';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
 import { SessionStateService } from '../../permisos/services/session-state.service';
+import { ApelacionContextService } from '../anexos/data/apelacion-context.service';
 
 @Component({
   selector: 'app-captura-apelacion',
@@ -42,6 +43,7 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   private modal = inject(ModalService);
   private apelacionService = inject(ApelacionApiService);
   private sessionState = inject(SessionStateService);
+  private contextoService = inject(ApelacionContextService);
 
   identificacionOpen = true;
   partesOpen         = true;
@@ -75,8 +77,8 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
       { id: 'nuevo',   label: 'Nuevo',   icon: 'nuevo',   primary: true, disabled: isSaving },
       { id: 'guardar', label: 'Guardar', icon: 'guardar', loading: isSaving, disabled: isSaving },
       { id: 'buscar',  label: 'Buscar',  icon: 'buscar',  disabled: isSaving },
+      { id: 'anexo',   label: 'Anexos',  icon: 'anexo',   disabled: !this.bus.tieneAnexos() || isSaving },
       { id: 'certificar', label: 'Certificar', icon: 'certificar', disabled: isSaving },
-
     ];
   }
 
@@ -104,10 +106,11 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
       this.activeTab = 'partes';
     });
     this.establecerPantalla();
+    this.restaurarEstadoBusqueda();
   }
 
   private establecerPantalla(): void {
-    const id = this.sessionState.buscarPantallaPorDescripcion('inicio/crear');
+    const id = this.sessionState.buscarPantallaPorDescripcion('/capturaApelacion');
     if (id) this.sessionState.setPantalla(id);
   }
 
@@ -121,13 +124,20 @@ private wireCallbacks(): void {
     this.partes = partes; this.relaciones = relaciones; this.delitosDisponibles.set(delitosDisponibles);
   };
   this.bus.onError = (m) => this.modal.error('Error', m);
-  this.bus.onNuevo = () => this.limpiarEstadoCaptura();
+  this.bus.onNuevo = () => { this.limpiarEstadoCaptura(); this.contextoService.clearSearchState(); };
 
       this.grd.onExito    = () =>{
     this.guardando.set(false);
-    this.mostrarModalAnexos.set(true)
-    const materiaActual = this.esIndigena ? 6 : 5;
-    this.actualizarFolioTentativo(materiaActual);
+    if (this.bus.apelacionId()) {
+      this.modal.success('Éxito', 'Apelación guardada correctamente.');
+      this.bus.resetNuevo(this.form);
+      this.form.reset();
+      this.limpiarEstadoCaptura();
+    } else {
+      this.mostrarModalAnexos.set(true);
+      const materiaActual = this.esIndigena ? 6 : 5;
+      this.actualizarFolioTentativo(materiaActual);
+    }
   };
 
   this.grd.onTerminar = () => {
@@ -141,6 +151,73 @@ private wireCallbacks(): void {
     this.modal.error('Error', m);
   };
 }
+
+  private guardarEstadoBusqueda(): void {
+    this.contextoService.saveSearchState({
+      formValues: this.form.getRawValue(),
+      busquedaExitosa: this.bus.busquedaExitosa(),
+      busquedaFallida: this.bus.busquedaFallida(),
+      bloquearBtn: this.bus.bloquearBtn(),
+      bloquearSeccion: this.bus.bloquearSeccion(),
+      apelacionId: this.bus.apelacionId(),
+      tieneAnexos: this.bus.tieneAnexos(),
+      anexos: this.bus.anexos(),
+      folioOficialia: this.bus.folioOficialia(),
+      sala: this.bus.sala(),
+      partes: this.partes,
+      relaciones: this.relaciones,
+      delitosDisponibles: this.delitosDisponibles(),
+      procesadoSeleccionado: this.procesadoSeleccionado,
+      ofendidoSeleccionado: this.ofendidoSeleccionado,
+      busquedaDelitoTexto: this.busquedaDelitoTexto.value ?? '',
+      busquedaRapida: this.form.get('busquedaRapida')?.value ?? '',
+    });
+  }
+
+  private restaurarEstadoBusqueda(): boolean {
+    const s = this.contextoService.getSearchState();
+    if (!s) return false;
+
+    this.form.patchValue(s.formValues);
+    this.partes = s.partes ?? [];
+    this.relaciones = s.relaciones ?? [];
+    this.procesadoSeleccionado = s.procesadoSeleccionado ?? null;
+    this.ofendidoSeleccionado = s.ofendidoSeleccionado ?? null;
+
+    if (s.busquedaDelitoTexto) {
+      this.busquedaDelitoTexto.setValue(s.busquedaDelitoTexto);
+    }
+
+    this.bus.apelacionId.set(s.apelacionId);
+    this.bus.busquedaExitosa.set(s.busquedaExitosa);
+    this.bus.busquedaFallida.set(s.busquedaFallida);
+    this.bus.bloquearBtn.set(s.bloquearBtn);
+    this.bus.bloquearSeccion.set(s.bloquearSeccion);
+    this.bus.tieneAnexos.set(s.tieneAnexos);
+    this.bus.anexos.set(s.anexos ?? []);
+    this.bus.folioOficialia.set(s.folioOficialia);
+    this.bus.sala.set(s.sala);
+
+    const savedIds = new Set(
+      (s.delitosDisponibles ?? [])
+        .filter((d: any) => d.seleccionado)
+        .map((d: any) => d.id)
+    );
+
+    this.cat.onDelitosListos = (delitos) => {
+      this.delitosDisponibles.set(
+        delitos.map(d => ({ ...d, seleccionado: savedIds.has(d.id) }))
+      );
+      if (this.bus.bloquearSeccion()) {
+        this.bus.bloquearCampos(this.form);
+      }
+    };
+
+    this.delitosDisponibles.set(s.delitosDisponibles ?? []);
+
+    this.contextoService.clearSearchState();
+    return true;
+  }
 
   private buildForm(): void {
     this.form = this.fb.group({
@@ -165,7 +242,7 @@ private wireCallbacks(): void {
 
   handleAction(id: string): void {
     const actions: Record<string, () => void> = {
-      nuevo:   () => { this.bus.resetNuevo(this.form); this.form.reset(); },
+      nuevo:   () => { this.bus.resetNuevo(this.form); this.form.reset(); this.contextoService.clearSearchState(); },
       guardar: () => {
         this.form.markAllAsTouched();
         if (this.form.invalid) {
@@ -185,11 +262,29 @@ private wireCallbacks(): void {
           tiposPartes: this.cat.tiposPartes(),
           folioGuardado: this.folioGuardado,
           salaGuardada: this.salaGuardada,
+          esActualizacion: !!this.bus.apelacionId(),
+          idTramite: this.bus.apelacionId() ?? undefined,
           onModalInvalido: () => {
             this.guardando.set(false);
             this.modal.info('Advertencia', 'Por favor, complete los campos obligatorios.');
           },
         });
+      },
+      anexo: () => {
+        const id = this.bus.apelacionId();
+        if (!id) return;
+        this.guardarEstadoBusqueda();
+        const anexosPrevios = (this.bus.anexos() ?? []).map(a => ({
+          idAnexo: a.idAnexo,
+          cantidad: a.cantidad,
+          tipo: a.descripcion,
+          esValor: a.esValor,
+          monto: a.monto ? Number(a.monto) : null,
+          otroAnexo: '',
+        }));
+        const folio = this.bus.folioOficialia() ?? this.form.get('busquedaRapida')?.value ?? '';
+        this.contextoService.setContexto(id, folio, this.bus.sala() ?? '', anexosPrevios);
+        this.router.navigate(['/capturaApelacion/anexos']);
       },
       certificar: () => {
         const id = this.bus.apelacionId();

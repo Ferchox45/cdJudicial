@@ -35,23 +35,48 @@
       </div>
     </div>
 
-    <div class="flex items-center gap-2.5 shrink-0">
-      <div class="flex flex-col text-right leading-tight">
-        <span class="text-[13px] font-bold text-gray-800 uppercase tracking-wide hidden sm:block">
-          {{ userName() }}
-        </span>
-        @if (area() && perfil()) {
-          <span class="text-[11px] text-gray-500 hidden md:block">
-            Área: {{ area()!.area }} - Perfil: {{ perfil()!.descripcion }}
+    <div class="relative flex items-center gap-2.5 shrink-0">
+      <button type="button" (click)="togglePerfilDropdown()"
+        class="flex items-center gap-2.5 focus:outline-none cursor-pointer">
+        <div class="flex flex-col text-right leading-tight">
+          <span class="text-[13px] font-bold text-gray-800 uppercase tracking-wide hidden sm:block">
+            {{ userName() }}
           </span>
-        }
-      </div>
+          @if (perfil()) {
+            <span class="text-[11px] text-gray-500 hidden md:block">
+              @if (sala(); as s) { Sala: {{ s.descripcion }} · }
+              Perfil: {{ perfil()!.descripcion }}
+            </span>
+          }
+        </div>
 
-      <div class="h-9 w-9 rounded-full bg-gray-300 border border-gray-300 overflow-hidden flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-        </svg>
-      </div>
+        <div class="h-9 w-9 rounded-full bg-gray-300 border border-gray-300 overflow-hidden flex items-center justify-center shrink-0">
+          @if (fotoParaMostrar(); as foto) {
+            <img [src]="foto" alt="Foto de perfil" class="h-full w-full object-cover"
+              (error)="onImgError()" />
+          } @else {
+            <svg class="h-6 w-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+            </svg>
+          }
+        </div>
+      </button>
+
+      @if (perfilDropdownAbierto()) {
+  <div class="fixed inset-0 z-40" (click)="cerrarPerfilDropdown()"></div>
+  <div class="absolute top-full right-0 mt-2 z-50 w-56 bg-white rounded-lg shadow-lg shadow-gray-200/50 border border-gray-100 py-2">
+    <button (click)="irASeleccionPerfil()"
+      class="group w-full flex items-center justify-between px-4 py-2 text-sm text-gray-600 hover:bg-sage-dark hover:text-gray-900 focus:bg-gray-50 focus:outline-none transition-colors">
+
+      <span class="font-medium">Cambiar Perfil</span>
+
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+           class="w-4 h-4 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-0.5 transition-transform">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+      </svg>
+    </button>
+  </div>
+}
     </div>
 
   </div>

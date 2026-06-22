@@ -8,4 +8,7 @@
   [mostrarColumnSelector]="true"
   (paginaCambio)="facade.irPagina($event)"
   (limitCambio)="facade.cambiarPorPagina($event)"
-  (selectionChange)="onSelectionChange($event)"/>
+   (selectionChange)="onSelectionChange($event)"
+   [showSelectAll]="true"
+   [allSelected]="todosSeleccionados"
+   (selectAllChange)="toggleTodos()"/>

@@ -1,114 +1,80 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { AuthService } from '../../../auth/services/auth.service';
 import { PermisosService } from '../../data/permisos.service';
 import { SessionStateService } from '../../services/session-state.service';
-import {
-  AreaUsuarioSistema,
-  PerfilUsuario,
-  SubArea,
-} from '../../models/permisos.types';
+import { PerfilUsuario, Sala } from '../../models/permisos.types';
+import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
 
-type Paso = 'areas' | 'perfiles' | 'completado';
+type Paso = 'perfiles' | 'completado';
 
 @Component({
   selector: 'app-seleccion-permisos',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
+  imports: [SpinnerComponent],
   templateUrl: './seleccion-permisos.component.html',
 })
 export class SeleccionPermisosComponent {
   private permisosService = inject(PermisosService);
   private sessionState = inject(SessionStateService);
+  private auth = inject(AuthService);
   private router = inject(Router);
 
-  paso = signal<Paso>('areas');
-  areas = signal<AreaUsuarioSistema[]>([]);
-  areaSeleccionada = signal<AreaUsuarioSistema | null>(null);
-  cargandoAreas = signal(false);
-  errorAreas = signal('');
+  paso = signal<Paso>('perfiles');
 
   perfiles = signal<PerfilUsuario[]>([]);
   perfilSeleccionado = signal<PerfilUsuario | null>(null);
   cargandoPerfil = signal(false);
   errorPerfil = signal('');
 
-  subareas = signal<SubArea[]>([]);
-  subareaSeleccionada = signal<SubArea | null>(null);
-
+  salas = signal<Sala[]>([]);
+  salaSeleccionada = signal<number | null>(null);
   cargandoModulos = signal(false);
 
   protected puedeIngresar = computed(() => this.perfilSeleccionado() !== null);
 
+  protected mostrarSelectorSalas = computed(() =>
+    this.perfilSeleccionado()?.idSistemaPerfil !== 2,
+  );
+
   constructor() {
-    this.cargarAreas();
+    this.cargarPerfiles();
   }
 
-  protected cargarAreas(): void {
-    this.cargandoAreas.set(true);
-    this.errorAreas.set('');
-    this.permisosService.getAreas().subscribe({
-      next: (areas) => {
-        this.areas.set(areas);
-        this.cargandoAreas.set(false);
-      },
-      error: () => {
-        this.errorAreas.set('Error al cargar las áreas. Intente de nuevo.');
-        this.cargandoAreas.set(false);
-      },
-    });
-  }
-
-  seleccionarArea(area: AreaUsuarioSistema): void {
-    this.areaSeleccionada.set(area);
+  private cargarPerfiles(): void {
     this.cargandoPerfil.set(true);
     this.errorPerfil.set('');
 
-    this.permisosService
-      .ingresar({ idArea: area.idArea, idAreaSistema: area.idAreaSistema })
-      .subscribe({
-        next: (config) => {
-          this.sessionState.setArea({
-            idArea: area.idArea,
-            idAreaSistema: area.idAreaSistema,
-            area: area.area,
-          });
-          this.sessionState.setAreaSistemaUsuario(config.idAreaSistemaUsuario);
-          this.perfiles.set(config.perfiles);
-          this.subareas.set(config.subareas);
-          this.subareaSeleccionada.set(null);
-          this.perfilSeleccionado.set(null);
-          this.cargandoPerfil.set(false);
-          this.paso.set('perfiles');
-        },
-        error: () => {
-          this.errorPerfil.set('Error al ingresar al área. Intente de nuevo.');
-          this.cargandoPerfil.set(false);
-        },
-      });
-  }
-
-  seleccionarSubarea(subarea: SubArea | null): void {
-    this.subareaSeleccionada.set(subarea);
-  }
-
-  protected onSubareaChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const idx = parseInt(select.value, 10);
-    this.subareaSeleccionada.set(idx >= 0 ? this.subareas()[idx] : null);
-  }
-
-  seleccionarPerfil(perfil: PerfilUsuario): void {
-    this.perfilSeleccionado.set(
-      this.perfilSeleccionado()?.idSistemaPerfil === perfil.idSistemaPerfil ? null : perfil,
-    );
+    this.permisosService.ingresar().subscribe({
+      next: (config) => {
+        this.sessionState.setAreaSistemaUsuario(config.idAreaSistemaUsuario);
+        this.perfiles.set(config.perfiles);
+        this.salas.set(config.salas);
+        this.cargandoPerfil.set(false);
+      },
+      error: () => {
+        this.errorPerfil.set('Error al cargar los perfiles. Intente de nuevo.');
+        this.cargandoPerfil.set(false);
+      },
+    });
   }
 
   protected onPerfilChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     const idx = parseInt(select.value, 10);
     this.perfilSeleccionado.set(idx >= 0 ? this.perfiles()[idx] : null);
+    this.salaSeleccionada.set(null);
+  }
+
+  protected onSalaChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const idx = parseInt(select.value, 10);
+    this.salaSeleccionada.set(idx >= 0 ? this.salas()[idx].idSala : null);
+  }
+
+  protected salir(): void {
+    this.auth.logout().subscribe();
   }
 
   ingresar(): void {
@@ -119,6 +85,14 @@ export class SeleccionPermisosComponent {
       idSistemaPerfil: perfil.idSistemaPerfil,
       descripcion: perfil.descripcion,
     });
+
+    const salaId = this.salaSeleccionada();
+    this.sessionState.setIdSala(salaId);
+    this.sessionState.setSalasDisponibles(this.salas());
+    if (salaId != null) {
+      const sala = this.salas().find(s => s.idSala === salaId);
+      if (sala) this.sessionState.setSalaInfo({ idSala: sala.idSala, descripcion: sala.descripcion });
+    }
 
     this.cargandoModulos.set(true);
     this.permisosService

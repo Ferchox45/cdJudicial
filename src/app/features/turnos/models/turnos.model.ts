@@ -11,8 +11,9 @@ export interface TurnoListItemDTO {
   nomenclatura: string | null;
   folioOficio: string | null;
   fechaRecepcion: string | null;
-  fechaHoraIngresoJuz: string | null;
-  importadoNS: boolean;
+  fechaExportacion: string | null;
+  fechaImportacion: string | null;
+  estadoActual: string | null;
   apelacion: string | null;
   tipoApelacion: string | null;
   seleccionado?: boolean;
@@ -29,7 +30,7 @@ export interface ApiResponseTurnos {
   status: string;
   message: string;
   data: {
-    data: TurnoListItemDTO[];
+    tocas: TurnoListItemDTO[];
     total: number;
     page: number;
     limit: number;

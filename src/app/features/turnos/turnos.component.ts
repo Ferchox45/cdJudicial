@@ -31,7 +31,7 @@ export class TurnosComponent implements OnInit {
     const accionId = esComun ? 'exportar' : 'importar';
     const accionLoading = esComun ? exportando : importando;
 
-    return [
+    const acciones: SidebarAction[] = [
       {
         id: 'buscar',
         label: 'Buscar',
@@ -40,20 +40,26 @@ export class TurnosComponent implements OnInit {
         loading: buscando,
         disabled: buscando || exportando || importando,
       },
-      {
+    ];
+
+    if (esComun) {
+      acciones.push({
         id: 'limpiar',
         label: 'Limpiar',
-        icon: 'limpiar',
+        icon: 'limpiar' as const,
         disabled: buscando || exportando || importando,
-      },
-      {
-        id: accionId,
-        label: accionLabel,
-        icon: 'turnar',
-        disabled: !this.facade.haySeleccion() || buscando || exportando || importando,
-        loading: accionLoading,
-      },
-    ];
+      });
+    }
+
+    acciones.push({
+      id: accionId,
+      label: accionLabel,
+      icon: 'turnar' as const,
+      disabled: !this.facade.haySeleccion() || buscando || exportando || importando,
+      loading: accionLoading,
+    });
+
+    return acciones;
   }
 
   onAction(id: string): void {
@@ -73,6 +79,14 @@ export class TurnosComponent implements OnInit {
       this.facade.perfilTipo.set('comun');
     } else {
       this.facade.perfilTipo.set('oficialia');
+    }
+    this.facade.limpiar();
+
+    if (this.facade.perfilTipo() === 'oficialia') {
+      const sala = this.sessionState.salaInfo();
+      if (sala) {
+        this.facade.form.update(f => ({ ...f, idSala: String(sala.idSala) }));
+      }
     }
   }
 }

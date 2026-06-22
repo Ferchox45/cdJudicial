@@ -21,7 +21,7 @@ export class TurnosService {
 
   getCatalogos(): Observable<CatalogoTurnos> {
     const call$ = this.http
-      .get<{ status: string; message: string; data: CatalogoTurnos }>(`${this.apiEndpoint}/api/turnos/catalogos`)
+      .get<{ status: string; message: string; data: CatalogoTurnos }>(`${this.apiEndpoint}/api/estados/catalogos`)
       .pipe(map((res) => res.data));
 
     return this.cache.manejarCache(CACHE_KEY_TURNOS_CATALOGOS, call$);
@@ -37,11 +37,11 @@ export class TurnosService {
     if (filtros.folioApelacion) params = params.set('folioApelacion', filtros.folioApelacion);
     if (filtros.soloTurnadas) params = params.set('soloTurnadas', 'true');
 
-    return this.http.get<ApiResponseTurnos>(`${this.apiEndpoint}/api/turnos`, { params })
+    return this.http.get<ApiResponseTurnos>(`${this.apiEndpoint}/api/estados`, { params })
       .pipe(
         timeout(15000),
         map((res) => ({
-          resultados: res.data.data ?? [],
+          resultados: res.data.tocas ?? [],
           paginacion: { total: res.data.total, page: res.data.page, limit: res.data.limit },
         }))
       );
@@ -49,14 +49,14 @@ export class TurnosService {
 
   exportar(ids: number[]): Observable<TurnosExportarImportarResponse> {
     return this.http.post<TurnosExportarImportarResponse>(
-      `${this.apiEndpoint}/api/turnos/exportar`,
+      `${this.apiEndpoint}/api/estados/exportar`,
       { ids },
     );
   }
 
   importar(ids: number[]): Observable<TurnosExportarImportarResponse> {
     return this.http.post<TurnosExportarImportarResponse>(
-      `${this.apiEndpoint}/api/turnos/importar`,
+      `${this.apiEndpoint}/api/estados/importar`,
       { ids },
     );
   }

@@ -1,25 +1,61 @@
 import { Injectable, signal } from '@angular/core';
+import { Anexo } from '../models/anexo.model';
+
+export interface SearchState {
+  formValues: Record<string, any>;
+  busquedaExitosa: boolean;
+  busquedaFallida: boolean;
+  bloquearBtn: boolean;
+  bloquearSeccion: boolean;
+  apelacionId: number | null;
+  tieneAnexos: boolean;
+  anexos: any[];
+  folioOficialia: string | null;
+  sala: string | null;
+  partes: any[];
+  relaciones: any[];
+  delitosDisponibles: any[];
+  procesadoSeleccionado: any | null;
+  ofendidoSeleccionado: any | null;
+  busquedaDelitoTexto: string;
+  busquedaRapida: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApelacionContextService {
-  // Se inicializan los signals para almacenar el ID y el Folio
   apelacionId = signal<number | null>(null);
   folioOficialia = signal<string | null>(null);
   sala = signal<string | null>(null);
+  anexosPrevios = signal<Anexo[]>([]);
 
-// Método para establecer el contexto con el ID y el Folio
-  setContexto(id: number, folio: string, sala: string) {
+  private searchState = signal<SearchState | null>(null);
+
+  setContexto(id: number, folio: string, sala: string, anexos: Anexo[] = []) {
     this.apelacionId.set(id);
     this.folioOficialia.set(folio);
     this.sala.set(sala);
+    this.anexosPrevios.set(anexos);
   }
 
-  // Limpia la memoria cuando se acaban de subir los anexos
   limpiarContexto() {
     this.apelacionId.set(null);
     this.folioOficialia.set(null);
     this.sala.set(null);
+    this.anexosPrevios.set([]);
+    this.searchState.set(null);
+  }
+
+  saveSearchState(state: SearchState): void {
+    this.searchState.set(state);
+  }
+
+  getSearchState(): SearchState | null {
+    return this.searchState();
+  }
+
+  clearSearchState(): void {
+    this.searchState.set(null);
   }
 }

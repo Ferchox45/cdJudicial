@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { DashboardLayoutComponent } from './features/dashboard/components/dashboardmain/dashboard.component';
 import { authGuard } from './core/auth/auth.guard';
 import { permisosGuard } from './features/permisos/guards/permisos.guard';
+import { seccionesGuard } from './features/permisos/guards/secciones.guard';
 
 export const routes: Routes = [
   // 1. REDIRECCIÓN INICIAL
@@ -28,6 +29,7 @@ export const routes: Routes = [
     path: '',
     component: DashboardLayoutComponent,
     canActivate: [authGuard, permisosGuard],
+    canActivateChild: [seccionesGuard],
     children: [
       {
         path: 'inicio',
@@ -59,6 +61,12 @@ export const routes: Routes = [
         path: 'turnos',
         data: { breadcrumb: 'Turnar a Sala' },
         loadChildren: () => import('./features/turnos/turnos.routes').then(m => m.TURNOS_ROUTES),
+      },
+
+      // --- MÓDULO SEGUIMIENTO ---
+      {
+        path: '',
+        loadChildren: () => import('./features/seguimiento/seguimiento.routes').then(m => m.SEGUIMIENTO_ROUTES),
       },
     ]
   },

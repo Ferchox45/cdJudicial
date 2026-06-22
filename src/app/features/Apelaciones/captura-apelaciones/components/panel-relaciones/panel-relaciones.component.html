@@ -111,15 +111,17 @@
             </tbody>
           </table>
         </div>
-        <div class="border-t border-gray-200 p-3 md:p-2 mt-auto">
-          <button type="button"
-            (click)="agregarRelacionEvt.emit()"
-            [disabled]="!procesadoSeleccionado() || !ofendidoSeleccionado()"
-            class="w-full bg-forest text-white text-xs font-bold uppercase py-3 md:py-2 rounded
-                   hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed">
-            Agregar Relación
-          </button>
-        </div>
+        @if (bloquearBtn()) {
+          <div class="border-t border-gray-200 p-3 md:p-2 mt-auto">
+            <button type="button"
+              (click)="agregarRelacionEvt.emit()"
+              [disabled]="!procesadoSeleccionado() || !ofendidoSeleccionado()"
+              class="w-full bg-forest text-white text-xs font-bold uppercase py-3 md:py-2 rounded
+                     hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed">
+              Agregar Relación
+            </button>
+          </div>
+        }
       </div>
 
       <div class="flex flex-col"
@@ -225,12 +227,13 @@
 
                 <td class="flex justify-between items-center md:table-cell px-4 py-3 md:py-2 text-center bg-red-50/30 md:bg-transparent rounded-b-lg md:rounded-none">
                   <span class="text-[10px] font-bold uppercase tracking-wider text-red-500 md:hidden">Eliminar:</span>
-                  <button type="button"
-                    (click)="eliminarDelitoRelacionEvt.emit({ relId: rel.id, delitoId: d.id })"
-                    [disabled]="!bloquearBtn()"
-                    class="text-red-600 hover:text-red-800 bg-white md:bg-transparent border border-red-200 md:border-0 rounded md:rounded-none w-8 h-8 md:w-auto md:h-auto flex items-center justify-center
-                           cursor-pointer text-lg font-bold leading-none disabled:opacity-40 shadow-sm md:shadow-none">✕
-                  </button>
+                  @if (bloquearBtn()) {
+                    <button type="button"
+                      (click)="eliminarDelitoRelacionEvt.emit({ relId: rel.id, delitoId: d.id })"
+                      class="text-red-600 hover:text-red-800 bg-white md:bg-transparent border border-red-200 md:border-0 rounded md:rounded-none w-8 h-8 md:w-auto md:h-auto flex items-center justify-center
+                             cursor-pointer text-lg font-bold leading-none disabled:opacity-40 shadow-sm md:shadow-none">✕
+                    </button>
+                  }
                 </td>
               </tr>
 

@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: '',
+  apiUrl: 'https://lucia-beatles-preview-fin.trycloudflare.com',
   baseUrl: '/',
 };

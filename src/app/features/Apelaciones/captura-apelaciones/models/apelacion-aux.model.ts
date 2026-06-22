@@ -44,7 +44,7 @@ export interface ApelacionPayloadRelacionNuevo {
 export interface ApelacionPayload {
   idMateria: number | null;
   idApelacion?: number | null;
-  idTipoApelacion?: number | null;
+  idTipoApelacion: number | null;
   idTipoEscrito?: number | null;
   idJuzgado?: number | null;
   idMunicipio?: number | null;
@@ -60,10 +60,11 @@ export interface ApelacionPayload {
   asunto?: string | null;
   lugarHechos?: string | null;
   esReposicion: boolean;
-  partes: ApelacionPayloadRelacionParte[];
+  partes?: ApelacionPayloadRelacionParte[];
   relaciones?: ApelacionPayloadRelacionNuevo[];
   idAreaSistemaUsuario: number | null;
   idPantalla: number | null;
+  idTramite?: number;
 }
 
 export interface ApelacionSaveResponseData {

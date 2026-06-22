@@ -30,6 +30,7 @@ export class AnexosComponent implements OnInit {
   readonly errorGuardado = signal<string | null>(null);
   readonly exitoGuardado = signal<string | null>(null);
   readonly anexosGuardados = signal(false);
+  readonly readOnly = signal(false);
 
   folioTramite: string | null = null;
   sala: string | null = null;
@@ -58,6 +59,11 @@ export class AnexosComponent implements OnInit {
       this.modalService.error('Error', 'No hay una apelación activa en memoria. Por favor, inicie desde la captura.');
       setTimeout(() => this.onBack(), 3000);
       return;
+    }
+    const previos = this.contextoService.anexosPrevios();
+    if (previos.length > 0) {
+      this.anexos.set(previos);
+      this.readOnly.set(true);
     }
     this.cargarAnexos();
   }

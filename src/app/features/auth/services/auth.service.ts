@@ -2,8 +2,8 @@ import { Injectable, signal, inject, DestroyRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { switchMap, tap, of, finalize, map } from 'rxjs';
-import { LoginResponse } from '../models/auth.model';
+import { Observable, switchMap, tap, of, finalize, map, catchError } from 'rxjs';
+import { LoginResponse, ProfileResponse } from '../models/auth.model';
 import { environment } from '../../../../environments/environment';
 import { SessionStateService } from '../../permisos/services/session-state.service';
 
@@ -26,6 +26,9 @@ export class AuthService {
   readonly isAuthenticated = signal(false);
   readonly initialized = signal(false);
 
+  readonly userNombre = signal<string | null>(null);
+  readonly userFoto = signal<string | null>(null);
+
   private destroyRef = inject(DestroyRef);
 
   constructor() {
@@ -43,6 +46,7 @@ export class AuthService {
           if (res?.data?.access_token) {
             this.accessToken.set(res.data.access_token);
             this.isAuthenticated.set(true);
+            this.getProfile().subscribe();
           }
         },
         error: () => {
@@ -57,7 +61,7 @@ export class AuthService {
         switchMap((res) => {
           if (res?.data?.access_token) {
             this.accessToken.set(res.data.access_token);
-            return of(true);
+            return this.getProfile().pipe(map(() => true));
           }
           return this.refresh().pipe(map(() => true));
         }),
@@ -96,6 +100,8 @@ export class AuthService {
       tap(() => {
         this.accessToken.set(null);
         this.isAuthenticated.set(false);
+        this.userNombre.set(null);
+        this.userFoto.set(null);
         this.sessionState.reiniciar();
         this.router.navigate(['/login']);
       }),
@@ -104,5 +110,17 @@ export class AuthService {
 
   getToken(): string | null {
     return this.accessToken();
+  }
+
+  private getProfile(): Observable<void> {
+    return this.http.get<ProfileResponse>(`${this.API}/api/auth/profile`)
+      .pipe(
+        tap((res) => {
+          this.userNombre.set(res.data.nombre);
+          this.userFoto.set(res.data.foto ? `data:image/png;base64,${res.data.foto}` : null);
+        }),
+        map(() => undefined),
+        catchError(() => of(undefined)),
+      );
   }
 }

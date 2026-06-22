@@ -1,6 +1,5 @@
 <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
 
-  <!-- ── Header collapsible ── -->
   <div
     (click)="toggle()"
     class="flex items-center justify-between px-5 py-3.5 bg-forest cursor-pointer select-none border-b">
@@ -29,64 +28,78 @@
 
   @if (abierto) {
 
-    <!-- ── Toolbar ── -->
     @if (mostrarColumnSelector()) {
       <div class="flex items-center justify-between px-4 py-2.5 bg-white border-b border-gray-200">
 
-        <div class="relative">
-          <button
-            (click)="toggleMenuColumnas(); $event.stopPropagation()"
-            class="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold bg-sage text-forest border-sage-dark/20 rounded-lg transition-colors hover:bg-sage-dark cursor-pointer">
-            <svg class="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
-            </svg>
-            Personalizar columnas
-            <svg class="size-3 transition-transform duration-200" [class.rotate-180]="menuColumnasAbierto"
-              fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-            </svg>
-          </button>
+        <div class="flex items-center gap-2">
+          
+          <div class="relative">
+            <button
+              (click)="toggleMenuColumnas(); $event.stopPropagation()"
+              class="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold bg-sage text-forest border-sage-dark/20 rounded-lg transition-colors hover:bg-sage-dark cursor-pointer">
+              <svg class="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+              </svg>
+              Personalizar columnas
+              <svg class="size-3 transition-transform duration-200" [class.rotate-180]="menuColumnasAbierto"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+              </svg>
+            </button>
 
-          @if (menuColumnasAbierto) {
-            <div class="absolute left-0 top-full mt-2 z-30 w-64 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
-              <div class="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200">
-                <span class="text-[0.65rem] font-bold text-gray-400 uppercase tracking-wider">Columnas</span>
-                <div class="flex gap-2">
-                  <button
-                    (click)="mostrarTodas()"
-                    class="text-[0.65rem] font-semibold text-forest hover:underline cursor-pointer bg-transparent border-0 p-0">
-                    Todas
-                  </button>
-                  <span class="text-gray-300 text-xs">|</span>
-                  <button
-                    (click)="ocultarTodas()"
-                    class="text-[0.65rem] font-semibold text-gray-400 hover:underline cursor-pointer bg-transparent border-0 p-0">
-                    Ninguna
-                  </button>
+            @if (menuColumnasAbierto) {
+              <div class="absolute left-0 top-full mt-2 z-30 w-64 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
+                <div class="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200">
+                  <span class="text-[0.65rem] font-bold text-gray-400 uppercase tracking-wider">Columnas</span>
+                  <div class="flex gap-2">
+                    <button
+                      (click)="mostrarTodas()"
+                      class="text-[0.65rem] font-semibold text-forest hover:underline cursor-pointer bg-transparent border-0 p-0">
+                      Todas
+                    </button>
+                    <span class="text-gray-300 text-xs">|</span>
+                    <button
+                      (click)="ocultarTodas()"
+                      class="text-[0.65rem] font-semibold text-gray-400 hover:underline cursor-pointer bg-transparent border-0 p-0">
+                      Ninguna
+                    </button>
+                  </div>
+                </div>
+                <div class="max-h-72 overflow-y-auto py-1">
+                  @for (col of columnas(); track col.field) {
+                    <label
+                      class="flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-emerald-50/60 transition-colors">
+                      <input
+                        type="checkbox"
+                        [checked]="col.visible"
+                        (change)="toggleColumna(col.field)"
+                        (click)="$event.stopPropagation()"
+                        class="size-4 rounded border-gray-300 text-forest accent-forest cursor-pointer shrink-0">
+                      <span
+                        class="text-sm select-none"
+                        [class.text-gray-800]="col.visible"
+                        [class.font-medium]="col.visible"
+                        [class.text-gray-400]="!col.visible">
+                        {{ col.label }}
+                      </span>
+                    </label>
+                  }
                 </div>
               </div>
-              <div class="max-h-72 overflow-y-auto py-1">
-                @for (col of columnas(); track col.field) {
-                  <label
-                    class="flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-emerald-50/60 transition-colors">
-                    <input
-                      type="checkbox"
-                      [checked]="col.visible"
-                      (change)="toggleColumna(col.field)"
-                      (click)="$event.stopPropagation()"
-                      class="size-4 rounded border-gray-300 text-forest accent-forest cursor-pointer shrink-0">
-                    <span
-                      class="text-sm select-none"
-                      [class.text-gray-800]="col.visible"
-                      [class.font-medium]="col.visible"
-                      [class.text-gray-400]="!col.visible">
-                      {{ col.label }}
-                    </span>
-                  </label>
-                }
-              </div>
-            </div>
+            }
+          </div>
+
+          @if (showSelectAll()) {
+            <button
+              (click)="onSelectAllToggle()"
+              class="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold bg-sage text-forest border-sage-dark/20 rounded-lg transition-colors hover:bg-sage-dark cursor-pointer">
+              <svg class="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+              @if (allSelected()) { Deseleccionar todo } @else { Seleccionar todo }
+            </button>
           }
         </div>
 
@@ -97,7 +110,6 @@
       </div>
     }
 
-    <!-- ── Tabla ── -->
     <div class="w-full overflow-x-auto">
       <table class="w-full border-collapse">
         <thead>
@@ -176,7 +188,6 @@
   }
 </div>
 
-<!-- Cerrar dropdown al hacer click fuera -->
 @if (menuColumnasAbierto) {
   <div class="fixed inset-0 z-20" (click)="toggleMenuColumnas()"></div>
 }

@@ -24,12 +24,15 @@ export class TablaReutilizableComponent {
   readonly mostrarColumnSelector = input(true);
   readonly filaSeleccionada = input<any>(null);
   readonly expandedTemplate = input<TemplateRef<any>>();
+  readonly showSelectAll = input(false);
+  readonly allSelected = input(false);
 
   readonly paginaCambio = output<number>();
   readonly limitCambio = output<number>();
   readonly rowClick = output<any>();
   readonly toggleAbierto = output<boolean>();
   readonly selectionChange = output<{ row: any; checked: boolean }>();
+  readonly selectAllChange = output<boolean>();
 
   abierto = true;
   menuColumnasAbierto = false;
@@ -40,7 +43,7 @@ export class TablaReutilizableComponent {
   constructor() {
     effect(() => {
       const cols = this.columns();
-      if (cols.length > 0 && this.columnas().length === 0) {
+      if (cols.length > 0) {
         this.columnas.set(cols.map(c => ({...c})));
       }
     });
@@ -53,6 +56,10 @@ export class TablaReutilizableComponent {
 
   toggleMenuColumnas(): void {
     this.menuColumnasAbierto = !this.menuColumnasAbierto;
+  }
+
+  onSelectAllToggle(): void {
+    this.selectAllChange.emit(!this.allSelected());
   }
 
   toggleColumna(field: string): void {
@@ -83,6 +90,11 @@ formatDate(value: string, format: string = 'dd/MM/yyyy HH:mm:ss'): string {
       return '—';
     }
   }
+
+  onSelectAllChange(event: Event): void {
+  const checked = (event.target as HTMLInputElement).checked;
+  this.selectAllChange.emit(checked);
+}
 
   mostrarTodas(): void {
     this.columnas.update(cols => cols.map(c => ({ ...c, visible: true })));

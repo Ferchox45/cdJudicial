@@ -18,6 +18,8 @@ export interface GuardarConfig {
   folioGuardado: WritableSignal<string>;
   salaGuardada: WritableSignal<string>;
   onModalInvalido: () => void;
+  esActualizacion?: boolean;
+  idTramite?: number;
 }
 
 @Injectable()
@@ -36,7 +38,7 @@ export class GuardarFacade {
   onError?:    (msg: string) => void;
 
 guardar(config: GuardarConfig): void {
-    const { form, relaciones, partes, sexos, tiposPartes, folioGuardado, salaGuardada, onModalInvalido } = config;
+    const { form, relaciones, partes, sexos, tiposPartes, folioGuardado, salaGuardada, onModalInvalido, esActualizacion, idTramite } = config;
 
     // Construimos el JSON con lo que sea que tenga el form
     const payload = buildPayload(
@@ -46,7 +48,8 @@ guardar(config: GuardarConfig): void {
       sexos,
       tiposPartes,
       this.sessionState.idAreaSistemaUsuario(),
-      this.sessionState.idPantalla()
+      this.sessionState.idPantalla(),
+      idTramite
     );
     // Despues validamos. Si es inválido, detenemos el flujo para que NO se envíe al servidor
     if (form.invalid) {
@@ -56,10 +59,13 @@ guardar(config: GuardarConfig): void {
     }
     // Si todo está bien, mandamos la petición al servidor
     this.guardando = true;
-    this.apelacionService.guardarApelacion(payload).subscribe({
+    const request$ = esActualizacion
+      ? this.apelacionService.actualizarApelacion(payload)
+      : this.apelacionService.guardarApelacion(payload);
+    request$.subscribe({
       next: (res: ApelacionSaveResponse) => {
         this.guardando = false;
-        if (res.status === 'success') {
+        if (res?.status === 'success' && res?.data) {
           const fol = res.data.folioOficialia;
           const sala = res.data.sala;
           folioGuardado.set(fol);
@@ -67,6 +73,10 @@ guardar(config: GuardarConfig): void {
           this.apelacionService.invalidarCatalogos();
           this.contextoService.setContexto(res.data.id, fol, sala);
           this.onExito?.();
+        } else if (esActualizacion && res?.status === 'success') {
+          this.onExito?.();
+        } else {
+          this.onError?.(res?.message || 'Error al guardar la apelación. Intente de nuevo.');
         }
       },
       error: (err) => {

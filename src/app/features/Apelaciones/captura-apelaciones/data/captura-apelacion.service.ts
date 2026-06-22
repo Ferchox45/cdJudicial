@@ -76,6 +76,12 @@ export class ApelacionApiService {
       .pipe(timeout(15000));
   }
 
+  actualizarApelacion(payload: ApelacionPayload): Observable<ApelacionSaveResponse> {
+    return this.http
+      .put<ApelacionSaveResponse>(`${this.apiEndpoint}/api/apelaciones`, payload)
+      .pipe(timeout(15000));
+  }
+
   // Invalidación de Caché
 
   invalidarCatalogos(): void {
