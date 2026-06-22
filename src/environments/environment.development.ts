@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://plumbing-strain-leading-considered.trycloudflare.com',
+  apiUrl: 'https://lucia-beatles-preview-fin.trycloudflare.com',
   baseUrl: '/',
 };
