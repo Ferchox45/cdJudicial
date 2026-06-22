@@ -42,9 +42,10 @@
           <span class="text-[13px] font-bold text-gray-800 uppercase tracking-wide hidden sm:block">
             {{ userName() }}
           </span>
-          @if (area() && perfil()) {
+          @if (perfil()) {
             <span class="text-[11px] text-gray-500 hidden md:block">
-              Área: {{ area()!.area }} - Perfil: {{ perfil()!.descripcion }}
+              @if (sala(); as s) { Sala: {{ s.descripcion }} · }
+              Perfil: {{ perfil()!.descripcion }}
             </span>
           }
         </div>

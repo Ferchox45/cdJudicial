@@ -46,10 +46,14 @@ export class MenulateralComponent {
 
   private getIcon(descripcion: string): string {
     if (descripcion.includes('inicio')) return 'home';
-    if (descripcion.includes('crear')) return 'file';
-    if (descripcion.includes('buscar') || descripcion.includes('historico')) return 'search';
-    if (descripcion.includes('estadistica') || descripcion.includes('reporte')) return 'chart';
-    if (descripcion.includes('turno')) return 'transfer';
+    if (descripcion.includes('capturaApelacion')) return 'file';
+    if (descripcion.includes('buscadorHistorico')) return 'search';
+    if (descripcion.includes('buscadorPlano')) return 'search';
+    if (descripcion.includes('estadisticas')) return 'chart';
+    if (descripcion.includes('turnos')) return 'transfer';
+    if (descripcion.includes('turnar')) return 'transfer-vertical';
+    if (descripcion.includes('recibir')) return 'inbox';
+    if (descripcion.includes('historial'))  return 'history';
     return 'default';
   }
 

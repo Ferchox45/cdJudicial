@@ -45,8 +45,8 @@ export class MainHeaderComponent {
 
   userName = computed(() => this.authService.userNombre() ?? 'USUARIO');
   photo = this.authService.userFoto;
-  area = this.sessionState.areaInfo;
   perfil = this.sessionState.perfilInfo;
+  sala = this.sessionState.salaInfo;
 
   fotoError = signal(false);
 

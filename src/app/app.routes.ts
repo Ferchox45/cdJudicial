@@ -62,6 +62,12 @@ export const routes: Routes = [
         data: { breadcrumb: 'Turnar a Sala' },
         loadChildren: () => import('./features/turnos/turnos.routes').then(m => m.TURNOS_ROUTES),
       },
+
+      // --- MÓDULO SEGUIMIENTO ---
+      {
+        path: '',
+        loadChildren: () => import('./features/seguimiento/seguimiento.routes').then(m => m.SEGUIMIENTO_ROUTES),
+      },
     ]
   },
 
