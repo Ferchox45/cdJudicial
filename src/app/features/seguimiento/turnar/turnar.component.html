@@ -1,0 +1,109 @@
+<div class="w-full min-h-screen bg-cream px-6 py-8">
+
+  <div class="mb-8 text-left">
+    <h2 class="text-3xl font-bold text-strong-coffee m-0">Turnar Toca</h2>
+    <p class="text-gray-500 mt-1 mb-0">
+      Seleccione una o varias apelaciones y configure el turno para todas.
+    </p>
+  </div>
+
+  <div class="flex flex-col md:flex-row md:items-start gap-4">
+
+    <main class="flex-1 w-full min-w-0 flex flex-col gap-6 pb-24 md:pb-0">
+      @if (!salaInfo()) {
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm px-5 py-3">
+          <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">
+            Sala
+          </label>
+          <select
+            [ngModel]="facade.salaSeleccionadaEnTurnar()"
+            (ngModelChange)="facade.seleccionarSala($event)"
+            class="w-full max-w-xs px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest cursor-pointer">
+            <option [ngValue]="null" disabled>Seleccione una sala</option>
+            @for (s of salasDisponibles(); track s.idSala) {
+              <option [ngValue]="s.idSala">{{ s.descripcion }}</option>
+            }
+          </select>
+        </div>
+      } @else {
+        @if (salaInfo(); as s) {
+          <div class="bg-white border border-gray-200 rounded-xl shadow-sm px-5 py-3">
+            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Sala:</span>
+            <span class="text-sm font-semibold text-gray-800 ml-2">{{ s.descripcion }}</span>
+          </div>
+        }
+      }
+      @if (facade.opcionesTurnar(); as opciones) {
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm px-5 py-3">
+          <div class="flex flex-wrap items-end gap-4">
+            @if (!facade.modoSoloUnPerfil()) {
+              <div>
+                <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">
+                  Turnar a
+                </label>
+                <select
+                  [ngModel]="facade.destinoSeleccionado()"
+                  (ngModelChange)="facade.seleccionarDestino($event)"
+                  class="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest cursor-pointer">
+                  <option [ngValue]="null" disabled>Seleccione un perfil destino</option>
+                  @for (p of facade.perfilesDestino(); track p.id) {
+                    <option [ngValue]="p.id">{{ p.descripcion }}</option>
+                  }
+                </select>
+              </div>
+            }
+            @if (facade.requiereProyectista() || facade.requiereMagistrado()) {
+              <div>
+                <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">
+                  {{ facade.requiereProyectista() ? 'Proyectista' : 'Magistrado' }}
+                </label>
+                <select
+                  [ngModel]="facade.idGeneralDestino()"
+                  (ngModelChange)="facade.seleccionarIdGeneralDestino($event)"
+                  class="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest cursor-pointer">
+                  <option [ngValue]="null" disabled>Seleccione {{ facade.requiereProyectista() ? 'proyectista' : 'magistrado' }}</option>
+                  @for (p of (facade.requiereProyectista() ? facade.proyectistas() : facade.magistrados()); track p.idGeneral) {
+                    <option [ngValue]="p.idGeneral">{{ p.nombre }}</option>
+                  }
+                </select>
+              </div>
+            }
+            @if (facade.seleccionCount() > 0) {
+              <div class="flex items-center gap-2 text-sm text-forest font-semibold pb-1">
+                <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <polyline points="9 11 12 14 22 4"/>
+                  <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+                </svg>
+                {{ facade.seleccionCount() }} apelacion(es) seleccionada(s)
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <app-table-reutilizable
+        [columns]="columnas"
+        [data]="facade.turnables()"
+        [paginaActual]="facade.paginaActual()"
+        [totalPaginas]="facade.totalPaginas()"
+        [totalResultados]="facade.totalResultados()"
+        [porPagina]="facade.porPagina()"
+        titulo="Apelaciones para Turnar"
+        (paginaCambio)="facade.irPagina($event)"
+        (limitCambio)="facade.cambiarPorPagina($event)"
+        (selectionChange)="onSelectionChange($event)" />
+    </main>
+
+    <aside class="
+      fixed bottom-0 left-0 w-full z-50
+      bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.08)]
+      md:bottom-auto md:left-auto md:w-auto md:z-auto
+      md:bg-transparent md:border-none md:shadow-none
+      md:sticky md:top-8 md:self-start md:shrink-0">
+      <app-action-sidebar
+        [actions]="sidebarActions"
+        (actionClick)="onAction($event)"/>
+    </aside>
+
+  </div>
+</div>
