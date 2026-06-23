@@ -4,7 +4,6 @@ import { PanelBusquedaTurnosComponent } from './components/panel-busqueda/panelB
 import { PanelResultadosTurnosComponent } from './components/panel-resultados/panelResultados.component';
 import { TurnosFacade, TurnosPerfilTipo } from './facades/turnos.facade';
 import { SessionStateService } from '../../features/permisos/services/session-state.service';
-import { CatalogosFacade } from '../apelaciones/busqueda-apelaciones/facades/catalogos.facade';
 
 @Component({
   selector: 'app-turnos',
@@ -20,7 +19,6 @@ import { CatalogosFacade } from '../apelaciones/busqueda-apelaciones/facades/cat
 export class TurnosComponent implements OnInit {
   readonly facade = inject(TurnosFacade);
   private readonly sessionState = inject(SessionStateService);
-  private readonly catalogosFacade = inject(CatalogosFacade);
 
   get sidebarActions(): SidebarAction[] {
     const buscando = this.facade.buscando();
@@ -42,14 +40,12 @@ export class TurnosComponent implements OnInit {
       },
     ];
 
-    if (esComun) {
-      acciones.push({
-        id: 'limpiar',
-        label: 'Limpiar',
-        icon: 'limpiar' as const,
-        disabled: buscando || exportando || importando,
-      });
-    }
+    acciones.push({
+      id: 'limpiar',
+      label: 'Limpiar',
+      icon: 'limpiar' as const,
+      disabled: buscando || exportando || importando,
+    });
 
     acciones.push({
       id: accionId,
@@ -65,7 +61,15 @@ export class TurnosComponent implements OnInit {
   onAction(id: string): void {
     const acciones: Record<string, () => void> = {
       buscar: () => this.facade.buscar(),
-      limpiar: () => this.facade.limpiar(),
+      limpiar: () => {
+        this.facade.limpiar();
+        if (this.facade.perfilTipo() === 'oficialia') {
+          const sala = this.sessionState.salaInfo();
+          if (sala) {
+            this.facade.form.update(f => ({ ...f, idSala: String(sala.idSala) }));
+          }
+        }
+      },
       exportar: () => this.facade.exportar(),
       importar: () => this.facade.importar(),
     };
@@ -73,7 +77,7 @@ export class TurnosComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.catalogosFacade.cargar();
+    this.facade.cargarCatalogos();
     const perfil = this.sessionState.perfilInfo()?.descripcion ?? '';
     if (perfil.toLowerCase().includes('oficialía común') || perfil.toLowerCase().includes('comun')) {
       this.facade.perfilTipo.set('comun');

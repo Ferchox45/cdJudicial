@@ -2,6 +2,10 @@ export interface TurnoSearchForm {
   folioOficialia: string;
   folioApelacion: string;
   idSala: string;
+  fechaRecepcionInicio: string;
+  fechaRecepcionFin: string;
+  idNomenclatura: string;
+  estado: string;
 }
 
 export interface TurnoListItemDTO {
@@ -23,7 +27,11 @@ export interface TurnoFiltrosDTO {
   idSala?: number;
   folioOficialia?: string;
   folioApelacion?: string;
-  soloTurnadas?: boolean;
+  fechaRecepcionInicio?: string;
+  fechaRecepcionFin?: string;
+  idNomenclatura?: number;
+  estado?: number;
+  idPerfil?: number;
 }
 
 export interface ApiResponseTurnos {
@@ -55,8 +63,11 @@ export interface TurnoSala {
   activo: boolean;
 }
 
+import { CatalogoItem } from '../../../core/models/catalogo-global.model';
+
 export interface CatalogoTurnos {
   salas: TurnoSala[];
+  nomenclaturas: CatalogoItem[];
 }
 
 export interface TurnosExportarImportarResponse {

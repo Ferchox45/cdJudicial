@@ -40,9 +40,9 @@
               (ngModelChange)="updateForm('idSala', $event)"
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-              [disabled]="catalogos.cargando() || facade.perfilTipo() === 'oficialia'">
-              <option value="">{{ catalogos.cargando() ? 'Cargando...' : 'Seleccione Sala' }}</option>
-              @for (item of catalogos.salas(); track item.id) {
+[disabled]="facade.cargandoCatalogos() || facade.perfilTipo() === 'oficialia'">
+<option value="">{{ facade.cargandoCatalogos() ? 'Cargando...' : 'Seleccione Sala' }}</option>
+@for (item of facade.salas(); track item.id) {
                 <option [value]="item.id">{{ item.descripcion }}</option>
               }
             </select>
@@ -67,6 +67,53 @@
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
               placeholder="Número de folio">
           </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="fechaRecepcionInicio" class="text-xs font-bold text-gray-700">Fecha Recepción Inicio</label>
+            <input id="fechaRecepcionInicio" type="date" name="fechaRecepcionInicio"
+              [ngModel]="form.fechaRecepcionInicio"
+              (ngModelChange)="updateForm('fechaRecepcionInicio', $event)"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="fechaRecepcionFin" class="text-xs font-bold text-gray-700">Fecha Recepción Fin</label>
+            <input id="fechaRecepcionFin" type="date" name="fechaRecepcionFin"
+              [ngModel]="form.fechaRecepcionFin"
+              (ngModelChange)="updateForm('fechaRecepcionFin', $event)"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="idNomenclatura" class="text-xs font-bold text-gray-700">Nomenclatura</label>
+            <select id="idNomenclatura" name="idNomenclatura"
+              [ngModel]="form.idNomenclatura"
+              (ngModelChange)="updateForm('idNomenclatura', $event)"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                    focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
+              <option value="">{{ facade.cargandoCatalogos() ? 'Cargando...' : 'Seleccione Nomenclatura' }}</option>
+              @for (item of facade.nomenclaturas(); track item.id) {
+                <option [value]="item.id">{{ item.descripcion }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="estado" class="text-xs font-bold text-gray-700">Estado</label>
+            <select id="estado" name="estado"
+              [ngModel]="form.estado"
+              (ngModelChange)="updateForm('estado', $event)"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
+              <option value="">Seleccione un estado</option>
+              <option value="0">Pendiente</option>
+              <option value="1">Exportado</option>
+              <option value="2">Importado</option>
+            </select>
+          </div>
+
         </div>
       </section>
 

@@ -19,13 +19,13 @@ export class TurnosService {
   private cache = inject(CacheService);
   private apiEndpoint = environment.apiUrl;
 
-  getCatalogos(): Observable<CatalogoTurnos> {
-    const call$ = this.http
-      .get<{ status: string; message: string; data: CatalogoTurnos }>(`${this.apiEndpoint}/api/estados/catalogos`)
-      .pipe(map((res) => res.data));
+getCatalogos(): Observable<CatalogoTurnos> {
+  const call$ = this.http
+    .get<{ status: string; message: string; data: CatalogoTurnos }>(`${this.apiEndpoint}/api/estados/catalogos`)
+    .pipe(map((res) => res.data));
 
-    return this.cache.manejarCache(CACHE_KEY_TURNOS_CATALOGOS, call$);
-  }
+  return this.cache.manejarCache(CACHE_KEY_TURNOS_CATALOGOS, call$);
+}
 
   listar(filtros: TurnoFiltrosDTO, page: number, limit: number): Observable<PagedResultTurnos> {
     let params = new HttpParams()
@@ -35,7 +35,11 @@ export class TurnosService {
     if (filtros.idSala != null) params = params.set('idSala', filtros.idSala);
     if (filtros.folioOficialia) params = params.set('folioOficialia', filtros.folioOficialia);
     if (filtros.folioApelacion) params = params.set('folioApelacion', filtros.folioApelacion);
-    if (filtros.soloTurnadas) params = params.set('soloTurnadas', 'true');
+    if (filtros.fechaRecepcionInicio) params = params.set('fechaRecepcionInicio', filtros.fechaRecepcionInicio);
+    if (filtros.fechaRecepcionFin) params = params.set('fechaRecepcionFin', filtros.fechaRecepcionFin);
+    if (filtros.idNomenclatura != null) params = params.set('idNomenclatura', filtros.idNomenclatura);
+    if (filtros.estado != null) params = params.set('estado', filtros.estado);
+    if (filtros.idPerfil != null) params = params.set('idPerfil', filtros.idPerfil);
 
     return this.http.get<ApiResponseTurnos>(`${this.apiEndpoint}/api/estados`, { params })
       .pipe(

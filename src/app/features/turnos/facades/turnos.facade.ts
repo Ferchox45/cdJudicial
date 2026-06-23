@@ -4,12 +4,17 @@ import { finalize } from 'rxjs';
 import { TurnosService } from '../data/turnos.service';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
 import { TurnosMapper } from '../utils/turnos.mapper';
-import { TurnoListItemDTO, TurnoSearchForm } from '../models/turnos.model';
+import { TurnoListItemDTO, TurnoSearchForm, TurnoSala } from '../models/turnos.model';
+import { CatalogoItem } from '../../../core/models/catalogo-global.model';
 
 export const FORM_VACIO: TurnoSearchForm = {
   folioOficialia: '',
   folioApelacion: '',
   idSala: '',
+  fechaRecepcionInicio: '',
+  fechaRecepcionFin: '',
+  idNomenclatura: '',
+  estado: '',
 };
 
 export type TurnosPerfilTipo = 'comun' | 'oficialia';
@@ -42,11 +47,29 @@ export class TurnosFacade {
   readonly exportando = signal(false);
   readonly importando = signal(false);
 
+  readonly salas = signal<TurnoSala[]>([]);
+  readonly nomenclaturas = signal<CatalogoItem[]>([]);
+  readonly cargandoCatalogos = signal(false);
+
   readonly seleccionCount = computed(() => this.idsSeleccionados().length);
   readonly haySeleccion = computed(() => this.idsSeleccionados().length > 0);
 
-  private get _soloTurnadas(): boolean {
-    return this.perfilTipo() === 'oficialia';
+  private readonly idPerfil = computed<number>(() =>
+    this.perfilTipo() === 'comun' ? 2 : 3,
+  );
+
+  cargarCatalogos(): void {
+    this.cargandoCatalogos.set(true);
+    this.service.getCatalogos().pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.cargandoCatalogos.set(false)),
+    ).subscribe({
+      next: (cat) => {
+        this.salas.set(cat.salas);
+        this.nomenclaturas.set(cat.nomenclaturas);
+      },
+      error: () => this.modal.error('Error', 'No se pudieron cargar los catálogos.'),
+    });
   }
 
   toggleSeleccion(id: number): void {
@@ -81,7 +104,7 @@ export class TurnosFacade {
 
   private _ejecutarBusqueda(page: number, mostrarModal: boolean): void {
     this.buscando.set(true);
-    const filtros = TurnosMapper.toDTO(this.form(), this._soloTurnadas);
+    const filtros = TurnosMapper.toDTO(this.form(), this.idPerfil());
 
     this.service.listar(filtros, page, this.porPagina())
       .pipe(
