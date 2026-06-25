@@ -6,11 +6,12 @@ import {
   ApiResponseEnvelope,
   ApiPagedData,
   OpcionesTurnar,
-  KardexResponse,
+  HistorialResponse,
   MovimientoPendiente,
   PagedResult,
   BatchResponse,
   ApelacionTurnable,
+  CatalogoItem,
 } from '../models/seguimiento.model';
 
 @Injectable({ providedIn: 'root' })
@@ -96,11 +97,22 @@ export class SeguimientoService {
       .pipe(map(res => res.data));
   }
 
-  getHistorial(folioOficialia: string): Observable<KardexResponse> {
+  getCatalogosHistorial(): Observable<{ nomenclaturas: CatalogoItem[] }> {
     return this.http
-      .get<ApiResponseEnvelope<KardexResponse>>(
+      .get<ApiResponseEnvelope<{ nomenclaturas: CatalogoItem[] }>>(
+        `${this.apiEndpoint}/api/estados/catalogos`,
+      )
+      .pipe(map(res => ({ nomenclaturas: res.data.nomenclaturas })));
+  }
+
+  getHistorial(params: { idSala: number; folioApelacion?: string; idNomenclatura?: number }): Observable<HistorialResponse> {
+    let httpParams = new HttpParams().set('idSala', params.idSala);
+    if (params.folioApelacion?.trim()) httpParams = httpParams.set('folioApelacion', params.folioApelacion.trim());
+    if (params.idNomenclatura != null) httpParams = httpParams.set('idNomenclatura', params.idNomenclatura);
+    return this.http
+      .get<ApiResponseEnvelope<HistorialResponse>>(
         `${this.apiEndpoint}/api/movimientos/historial`,
-        { params: { folioOficialia } },
+        { params: httpParams },
       )
       .pipe(
         timeout(15000),

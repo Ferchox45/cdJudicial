@@ -1,38 +1,55 @@
 <div class="min-h-screen flex">
 
-  <!-- Columna izquierda: formulario -->
   <div class="flex flex-col justify-center px-16 py-12 w-1/2 bg-white">
 
-    <!-- Título -->
     <h1 class="text-4xl font-black text-gray-900 leading-tight mb-3">
       Configura tu acceso
-      <span class="text-forest block">selecciona tu perfil y Sala</span>
+      <span class="text-forest block">selecciona tu área y perfil</span>
     </h1>
     <p class="text-sm text-gray-500 mb-8">
-      Selecciona primero la adscripción y después el perfil con el que deseas ingresar al sistema.
+      Selecciona primero el área y después el perfil con el que deseas ingresar al sistema.
     </p>
 
-    @if (errorPerfil()) {
+    @if (errorAreas() || errorPerfil()) {
       <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-        <p class="text-sm text-red-700">{{ errorPerfil() }}</p>
+        <p class="text-sm text-red-700">{{ errorAreas() || errorPerfil() }}</p>
       </div>
     }
 
-    @if (cargandoPerfil()) {
+    @if (cargandoAreas()) {
       <div class="flex items-center justify-center py-12">
-        <app-spinner size="xl" color="forest" ariaLabel="Cargando perfiles..." />
+        <app-spinner size="xl" color="forest" ariaLabel="Cargando áreas..." />
       </div>
     }
 
-    @if (!cargandoPerfil()) {
-      <!-- Selector: Perfil -->
+    @if (!cargandoAreas()) {
+      <!-- Selector: Área -->
       <div class="mb-4">
-        <select (change)="onPerfilChange($event)"
+        <select (change)="onAreaChange($event)"
+          [disabled]="cargandoAreas() || cargandoPerfil()"
           class="w-full px-4 py-3 rounded-lg text-sm border border-gray-300 bg-white text-gray-700
                  focus:outline-none focus:ring-2 focus:ring-forest focus:border-transparent
                  cursor-pointer appearance-none
                  bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22none%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%221.5%22%3E%3Cpath%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')]
-                 bg-size-[20px] bg-position-[right_12px_center] bg-no-repeat pr-10">
+                 bg-size-[20px] bg-position-[right_12px_center] bg-no-repeat pr-10
+                 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100">
+          <option value="-1">Selecciona un área</option>
+          @for (a of areas(); track a.idAreaSistema; let i = $index) {
+            <option [value]="i">{{ a.area }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Selector: Perfil -->
+      <div class="mb-4">
+        <select (change)="onPerfilChange($event)"
+          [disabled]="cargandoAreas() || cargandoPerfil() || paso() === 'areas' || perfiles().length === 0"
+          class="w-full px-4 py-3 rounded-lg text-sm border border-gray-300 bg-white text-gray-700
+                 focus:outline-none focus:ring-2 focus:ring-forest focus:border-transparent
+                 cursor-pointer appearance-none
+                 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22none%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%221.5%22%3E%3Cpath%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')]
+                 bg-size-[20px] bg-position-[right_12px_center] bg-no-repeat pr-10
+                 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100">
           <option value="-1">Selecciona un perfil</option>
           @for (p of perfiles(); track p.idSistemaPerfil; let i = $index) {
             <option [value]="i">{{ p.descripcion }}</option>
@@ -40,51 +57,25 @@
         </select>
       </div>
 
-      <!-- Selector: Sala -->
-      @if (mostrarSelectorSalas()) {
-        <div class="mb-4">
-          <select (change)="onSalaChange($event)"
-            class="w-full px-4 py-3 rounded-lg text-sm border border-gray-300 bg-white text-gray-700
-                   focus:outline-none focus:ring-2 focus:ring-forest focus:border-transparent
-                   cursor-pointer appearance-none
-                   bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22none%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%221.5%22%3E%3Cpath%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')]
-                   bg-size-[20px] bg-position-[right_12px_center] bg-no-repeat pr-10">
-            <option value="-1">Selecciona una sala</option>
-            @for (s of salas(); track s.idSala; let i = $index) {
-              <option [value]="i">{{ s.descripcion }}</option>
-            }
-          </select>
-        </div>
-      }
-
-      <!-- Checkbox: Recordar perfil -->
-      <label class="flex items-center gap-2 mb-6 cursor-pointer select-none">
-        <input type="checkbox" class="w-4 h-4 rounded border-gray-300 accent-forest cursor-pointer" />
-        <span class="text-sm text-gray-600">Recordar perfil seleccionado</span>
-      </label>
+      <!-- Selector: Subárea (opcional) -->
+      <div class="mb-4">
+        <select (change)="onSubareaChange($event)"
+          [disabled]="cargandoAreas() || cargandoPerfil() || paso() === 'areas' || subareas().length === 0"
+          class="w-full px-4 py-3 rounded-lg text-sm border border-gray-300 bg-white text-gray-700
+                 focus:outline-none focus:ring-2 focus:ring-forest focus:border-transparent
+                 cursor-pointer appearance-none
+                 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22none%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%221.5%22%3E%3Cpath%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')]
+                 bg-size-[20px] bg-position-[right_12px_center] bg-no-repeat pr-10
+                 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100">
+          <option value="-1">Selecciona una subárea (opcional)</option>
+          @for (s of subareas(); track s.idSubArea; let i = $index) {
+            <option [value]="i">{{ s.descripcion }}</option>
+          }
+        </select>
+      </div>
 
       <!-- Botones -->
-      <div class="flex items-center gap-3">
-        <button (click)="ingresar()"
-          [disabled]="!puedeIngresar() || cargandoModulos()"
-          class="flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all duration-150 cursor-pointer border-0"
-          [class.bg-forest]="puedeIngresar()"
-          [class.text-white]="puedeIngresar()"
-          [class.bg-gray-300]="!puedeIngresar()"
-          [class.text-gray-500]="!puedeIngresar()"
-          [class.cursor-not-allowed]="!puedeIngresar()">
-          @if (cargandoModulos()) {
-            <app-spinner size="sm" color="current" ariaLabel="Cargando módulos..." />
-          } @else {
-            <!-- Ícono usuario -->
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-            </svg>
-          }
-          Continuar
-        </button>
-
+      @if (paso() === 'areas') {
         <button type="button"
           class="bg-sage text-forest font-bold md:font-medium px-6 py-3 md:py-2 rounded-md border border-sage-dark/20 flex items-center justify-center gap-2 cursor-pointer transition hover:bg-sage-dark w-full md:w-auto"
           (click)="salir()">
@@ -94,10 +85,42 @@
           </svg>
           Salir
         </button>
-      </div>
+      }
+
+      @if (paso() === 'perfiles') {
+        <div class="flex items-center gap-3">
+          <button (click)="ingresar()"
+            [disabled]="!puedeIngresar() || cargandoModulos()"
+            class="flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all duration-150 cursor-pointer border-0"
+            [class.bg-forest]="puedeIngresar()"
+            [class.text-white]="puedeIngresar()"
+            [class.bg-gray-300]="!puedeIngresar()"
+            [class.text-gray-500]="!puedeIngresar()"
+            [class.cursor-not-allowed]="!puedeIngresar()">
+            @if (cargandoModulos()) {
+              <app-spinner size="sm" color="current" ariaLabel="Cargando módulos..." />
+            } @else {
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+              </svg>
+            }
+            Continuar
+          </button>
+
+          <button type="button"
+            class="bg-sage text-forest font-bold md:font-medium px-6 py-3 md:py-2 rounded-md border border-sage-dark/20 flex items-center justify-center gap-2 cursor-pointer transition hover:bg-sage-dark w-full md:w-auto"
+            (click)="salir()">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+            </svg>
+            Salir
+          </button>
+        </div>
+      }
     }
 
-    <!-- Estado: Completado -->
     @if (paso() === 'completado') {
       <div class="mt-8 text-center">
         <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-4">
@@ -112,14 +135,12 @@
 
   </div>
 
-  <!-- Columna derecha: imagen hero -->
   <div class="w-1/2 relative overflow-hidden">
     <img
       src="assets/images/Fondo_Acceso.jpg"
       alt="Acceso al sistema judicial"
       class="w-full h-full object-cover object-center"
     />
-    <!-- Overlay sutil opcional -->
     <div class="absolute inset-0 bg-forest/10"></div>
   </div>
 

@@ -52,7 +52,6 @@ export class TurnarComponent {
   get columnas(): TablaColumna[] {
     return [
       { field: 'folioApelacion', label: 'Folio Apelación', visible: true },
-      { field: 'folioOficialia', label: 'Folio Oficialía', visible: true },
       { field: 'cargoOrigen', label: 'Quién te lo turnó', visible: true },
       { field: 'fechaTurno', label: 'Fecha de turnó', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy HH:mm' },
       { field: 'cargoDestino', label: 'Cargo destino', visible: true },

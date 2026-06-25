@@ -36,8 +36,9 @@ export interface OpcionesTurnar {
   magistrados: UsuarioOpcion[];
 }
 
-export interface MovimientoKardex {
+export interface MovimientoHistorial {
   id: number;
+  movimiento: string;
   paso: string;
   cargoTurna: string;
   nombreTurna: string;
@@ -47,10 +48,10 @@ export interface MovimientoKardex {
   fechaRecibe: string | null;
 }
 
-export interface KardexResponse {
+export interface HistorialResponse {
   folioOficialia: string;
   folioApelacion: string | null;
-  movimientos: MovimientoKardex[];
+  movimientos: MovimientoHistorial[];
 }
 
 export interface ApiResponseEnvelope<T> {

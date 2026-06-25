@@ -4,6 +4,7 @@ import { map, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
   ApiResponse,
+  Area,
   ConfiguracionArea,
   ModuloPantalla,
   Seccion,
@@ -14,9 +15,15 @@ export class PermisosService {
   private API = environment.apiUrl;
   private http = inject(HttpClient);
 
-  ingresar(): Observable<ConfiguracionArea> {
+  getAreas(): Observable<Area[]> {
     return this.http
-      .get<ApiResponse<ConfiguracionArea>>(`${this.API}/api/permisos/ingresar`)
+      .get<ApiResponse<Area[]>>(`${this.API}/api/permisos/areas`)
+      .pipe(map(r => r.data));
+  }
+
+  ingresar(idArea: number, idAreaSistema: number): Observable<ConfiguracionArea> {
+    return this.http
+      .post<ApiResponse<ConfiguracionArea>>(`${this.API}/api/permisos/ingresar`, { idArea, idAreaSistema })
       .pipe(map(r => r.data));
   }
 

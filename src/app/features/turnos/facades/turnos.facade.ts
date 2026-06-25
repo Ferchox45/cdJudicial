@@ -1,8 +1,10 @@
 import { Injectable, inject, signal, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs';
+import { finalize, switchMap } from 'rxjs';
 import { TurnosService } from '../data/turnos.service';
+import { SeguimientoService } from '../../seguimiento/data/seguimiento.service';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
+import { SessionStateService } from '../../permisos/services/session-state.service';
 import { TurnosMapper } from '../utils/turnos.mapper';
 import { TurnoListItemDTO, TurnoSearchForm, TurnoSala } from '../models/turnos.model';
 import { CatalogoItem } from '../../../core/models/catalogo-global.model';
@@ -22,7 +24,9 @@ export type TurnosPerfilTipo = 'comun' | 'oficialia';
 @Injectable({ providedIn: 'root' })
 export class TurnosFacade {
   private readonly service = inject(TurnosService);
+  private readonly seguimientoService = inject(SeguimientoService);
   private readonly modal = inject(ModalService);
+  private readonly sessionState = inject(SessionStateService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly _cache = new Map<number, TurnoListItemDTO[]>();
 
@@ -54,9 +58,7 @@ export class TurnosFacade {
   readonly seleccionCount = computed(() => this.idsSeleccionados().length);
   readonly haySeleccion = computed(() => this.idsSeleccionados().length > 0);
 
-  private readonly idPerfil = computed<number>(() =>
-    this.perfilTipo() === 'comun' ? 2 : 3,
-  );
+  private readonly idPerfil = computed(() => this.sessionState.idPerfil());
 
   cargarCatalogos(): void {
     this.cargandoCatalogos.set(true);
@@ -103,8 +105,10 @@ export class TurnosFacade {
   }
 
   private _ejecutarBusqueda(page: number, mostrarModal: boolean): void {
+    const perfil = this.idPerfil();
+    if (perfil == null) return;
     this.buscando.set(true);
-    const filtros = TurnosMapper.toDTO(this.form(), this.idPerfil());
+    const filtros = TurnosMapper.toDTO(this.form(), perfil);
 
     this.service.listar(filtros, page, this.porPagina())
       .pipe(
@@ -198,38 +202,65 @@ export class TurnosFacade {
       return;
     }
 
+    const idPerfil = this.idPerfil();
+    if (idPerfil == null) {
+      this.modal.error('Error', 'Perfil de usuario no disponible.');
+      return;
+    }
+
     this.exportando.set(true);
-    this.service.exportar(ids).pipe(
+    this.seguimientoService.getOpcionesTurnar(idPerfil).pipe(
+      switchMap(opciones => {
+        const destinoId = opciones.perfilesDestino[0]?.id;
+        if (destinoId == null) {
+          throw new Error('No hay destino disponible para exportar');
+        }
+        return this.seguimientoService.turnar({
+          ids,
+          idPerfilOrigen: idPerfil,
+          idPerfilDestino: destinoId,
+          idGeneralDestino: null,
+        });
+      }),
       takeUntilDestroyed(this.destroyRef),
       finalize(() => this.exportando.set(false)),
     ).subscribe({
       next: (res) => {
-        this.modal.success('Exportación exitosa', res.message);
+        this.modal.success('Exportación exitosa', `Se exportaron ${res.afectados} de ${res.total} registros correctamente.`);
         this.idsSeleccionados.set([]);
         const pagina = this._paginacion().page;
         this._limpiarCache();
         this._ejecutarBusqueda(pagina, false);
       },
-      error: () => {
-        this.modal.error('Error de exportación', 'Ocurrió un error al exportar las apelaciones.');
+      error: (err) => {
+        this.modal.error('Error de exportación', err instanceof Error ? err.message : 'Ocurrió un error al exportar las apelaciones.');
       },
     });
   }
 
   importar(): void {
-    const ids = this.idsSeleccionados();
-    if (ids.length === 0) {
+    const idsToca = this.idsSeleccionados();
+    if (idsToca.length === 0) {
       this.modal.info('Sin selección', 'Selecciona al menos una apelación para importar.');
       return;
     }
 
+    const idsMovimiento = this.resultados()
+      .filter(r => idsToca.includes(r.idToca))
+      .map(r => r.idMovimiento);
+
+    if (idsMovimiento.length === 0) {
+      this.modal.error('Sin selección', 'No se encontraron los movimientos seleccionados.');
+      return;
+    }
+
     this.importando.set(true);
-    this.service.importar(ids).pipe(
+    this.seguimientoService.recibir(idsMovimiento).pipe(
       takeUntilDestroyed(this.destroyRef),
       finalize(() => this.importando.set(false)),
     ).subscribe({
       next: (res) => {
-        this.modal.success('Importación exitosa', res.message);
+        this.modal.success('Importación exitosa', `Se importaron ${res.afectados} de ${res.total} registros correctamente.`);
         this.idsSeleccionados.set([]);
         const pagina = this._paginacion().page;
         this._limpiarCache();

@@ -43,7 +43,6 @@ export class RecibirComponent {
 
 get columnas(): TablaColumna[] {
   return [
-    { field: 'folioOficialia', label: 'Folio de Oficialía', visible: true },
     { field: 'folioApelacion', label: 'Folio de Apelación', visible: true },
     { field: 'cargoOrigen', label: 'Cargo de Origen', visible: true },
     { field: 'nombreTurna', label: 'Turnado por', visible: true },

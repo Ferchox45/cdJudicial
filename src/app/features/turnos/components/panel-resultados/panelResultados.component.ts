@@ -37,18 +37,18 @@ export class PanelResultadosTurnosComponent {
   }
 
   get todosSeleccionados(): boolean {
-    const ids = this.facade.resultados().map(r => Number(r.id));
+    const ids = this.facade.resultados().map(r => r.idToca);
     const seleccionados = this.facade.idsSeleccionados();
     return ids.length > 0 && ids.every(id => seleccionados.includes(id));
   }
 
   toggleTodos(): void {
-    const ids = this.facade.resultados().map(r => Number(r.id));
+    const ids = this.facade.resultados().map(r => r.idToca);
     this.facade.toggleSeleccionTodos(ids);
   }
 
   onSelectionChange(event: { row: any; checked: boolean }): void {
-    const id = event.row.id;
+    const id = event.row.idToca;
     if (id != null) {
       this.facade.toggleSeleccion(id);
     }

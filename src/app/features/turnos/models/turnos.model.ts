@@ -9,7 +9,8 @@ export interface TurnoSearchForm {
 }
 
 export interface TurnoListItemDTO {
-  id: number;
+  idToca: number;
+  idMovimiento: number;
   folioOficialia: string;
   folioApelacion: string | null;
   nomenclatura: string | null;

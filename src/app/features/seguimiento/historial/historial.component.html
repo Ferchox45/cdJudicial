@@ -11,19 +11,35 @@
 
     <main class="flex-1 w-full min-w-0 flex flex-col gap-6 pb-24 md:pb-0">
 
-      <!-- Campo de búsqueda -->
-      <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5">
-        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
-          Folio de Oficialía
-        </label>
-        <div class="flex gap-3">
-          <input
-            type="text"
-            [ngModel]="facade.folio()"
-            (ngModelChange)="facade.folio.set($event)"
-            (keydown.enter)="facade.buscar()"
-            placeholder="Ingrese el folio de oficialía"
-            class="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest" />
+      @if (sala(); as s) {
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm px-5 py-3">
+          <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Sala:</span>
+          <span class="text-sm font-semibold text-gray-800 ml-2">{{ s.descripcion }}</span>
+        </div>
+      }
+
+      <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5" [formGroup]="form">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-gray-600 uppercase tracking-wider">Folio Apelación</label>
+            <input id="folioApelacion" type="text"
+              formControlName="folioApelacion"
+              (keydown.enter)="facade.buscar()"
+              placeholder="Ingrese el folio de apelación"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest" />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-gray-600 uppercase tracking-wider">Nomenclatura</label>
+            <select formControlName="idNomenclatura"
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
+                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
+              <option [ngValue]="null">Seleccione Nomenclatura</option>
+              @for (n of facade.nomenclaturas(); track n.id) {
+                <option [ngValue]="n.id">{{ n.descripcion }}</option>
+              }
+            </select>
+          </div>
         </div>
       </div>
 
@@ -32,7 +48,7 @@
           <div class="bg-white border border-gray-200 rounded-xl shadow-sm px-5 py-3">
             <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Folio:</span>
             <span class="text-sm font-semibold text-gray-800 ml-2">{{ folioOf }}</span>
-            @if (facade.folioApelacion(); as folioAp) {
+            @if (facade.folioApelacionInfo(); as folioAp) {
               <span class="text-xs text-gray-400 mx-2">·</span>
               <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Apelación:</span>
               <span class="text-sm font-semibold text-gray-800 ml-1">{{ folioAp }}</span>
@@ -49,7 +65,6 @@
           titulo="Historial de Movimientos" />
       }
 
-      <!-- Estado vacío -->
       @if (facade.buscado() && facade.movimientos().length === 0) {
         <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-16 text-center">
           <div class="flex flex-col items-center gap-3 text-gray-400">
@@ -58,12 +73,11 @@
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
             <p class="text-base font-semibold text-gray-500 m-0">Sin resultados</p>
-            <span class="text-sm">No se encontraron movimientos para este folio.</span>
+            <span class="text-sm">No se encontraron movimientos con los criterios ingresados.</span>
           </div>
         </div>
       }
 
-      <!-- Estado inicial -->
       @if (!facade.buscado()) {
         <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-16 text-center">
           <div class="flex flex-col items-center gap-3 text-gray-400">
@@ -72,7 +86,7 @@
                 d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             <p class="text-base font-semibold text-gray-500 m-0">Consulte el Historial de Movimientos</p>
-            <span class="text-sm">Ingrese un folio de oficialía para ver el historial de movimientos.</span>
+            <span class="text-sm">Ingrese un folio de apelación o seleccione una nomenclatura para consultar.</span>
           </div>
         </div>
       }

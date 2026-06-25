@@ -23,7 +23,7 @@ export class HomeComponent {
   tieneBuscadorHistorico = computed(() => this.existePantalla('/buscadorHistorico'));
   tieneEstadisticas = computed(() => this.existePantalla('/estadisticas'));
   tieneTurnos = computed(() => this.existePantalla('/turnos'));
-  tieneRecibirToca = computed(() => this.existePantalla('/recibir'));
-  tieneTurnarToca = computed(() => this.existePantalla('/turnar'));
+  tieneRecibirToca = computed(() => this.existePantalla('/recibirtoca'));
+  tieneTurnarToca = computed(() => this.existePantalla('/turnarToca'));
   tieneHistorial = computed(() => this.existePantalla('/historial'));
 }
