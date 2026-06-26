@@ -12,11 +12,12 @@ export interface SearchState {
   anexos: any[];
   folioOficialia: string | null;
   sala: string | null;
+  importadoNS: boolean | null;
   partes: any[];
   relaciones: any[];
   delitosDisponibles: any[];
-  procesadoSeleccionado: any | null;
-  ofendidoSeleccionado: any | null;
+  idsProcesadosSeleccionados: number[];
+  idsOfendidosSeleccionados: number[];
   busquedaDelitoTexto: string;
   busquedaRapida: string;
 }

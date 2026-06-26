@@ -23,16 +23,17 @@ export class PanelRelacionesComponent {
   readonly relaciones = input<RelacionBusqueda[]>([]);
   readonly delitosFiltrados = input<DelitoDisponible[]>([]);
   readonly busquedaDelitoTexto = input.required<FormControl>();
-  readonly procesadoSeleccionado = input<Parte | null>(null);
-  readonly ofendidoSeleccionado  = input<Parte | null>(null);
+  readonly idsProcesadosSeleccionados = input<Set<number>>(new Set());
+  readonly idsOfendidosSeleccionados  = input<Set<number>>(new Set());
   readonly datosGeneralesOpen = input(true);
   readonly relacionesFinalesOpen = input(false);
   readonly bloquearSeccion = input(false);
   readonly bloquearBtn = input(true);
+  readonly hayDelitoSeleccionado = input(false);
 
   // ── Outputs ───────────────────────────────────────────────
-  readonly seleccionarProcesadoEvt   = output<Parte>();
-  readonly seleccionarOfendidoEvt    = output<Parte>();
+  readonly toggleProcesadoEvt        = output<number>();
+  readonly toggleOfendidoEvt         = output<number>();
   readonly marcarTodosProcesadosEvt  = output<void>();
   readonly marcarTodosOfendidosEvt   = output<void>();
   readonly agregarRelacionEvt        = output<void>();

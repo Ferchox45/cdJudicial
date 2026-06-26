@@ -40,6 +40,7 @@ export class BusquedaFacade {
   readonly anexos = signal<AnexoBusquedaRapida[]>([]);
   readonly folioOficialia = signal<string | null>(null);
   readonly sala = signal<string | null>(null);
+  readonly importadoNS = signal<boolean | null>(null);
 
   onExito?:  (resultado: ResultadoBusqueda) => void;
   onError?:  (msg: string) => void;
@@ -101,6 +102,7 @@ export class BusquedaFacade {
     this.anexos.set([]);
     this.folioOficialia.set(null);
     this.sala.set(null);
+    this.importadoNS.set(null);
     this.onNuevo?.();
   }
 
@@ -140,6 +142,7 @@ export class BusquedaFacade {
     delitosDisponibles: DelitoDisponible[]
   ): void {
     this.apelacionId.set(d.id);
+    this.importadoNS.set(d.importadoNS ?? null);
     this.tieneAnexos.set(Array.isArray(d.anexos) && d.anexos.length > 0);
     this.anexos.set(d.anexos ?? []);
     this.folioOficialia.set(d.folioOficilia ?? null);
@@ -168,6 +171,10 @@ export class BusquedaFacade {
     });
 
     this.bloquearCampos(form);
+
+    if (d.importadoNS) {
+      CAMPOS_BUSQUEDA.forEach((c) => form.get(c)?.disable({ emitEvent: false }));
+    }
 
     const partes = mapearPartesDesdeRelaciones(d.relaciones);
     const relaciones = mapearRelaciones(d.relaciones);

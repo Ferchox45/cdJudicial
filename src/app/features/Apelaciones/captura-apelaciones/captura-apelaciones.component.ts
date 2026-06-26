@@ -64,8 +64,8 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   partes:     Parte[]            = [];
   relaciones: RelacionBusqueda[] = [];
   delitosDisponibles = signal<DelitoDisponible[]>([]);
-  procesadoSeleccionado: Parte | null = null;
-  ofendidoSeleccionado:  Parte | null = null;
+  idsProcesadosSeleccionados = new Set<number>();
+  idsOfendidosSeleccionados = new Set<number>();
   busquedaDelitoTexto = new FormControl('');
   mostrarFormParte    = false;
 
@@ -73,9 +73,10 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
 
   get sidebarActions(): SidebarAction[] {
     const isSaving = this.guardando();
+    const importado = this.bus.importadoNS() === true;
     return [
       { id: 'nuevo',   label: 'Nuevo',   icon: 'nuevo',   primary: true, disabled: isSaving },
-      { id: 'guardar', label: 'Guardar', icon: 'guardar', loading: isSaving, disabled: isSaving },
+      { id: 'guardar', label: 'Guardar', icon: 'guardar', loading: isSaving, disabled: isSaving || importado },
       { id: 'buscar',  label: 'Buscar',  icon: 'buscar',  disabled: isSaving },
       { id: 'anexo',   label: 'Anexos',  icon: 'anexo',   disabled: !this.bus.tieneAnexos() || isSaving },
       { id: 'certificar', label: 'Certificar', icon: 'certificar', disabled: isSaving },
@@ -164,11 +165,12 @@ private wireCallbacks(): void {
       anexos: this.bus.anexos(),
       folioOficialia: this.bus.folioOficialia(),
       sala: this.bus.sala(),
+      importadoNS: this.bus.importadoNS(),
       partes: this.partes,
       relaciones: this.relaciones,
       delitosDisponibles: this.delitosDisponibles(),
-      procesadoSeleccionado: this.procesadoSeleccionado,
-      ofendidoSeleccionado: this.ofendidoSeleccionado,
+      idsProcesadosSeleccionados: [...this.idsProcesadosSeleccionados],
+      idsOfendidosSeleccionados: [...this.idsOfendidosSeleccionados],
       busquedaDelitoTexto: this.busquedaDelitoTexto.value ?? '',
       busquedaRapida: this.form.get('busquedaRapida')?.value ?? '',
     });
@@ -181,8 +183,8 @@ private wireCallbacks(): void {
     this.form.patchValue(s.formValues);
     this.partes = s.partes ?? [];
     this.relaciones = s.relaciones ?? [];
-    this.procesadoSeleccionado = s.procesadoSeleccionado ?? null;
-    this.ofendidoSeleccionado = s.ofendidoSeleccionado ?? null;
+    this.idsProcesadosSeleccionados = new Set(s.idsProcesadosSeleccionados ?? []);
+    this.idsOfendidosSeleccionados = new Set(s.idsOfendidosSeleccionados ?? []);
 
     if (s.busquedaDelitoTexto) {
       this.busquedaDelitoTexto.setValue(s.busquedaDelitoTexto);
@@ -197,6 +199,7 @@ private wireCallbacks(): void {
     this.bus.anexos.set(s.anexos ?? []);
     this.bus.folioOficialia.set(s.folioOficialia);
     this.bus.sala.set(s.sala);
+    this.bus.importadoNS.set(s.importadoNS ?? null);
 
     const savedIds = new Set(
       (s.delitosDisponibles ?? [])
@@ -244,6 +247,10 @@ private wireCallbacks(): void {
     const actions: Record<string, () => void> = {
       nuevo:   () => { this.bus.resetNuevo(this.form); this.form.reset(); this.contextoService.clearSearchState(); },
       guardar: () => {
+        if (this.bus.importadoNS()) {
+          this.modal.info('Apelación importada', 'Esta apelación ya fue importada a un sistema externo y no puede ser modificada.');
+          return;
+        }
         this.form.markAllAsTouched();
         if (this.form.invalid) {
           this.modal.info('Advertencia', 'Rellena los campos obligatorios.');
@@ -330,13 +337,21 @@ private wireCallbacks(): void {
   }
 
   agregarRelacionDesdePanel(): void {
-    if (!this.procesadoSeleccionado || !this.ofendidoSeleccionado) return;
-    this.relaciones = [...this.relaciones, buildNuevaRelacion(
-      this.procesadoSeleccionado, this.ofendidoSeleccionado,
-      this.delitosDisponibles().filter(d => d.seleccionado)
-    )];
+    const procesadosSel = this.procesados.filter(p => this.idsProcesadosSeleccionados.has(p.id));
+    const ofendidosSel = this.ofendidos.filter(p => this.idsOfendidosSeleccionados.has(p.id));
+    const delitosSel = this.delitosDisponibles().filter(d => d.seleccionado);
+    if (procesadosSel.length === 0 || ofendidosSel.length === 0) return;
+
+    const nuevas: RelacionBusqueda[] = [];
+    for (const proc of procesadosSel) {
+      for (const ofen of ofendidosSel) {
+        nuevas.push(buildNuevaRelacion(proc, ofen, delitosSel));
+      }
+    }
+    this.relaciones = [...this.relaciones, ...nuevas];
     this.delitosDisponibles.set(this.delitosDisponibles().map(d => ({ ...d, seleccionado: false })));
-    this.procesadoSeleccionado = null; this.ofendidoSeleccionado = null;
+    this.idsProcesadosSeleccionados = new Set();
+    this.idsOfendidosSeleccionados = new Set();
     this.relacionesFinalesOpen = true;
   }
 
@@ -350,14 +365,38 @@ private wireCallbacks(): void {
     this.delitosDisponibles.update(dd => dd.map(x => x.id === d.id ? { ...x, seleccionado: !x.seleccionado } : x));
   }
 
-  seleccionarProcesado(p: Parte): void { this.procesadoSeleccionado = this.procesadoSeleccionado?.id === p.id ? null : p; }
-  seleccionarOfendido(p: Parte):  void { this.ofendidoSeleccionado  = this.ofendidoSeleccionado?.id  === p.id ? null : p; }
+  toggleProcesado(id: number): void {
+    const next = new Set(this.idsProcesadosSeleccionados);
+    next.has(id) ? next.delete(id) : next.add(id);
+    this.idsProcesadosSeleccionados = next;
+  }
+  toggleOfendido(id: number): void {
+    const next = new Set(this.idsOfendidosSeleccionados);
+    next.has(id) ? next.delete(id) : next.add(id);
+    this.idsOfendidosSeleccionados = next;
+  }
+  marcarTodosProcesados(): void {
+    const ids = this.procesados.map(p => p.id);
+    if (this.idsProcesadosSeleccionados.size === ids.length) {
+      this.idsProcesadosSeleccionados = new Set();
+    } else {
+      this.idsProcesadosSeleccionados = new Set(ids);
+    }
+  }
+  marcarTodosOfendidos(): void {
+    const ids = this.ofendidos.map(p => p.id);
+    if (this.idsOfendidosSeleccionados.size === ids.length) {
+      this.idsOfendidosSeleccionados = new Set();
+    } else {
+      this.idsOfendidosSeleccionados = new Set(ids);
+    }
+  }
 
   private limpiarEstadoCaptura(): void {
-    this.partes                = [];
-    this.relaciones            = [];
-    this.procesadoSeleccionado = null;
-    this.ofendidoSeleccionado  = null;
+    this.partes                      = [];
+    this.relaciones                  = [];
+    this.idsProcesadosSeleccionados  = new Set();
+    this.idsOfendidosSeleccionados   = new Set();
     this.delitosDisponibles.update(dd => dd.map(d => ({ ...d, seleccionado: false })));
     this.busquedaDelitoTexto.setValue('');
   }

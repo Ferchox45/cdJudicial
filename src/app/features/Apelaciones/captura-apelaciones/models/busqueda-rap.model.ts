@@ -45,6 +45,7 @@ export interface AnexoBusquedaRapida {
 
 export interface BusquedaRapida {
   id:              number;
+  importadoNS:     boolean;
   folioOficilia:   string;
   folioTentativo:  string;
   folioOficio:     string;

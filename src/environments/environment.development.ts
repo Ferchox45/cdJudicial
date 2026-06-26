@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://invisible-roommate-surprised-litigation.trycloudflare.com',
+  apiUrl: 'https://franklin-feeds-eligible-with.trycloudflare.com',
   baseUrl: '/',
 };
