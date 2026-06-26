@@ -24,17 +24,23 @@ export const routes: Routes = [
     loadComponent: () => import('./features/permisos/components/seleccion-permisos/seleccion-permisos.component').then(m => m.SeleccionPermisosComponent)
   },
 
+  // 3b. RUTA DE ACCESO DENEGADO
+  {
+    path: 'acceso-denegado',
+    loadComponent: () => import('./shared/components/access-denied/access-denied.component').then(m => m.AccessDeniedComponent)
+  },
+
   // 4. RUTAS PRIVADAS (Dashboard y sub-módulos)
   {
     path: '',
     component: DashboardLayoutComponent,
     canActivate: [authGuard, permisosGuard],
-    canActivateChild: [seccionesGuard],
     children: [
       {
         path: 'inicio',
         loadComponent: () => import('./features/dashboard/components/home/home.component').then(m => m.HomeComponent),
-        data: { breadcrumb: 'Inicio' }
+        data: { breadcrumb: 'Inicio' },
+        canActivate: [seccionesGuard]
       },
 
       // --- MÓDULO APELACIONES ---
@@ -60,7 +66,7 @@ export const routes: Routes = [
       {
         path: 'turnos',
         data: { breadcrumb: 'Turnar a Sala' },
-        loadChildren: () => import('./features/turnos/turnos.routes').then(m => m.TURNOS_ROUTES),
+        loadChildren: () => import('./features/turnos/turnos.routes').then(m => m.TURNOS_ROUTES)
       },
 
       // --- MÓDULO SEGUIMIENTO ---
@@ -74,7 +80,7 @@ export const routes: Routes = [
   // 5. WILDCARD (Ruta no encontrada)
   {
     path: '**',
-    redirectTo: 'login',
+    redirectTo: 'inicio',
     pathMatch: 'full'
   }
 ];

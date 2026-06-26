@@ -1,22 +1,26 @@
 import { Routes } from '@angular/router';
-import { anexosGuard } from '../anexos/guards/anexos.guard'; // Ajusta la ruta si es necesario
+import { anexosGuard } from '../anexos/guards/anexos.guard';
+import { unsavedChangesGuard } from '../../../shared/guards/unsaved-changes.guard';
+import { seccionesGuard } from '../../../features/permisos/guards/secciones.guard';
 
 export const CAPTURA_APELACIONES_ROUTES: Routes = [
   {
-    path: '', // Ruta base
-    loadComponent: () => import('./captura-apelaciones.component').then(m => m.CapturaApelacionesComponent)
+    path: '',
+    loadComponent: () => import('./captura-apelaciones.component').then(m => m.CapturaApelacionesComponent),
+    canDeactivate: [unsavedChangesGuard],
+    canActivate: [seccionesGuard]
   },
   {
-  // Ruta hija
     path: 'anexos',
     loadComponent: () => import('../anexos/anexos.component').then(m => m.AnexosComponent),
     data: { breadcrumb: 'Anexos' },
-    canActivate: [anexosGuard]
+    canDeactivate: [unsavedChangesGuard],
+    canActivate: [anexosGuard, seccionesGuard]
   },
   {
-    //Ruta hija
     path: 'busquedaApelacion',
     loadComponent: () => import('../busqueda-apelaciones/busquedaApelaciones.component').then(m => m.BusquedaApelacionesComponent),
-    data: { breadcrumb: 'Búsqueda de Apelación' }
+    data: { breadcrumb: 'Búsqueda de Apelación' },
+    canActivate: [seccionesGuard]
   },
 ];

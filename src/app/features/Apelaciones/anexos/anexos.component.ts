@@ -9,6 +9,7 @@ import { ApelacionContextService } from './data/apelacion-context.service';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 import { SessionStateService } from '../../permisos/services/session-state.service';
+import { OnUnsavedChanges } from '../../../shared/guards/on-unsaved-changes';
 
 @Component({
   selector: 'app-anexos',
@@ -17,7 +18,7 @@ import { SessionStateService } from '../../permisos/services/session-state.servi
   imports: [CommonModule, FormsModule, SpinnerComponent],
   templateUrl: './anexos.component.html',
 })
-export class AnexosComponent implements OnInit {
+export class AnexosComponent implements OnInit, OnUnsavedChanges {
 
   private apelacionService = inject(AnexoApiService);
   private contextoService  = inject(ApelacionContextService);
@@ -183,6 +184,10 @@ agregarAnexo(): void {
   recargar(): void {
     this.apelacionService.invalidarAnexos();
     this.cargarAnexos();
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.anexos().length > 0 && !this.anexosGuardados();
   }
 
   onBack(): void {

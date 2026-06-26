@@ -6,7 +6,6 @@ import { PanelResultadosPlanoComponent } from './components/panel-resultados-pla
 import { SidebarAction } from '../../../shared/components/action-sidebar/action-sidebar.component';
 import { CatalogosFacade } from '../../apelaciones/busqueda-apelaciones/facades/catalogos.facade';
 import { BusquedaPlanaFacade } from './facades/busquedaPlana.facade';
-
 @Component({
   selector: 'app-buscador-plano',
   standalone: true,

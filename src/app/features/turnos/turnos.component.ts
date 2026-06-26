@@ -4,7 +4,6 @@ import { PanelBusquedaTurnosComponent } from './components/panel-busqueda/panelB
 import { PanelResultadosTurnosComponent } from './components/panel-resultados/panelResultados.component';
 import { TurnosFacade, TurnosPerfilTipo } from './facades/turnos.facade';
 import { SessionStateService } from '../../features/permisos/services/session-state.service';
-
 @Component({
   selector: 'app-turnos',
   standalone: true,

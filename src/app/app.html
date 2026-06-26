@@ -6,6 +6,6 @@
   [message]="modalService.config()?.message ?? ''"
   [confirmText]="modalService.config()?.confirmText ?? 'Aceptar'"
   [cancelText]="modalService.config()?.cancelText ?? 'Cancelar'"
-  (confirm)="modalService.close()"
-  (cancel)="modalService.close()"
+   (confirm)="modalService.confirmar()"
+   (cancel)="modalService.cancelar()"
 />

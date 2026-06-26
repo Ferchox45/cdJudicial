@@ -6,7 +6,6 @@ import { TablaReutilizableComponent } from '../../../shared/components/table-reu
 import { TablaColumna } from '../../../shared/components/table-reutilizable/models/tabla-columna.model';
 import { TurnarFacade } from '../facades/turnar.facade';
 import { SessionStateService } from '../../permisos/services/session-state.service';
-
 @Component({
   selector: 'app-turnar',
   standalone: true,

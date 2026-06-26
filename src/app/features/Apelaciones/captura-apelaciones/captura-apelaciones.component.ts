@@ -19,6 +19,7 @@ import { DelitoDisponible } from './models/apelacion-aux.model';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
 import { SessionStateService } from '../../permisos/services/session-state.service';
 import { ApelacionContextService } from '../anexos/data/apelacion-context.service';
+import { OnUnsavedChanges } from '../../../shared/guards/on-unsaved-changes';
 
 @Component({
   selector: 'app-captura-apelacion',
@@ -33,7 +34,7 @@ import { ApelacionContextService } from '../anexos/data/apelacion-context.servic
   ],
   templateUrl: './captura-apelaciones.component.html',
 })
-export class CapturaApelacionesComponent implements OnInit, OnDestroy {
+export class CapturaApelacionesComponent implements OnInit, OnDestroy, OnUnsavedChanges {
 
   cat = inject(CatalogosFacade);
   bus = inject(BusquedaFacade);
@@ -113,6 +114,10 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy {
   private establecerPantalla(): void {
     const id = this.sessionState.buscarPantallaPorDescripcion('/capturaApelacion');
     if (id) this.sessionState.setPantalla(id);
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty || this.partes.length > 0 || this.relaciones.length > 0;
   }
 
   ngOnDestroy(): void { clearInterval(this.intervalId); }

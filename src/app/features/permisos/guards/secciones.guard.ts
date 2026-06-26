@@ -1,25 +1,29 @@
 import { inject } from '@angular/core';
-import { CanActivateChildFn, Router } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { SessionStateService } from '../services/session-state.service';
 import { PermisosService } from '../data/permisos.service';
 
-export const seccionesGuard: CanActivateChildFn = (childRoute) => {
+export const seccionesGuard: CanActivateFn = (route) => {
   const session = inject(SessionStateService);
   const permisosService = inject(PermisosService);
   const router = inject(Router);
 
-  const path = childRoute.routeConfig?.path;
-  if (!path) return of(true);
+  const fullPath = route.pathFromRoot
+    .map(r => r.routeConfig?.path ?? '')
+    .filter(p => p.length > 0)
+    .join('/');
+  const ruta = '/' + fullPath;
 
-  const ruta = path.startsWith('/') ? path : '/' + path;
+  if (ruta === '/inicio') return true;
+
   const idPantalla = session.buscarPantallaPorDescripcion(ruta);
-  if (idPantalla === null) return of(true);
+  if (idPantalla === null) return router.parseUrl('/acceso-denegado');
 
   const idAreaSistemaUsuario = session.idAreaSistemaUsuario();
   const idPerfil = session.idPerfil();
-  if (!idAreaSistemaUsuario || !idPerfil) return of(true);
+  if (!idAreaSistemaUsuario || !idPerfil) return router.parseUrl('/acceso-denegado');
 
   return permisosService.getSecciones({ idAreaSistemaUsuario, idPantalla, idPerfil }).pipe(
     tap(secciones => session.setSecciones(secciones)),
