@@ -1,6 +1,7 @@
 import { Injectable, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import { SeguimientoService } from '../data/seguimiento.service';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
@@ -16,8 +17,8 @@ export class HistorialFacade {
   private fb = inject(FormBuilder);
 
   readonly form: FormGroup = this.fb.group({
-    folioApelacion: [''],
-    idNomenclatura: [null],
+    folioApelacion: ['', Validators.required],
+    idNomenclatura: [null, Validators.required],
   });
 
   readonly nomenclaturas = signal<CatalogoItem[]>([]);
@@ -51,13 +52,20 @@ export class HistorialFacade {
       return;
     }
 
+    if (this.form.invalid) {
+      this.modal.info('Campos requeridos', 'Debe ingresar el folio de apelación y seleccionar una nomenclatura.');
+      return;
+    }
+
     this.buscando.set(true);
     this.buscado.set(false);
 
     const raw = this.form.value;
-    const params: { idSala: number; folioApelacion?: string; idNomenclatura?: number } = { idSala };
-    if (raw.folioApelacion?.trim()) params.folioApelacion = raw.folioApelacion.trim();
-    if (raw.idNomenclatura != null) params.idNomenclatura = raw.idNomenclatura;
+    const params = {
+      idSala,
+      folioApelacion: raw.folioApelacion.trim(),
+      idNomenclatura: raw.idNomenclatura,
+    };
 
     this.service.getHistorial(params)
       .pipe(
@@ -74,11 +82,21 @@ export class HistorialFacade {
           this.buscado.set(true);
 
           if (res.movimientos.length === 0) {
-            this.modal.info('Sin movimientos', 'No se encontraron movimientos.');
+            this.movimientos.set([]);
+            this.folioOficialia.set('');
+            this.folioApelacionInfo.set(null);
+            this.modal.info('Sin resultados', 'No se encontró el registro con el folio y la nomenclatura ingresada');
           }
         },
-        error: () => {
-          this.modal.error('Error de consulta', 'Ocurrió un error al consultar el historial.');
+        error: (err: HttpErrorResponse) => {
+          this.movimientos.set([]);
+          this.folioOficialia.set('');
+          this.folioApelacionInfo.set(null);
+          if (err.status === 404) {
+            this.modal.info('Sin resultados', 'No se encontró el registro con el folio y la nomenclatura ingresada');
+          } else {
+            this.modal.error('Error de consulta', 'Ocurrió un error al consultar el historial.');
+          }
           this.buscado.set(true);
         },
       });
