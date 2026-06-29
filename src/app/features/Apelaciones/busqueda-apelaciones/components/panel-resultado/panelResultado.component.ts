@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/core';
 
 import { BusquedaFacade } from '../../facades/busqueda.facade';
 import { PanelDetalleComponent } from '../panel-detalle/panelDetalle.component';
@@ -35,8 +35,29 @@ export class PanelResultadosComponent {
     { field: 'magistradoAsignado', label: 'Magistrado Asignado', visible: true },
     { field: 'fechaHoraRecepcion', label: 'Fecha de Recepcion', visible: true, type: 'date' },
     { field: 'observaciones', label: 'Observaciones', visible: true },
+    { field: 'esReposicion', label: 'Reposición', visible: true, type: 'boolean' },
+    { field: 'asunto', label: 'Asunto', visible: true },
+    { field: 'lugarHechos', label: 'Lugar de los Hechos', visible: true },
     { field: 'fechaHoraIngresoJuz', label: 'Fecha de Ingreso al Juzgado', visible: true, type: 'date' },
   ];
+
+  readonly columnasVisibles = computed(() => {
+    const data = this.busqueda.resultados();
+    const threshold = 0.5;
+
+    if (data.length === 0) return this.columnas;
+
+    return this.columnas.map(col => {
+      const llenas = data.filter(r => {
+        const valor = (r as any)[col.field];
+        return valor != null && valor !== '';
+      }).length;
+      return {
+        ...col,
+        visible: llenas / data.length >= threshold,
+      };
+    });
+  });
 
   seleccionar(r: Resultado): void {
     this.busqueda.seleccionarFila(r);
