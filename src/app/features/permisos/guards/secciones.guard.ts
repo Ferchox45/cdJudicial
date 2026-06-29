@@ -21,6 +21,10 @@ export const seccionesGuard: CanActivateFn = (route) => {
   const idPantalla = session.buscarPantallaPorDescripcion(ruta);
   if (idPantalla === null) return router.parseUrl('/acceso-denegado');
 
+  if (['/turnos', '/turnarToca', '/recibirtoca'].includes(ruta)) {
+    session.setPantalla(idPantalla);
+  }
+
   const idAreaSistemaUsuario = session.idAreaSistemaUsuario();
   const idPerfil = session.idPerfil();
   if (!idAreaSistemaUsuario || !idPerfil) return router.parseUrl('/acceso-denegado');
