@@ -62,10 +62,14 @@ export class ApelacionApiService {
       .pipe(timeout(15000), map((res) => res.data));
   }
 
-  certificarApelacion(id: number): Observable<{ certificacion: string }> {
+  certificarApelacion(id: number, idPantalla: number | null, idAreaSistemaUsuario: number | null): Observable<{ certificacion: string }> {
+    const params: Record<string, number> = {};
+    if (idPantalla != null) params['idPantalla'] = idPantalla;
+    if (idAreaSistemaUsuario != null) params['idAreaSistemaUsuario'] = idAreaSistemaUsuario;
     return this.http
       .get<{ data: { certificacion: string } }>(
-        `${this.apiEndpoint}/api/apelaciones/${id}/certificacion`
+        `${this.apiEndpoint}/api/apelaciones/${id}/certificacion`,
+        { params }
       )
       .pipe(timeout(15000), map((res) => res.data));
   }

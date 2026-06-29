@@ -308,7 +308,7 @@ private wireCallbacks(): void {
           }
           return;
         }
-        this.apelacionService.certificarApelacion(id).subscribe({
+        this.apelacionService.certificarApelacion(id, this.sessionState.idPantalla(), this.sessionState.idAreaSistemaUsuario()).subscribe({
           next: (res) => {
             this.certBase64.set(res.certificacion);
             this.mostrarCertificacion.set(true);
