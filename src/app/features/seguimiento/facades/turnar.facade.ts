@@ -19,6 +19,8 @@ export class TurnarFacade {
 
   readonly idPerfil = computed(() => this.sessionState.idPerfil());
   readonly idSala = computed(() => this.sessionState.idSala());
+  private readonly idAreaSistemaUsuario = computed(() => this.sessionState.idAreaSistemaUsuario());
+  private readonly idPantalla = computed(() => this.sessionState.idPantalla());
 
   readonly turnables = signal<ApelacionTurnable[]>([]);
   readonly opcionesTurnar = signal<OpcionesTurnar | null>(null);
@@ -59,13 +61,17 @@ export class TurnarFacade {
   readonly seleccionCount = computed(() => this.idsSeleccionados().length);
   readonly haySeleccion = computed(() => this.idsSeleccionados().length > 0);
 
-  readonly requiereProyectista = computed(() =>
-    this.destinoSeleccionado() === 6,
-  );
+  readonly requiereProyectista = computed(() => {
+    if (this.proyectistas().length === 0 || this.destinoSeleccionado() == null) return false;
+    const destino = this.perfilesDestino().find(p => p.id === this.destinoSeleccionado());
+    return destino != null && /proyectista/i.test(destino.descripcion);
+  });
 
-  readonly requiereMagistrado = computed(() =>
-    this.perfilActual() === 6 && this.destinoSeleccionado() !== 5,
-  );
+  readonly requiereMagistrado = computed(() => {
+    if (this.magistrados().length === 0 || this.destinoSeleccionado() == null) return false;
+    const destino = this.perfilesDestino().find(p => p.id === this.destinoSeleccionado());
+    return destino != null && /magistrado/i.test(destino.descripcion);
+  });
 
   readonly turnarHabilitado = computed(() =>
     this.idsSeleccionados().length > 0
@@ -114,10 +120,12 @@ export class TurnarFacade {
   verificarPendientes(): void {
     const perfil = this.idPerfil();
     const sala = this.idSala();
-    if (perfil == null || sala == null) return;
+    const idArea = this.idAreaSistemaUsuario();
+    const idPant = this.idPantalla();
+    if (perfil == null || sala == null || idArea == null || idPant == null) return;
 
     this.verificandoPendientes.set(true);
-    this.service.getPendientesRecibir({ idSala: sala, idPerfil: perfil, pagina: 1, limite: 1 })
+    this.service.getPendientesRecibir({ idSala: sala, idPerfil: perfil, pagina: 1, limite: 1, idAreaSistemaUsuario: idArea, idPantalla: idPant })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.verificandoPendientes.set(false)),
@@ -137,10 +145,12 @@ export class TurnarFacade {
 
   cargarCatalogos(): void {
     const perfil = this.idPerfil();
-    if (perfil == null) return;
+    const idArea = this.idAreaSistemaUsuario();
+    const idPant = this.idPantalla();
+    if (perfil == null || idArea == null || idPant == null) return;
 
     this.cargandoCatalogos.set(true);
-    this.service.getOpcionesTurnar(perfil)
+    this.service.getOpcionesTurnar(perfil, idArea, idPant)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.cargandoCatalogos.set(false)),
@@ -173,7 +183,9 @@ export class TurnarFacade {
   private _ejecutarCarga(page: number, mostrarModal: boolean): void {
     const perfil = this.idPerfil();
     const sala = this.currentIdSala();
-    if (perfil == null || sala == null) return;
+    const idArea = this.idAreaSistemaUsuario();
+    const idPant = this.idPantalla();
+    if (perfil == null || sala == null || idArea == null || idPant == null) return;
 
     this.cargando.set(true);
 
@@ -182,6 +194,8 @@ export class TurnarFacade {
       idPerfil: perfil,
       pagina: page,
       limite: this.porPagina(),
+      idAreaSistemaUsuario: idArea,
+      idPantalla: idPant,
     })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
@@ -211,7 +225,9 @@ export class TurnarFacade {
   turnar(): void {
     const destino = this.destinoSeleccionado();
     const perfil = this.idPerfil();
-    if (destino == null || perfil == null) return;
+    const idArea = this.idAreaSistemaUsuario();
+    const idPant = this.idPantalla();
+    if (destino == null || perfil == null || idArea == null || idPant == null) return;
 
     const ids = this.idsSeleccionados().map(Number);
     if (ids.length === 0) return;
@@ -223,6 +239,8 @@ export class TurnarFacade {
       idPerfilOrigen: perfil,
       idPerfilDestino: destino,
       idGeneralDestino: this.idGeneralDestino(),
+      idAreaSistemaUsuario: idArea,
+      idPantalla: idPant,
     })
       .pipe(
         takeUntilDestroyed(this.destroyRef),

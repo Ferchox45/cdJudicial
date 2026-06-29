@@ -19,23 +19,25 @@ export class SeguimientoService {
   private http = inject(HttpClient);
   private apiEndpoint = environment.apiUrl;
 
-  getOpcionesTurnar(idPerfil: number): Observable<OpcionesTurnar> {
+  getOpcionesTurnar(idPerfil: number, idAreaSistemaUsuario: number, idPantalla: number): Observable<OpcionesTurnar> {
     return this.http
       .get<ApiResponseEnvelope<OpcionesTurnar>>(
         `${this.apiEndpoint}/api/movimientos/turnar/opciones`,
-        { params: { idPerfil } },
+        { params: { idPerfil, idAreaSistemaUsuario, idPantalla } },
       )
       .pipe(map(res => res.data));
   }
 
   getApelacionesTurnar(
-    params: { idSala: number; idPerfil: number; pagina: number; limite: number },
+    params: { idSala: number; idPerfil: number; pagina: number; limite: number; idAreaSistemaUsuario: number; idPantalla: number },
   ): Observable<PagedResult<ApelacionTurnable>> {
     let httpParams = new HttpParams()
       .set('idSala', params.idSala)
       .set('idPerfil', params.idPerfil)
       .set('page', params.pagina)
-      .set('limit', params.limite);
+      .set('limit', params.limite)
+      .set('idAreaSistemaUsuario', params.idAreaSistemaUsuario)
+      .set('idPantalla', params.idPantalla);
 
     return this.http
       .get<ApiResponseEnvelope<ApiPagedData<ApelacionTurnable>>>(
@@ -56,6 +58,8 @@ export class SeguimientoService {
     idPerfilOrigen: number;
     idPerfilDestino: number;
     idGeneralDestino: number | null;
+    idAreaSistemaUsuario: number;
+    idPantalla: number;
   }): Observable<BatchResponse> {
     return this.http
       .post<ApiResponseEnvelope<BatchResponse>>(
@@ -66,13 +70,15 @@ export class SeguimientoService {
   }
 
   getPendientesRecibir(
-    params: { idSala: number; idPerfil: number; pagina: number; limite: number },
+    params: { idSala: number; idPerfil: number; pagina: number; limite: number; idAreaSistemaUsuario: number; idPantalla: number },
   ): Observable<PagedResult<MovimientoPendiente>> {
     let httpParams = new HttpParams()
       .set('idSala', params.idSala)
       .set('idPerfil', params.idPerfil)
       .set('page', params.pagina)
-      .set('limit', params.limite);
+      .set('limit', params.limite)
+      .set('idAreaSistemaUsuario', params.idAreaSistemaUsuario)
+      .set('idPantalla', params.idPantalla);
 
     return this.http
       .get<ApiResponseEnvelope<ApiPagedData<MovimientoPendiente>>>(
@@ -88,11 +94,11 @@ export class SeguimientoService {
       );
   }
 
-  recibir(ids: number[]): Observable<BatchResponse> {
+  recibir(ids: number[], idAreaSistemaUsuario: number, idPantalla: number): Observable<BatchResponse> {
     return this.http
       .post<ApiResponseEnvelope<BatchResponse>>(
         `${this.apiEndpoint}/api/movimientos/recibir`,
-        { ids },
+        { ids, idAreaSistemaUsuario, idPantalla },
       )
       .pipe(map(res => res.data));
   }

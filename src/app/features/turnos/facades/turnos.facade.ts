@@ -203,13 +203,15 @@ export class TurnosFacade {
     }
 
     const idPerfil = this.idPerfil();
-    if (idPerfil == null) {
-      this.modal.error('Error', 'Perfil de usuario no disponible.');
+    const idArea = this.sessionState.idAreaSistemaUsuario();
+    const idPant = this.sessionState.idPantalla();
+    if (idPerfil == null || idArea == null || idPant == null) {
+      this.modal.error('Error', 'Parámetros de sesión no disponibles.');
       return;
     }
 
     this.exportando.set(true);
-    this.seguimientoService.getOpcionesTurnar(idPerfil).pipe(
+    this.seguimientoService.getOpcionesTurnar(idPerfil, idArea, idPant).pipe(
       switchMap(opciones => {
         const destinoId = opciones.perfilesDestino[0]?.id;
         if (destinoId == null) {
@@ -220,6 +222,8 @@ export class TurnosFacade {
           idPerfilOrigen: idPerfil,
           idPerfilDestino: destinoId,
           idGeneralDestino: null,
+          idAreaSistemaUsuario: idArea,
+          idPantalla: idPant,
         });
       }),
       takeUntilDestroyed(this.destroyRef),
@@ -254,8 +258,15 @@ export class TurnosFacade {
       return;
     }
 
+    const idArea = this.sessionState.idAreaSistemaUsuario();
+    const idPant = this.sessionState.idPantalla();
+    if (idArea == null || idPant == null) {
+      this.modal.error('Error', 'Parámetros de sesión no disponibles.');
+      return;
+    }
+
     this.importando.set(true);
-    this.seguimientoService.recibir(idsMovimiento).pipe(
+    this.seguimientoService.recibir(idsMovimiento, idArea, idPant).pipe(
       takeUntilDestroyed(this.destroyRef),
       finalize(() => this.importando.set(false)),
     ).subscribe({

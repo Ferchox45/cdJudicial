@@ -16,6 +16,8 @@ export class RecibirFacade {
 
   private readonly idPerfil = computed(() => this.sessionState.idPerfil());
   private readonly idSala = computed(() => this.sessionState.idSala());
+  private readonly idAreaSistemaUsuario = computed(() => this.sessionState.idAreaSistemaUsuario());
+  private readonly idPantalla = computed(() => this.sessionState.idPantalla());
 
   readonly pendientes = signal<MovimientoPendiente[]>([]);
   readonly idsSeleccionados = signal<number[]>([]);
@@ -71,11 +73,13 @@ export class RecibirFacade {
   private _ejecutarCarga(page: number, mostrarModal: boolean): void {
     const perfil = this.idPerfil();
     const sala = this.idSala();
-    if (perfil == null || sala == null) return;
+    const idArea = this.idAreaSistemaUsuario();
+    const idPant = this.idPantalla();
+    if (perfil == null || sala == null || idArea == null || idPant == null) return;
 
     this.cargando.set(true);
 
-    this.service.getPendientesRecibir({ idSala: sala, idPerfil: perfil, pagina: page, limite: this.porPagina() })
+    this.service.getPendientesRecibir({ idSala: sala, idPerfil: perfil, pagina: page, limite: this.porPagina(), idAreaSistemaUsuario: idArea, idPantalla: idPant })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.cargando.set(false)),
@@ -106,7 +110,14 @@ export class RecibirFacade {
 
     this.recibiendo.set(true);
 
-    this.service.recibir(ids.map(Number))
+    const idArea = this.idAreaSistemaUsuario();
+    const idPant = this.idPantalla();
+    if (idArea == null || idPant == null) {
+      this.modal.error('Error', 'No se encontraron los parámetros de sesión.');
+      return;
+    }
+
+    this.service.recibir(ids.map(Number), idArea, idPant)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.recibiendo.set(false)),
