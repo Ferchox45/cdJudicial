@@ -19,6 +19,18 @@ export class TurnosComponent implements OnInit {
   readonly facade = inject(TurnosFacade);
   private readonly sessionState = inject(SessionStateService);
 
+  get titulo(): string {
+    return this.facade.perfilTipo() === 'comun'
+      ? 'Exportación de Tocas'
+      : 'Importación de Tocas';
+  }
+
+  get subtitulo(): string {
+    return this.facade.perfilTipo() === 'comun'
+      ? 'Consulte y exporte las apelaciones turnadas a la sala correspondiente.'
+      : 'Consulte e importe las apelaciones turnadas a la sala correspondiente.';
+  }
+
   get sidebarActions(): SidebarAction[] {
     const buscando = this.facade.buscando();
     const exportando = this.facade.exportando();

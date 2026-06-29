@@ -108,7 +108,9 @@
               class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
                      focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
               <option value="">Seleccione un estado</option>
-              <option value="0">Pendiente</option>
+              @if (facade.perfilTipo() !== 'oficialia') {
+                <option value="0">Pendiente</option>
+              }
               <option value="1">Exportado</option>
               <option value="2">Importado</option>
             </select>
