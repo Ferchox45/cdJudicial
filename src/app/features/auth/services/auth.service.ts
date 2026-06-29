@@ -3,17 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, switchMap, tap, of, finalize, map, catchError } from 'rxjs';
-import { LoginResponse, ProfileResponse } from '../models/auth.model';
+import { LoginResponse, ProfileResponse, AuthenticatorStatus } from '../models/auth.model';
 import { environment } from '../../../../environments/environment';
 import { SessionStateService } from '../../permisos/services/session-state.service';
-
-export interface AuthenticatorStatus {
-  activo: boolean;
-  encodedSecret: string | null;
-  user: string;
-  lastLoginUTC: string | null;
-}
-
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   API = environment.apiUrl;
@@ -36,6 +28,10 @@ export class AuthService {
   }
 
   private tryRestoreSession() {
+    if (this.accessToken()) {
+      this.initialized.set(true);
+      return;
+    }
     this.http.post<LoginResponse>(`${this.API}/api/auth/refresh`, {})
       .pipe(
         takeUntilDestroyed(this.destroyRef),

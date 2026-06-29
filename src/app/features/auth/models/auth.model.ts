@@ -15,3 +15,10 @@ export interface ProfileResponse {
     foto: string;
   };
 }
+
+export interface AuthenticatorStatus {
+  activo: boolean;
+  encodedSecret: string | null;
+  user: string;
+  lastLoginUTC: string | null;
+}
