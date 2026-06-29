@@ -49,7 +49,7 @@
             </button>
 
             @if (menuColumnasAbierto) {
-              <div class="absolute left-0 top-full mt-2 z-30 w-64 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
+              <div class="absolute left-0 top-full mt-2 z-30 min-w-64 max-w-[90vw] bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
                 <div class="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200">
                   <span class="text-[0.65rem] font-bold text-gray-400 uppercase tracking-wider">Columnas</span>
                   <div class="flex gap-2">
@@ -142,6 +142,8 @@
                     <span
                       [class]="getCellClass(col, r)"
                       [title]="$any(r)[col.field]">{{ formatDate($any(r)[col.field], col.dateFormat) }}</span>
+                  } @else if (col.type === 'boolean') {
+                    <span [class]="getCellClass(col, r)">{{ $any(r)[col.field] ? 'SI' : 'NO' }}</span>
                   } @else {
                     <span
                       [class]="getCellClass(col, r)"

@@ -36,6 +36,7 @@ export class TablaReutilizableComponent {
 
   abierto = true;
   menuColumnasAbierto = false;
+  private userModifiedColumns = false;
 
   columnas = signal<TablaColumna[]>([]);
   columnasVisibles = computed(() => this.columnas().filter(c => c.visible));
@@ -43,7 +44,7 @@ export class TablaReutilizableComponent {
   constructor() {
     effect(() => {
       const cols = this.columns();
-      if (cols.length > 0) {
+      if (cols.length > 0 && !this.userModifiedColumns) {
         this.columnas.set(cols.map(c => ({...c})));
       }
     });
@@ -63,6 +64,7 @@ export class TablaReutilizableComponent {
   }
 
   toggleColumna(field: string): void {
+    this.userModifiedColumns = true;
     this.columnas.update(cols =>
       cols.map(c => c.field === field ? { ...c, visible: !c.visible } : c)
     );
@@ -97,10 +99,12 @@ formatDate(value: string, format: string = 'dd/MM/yyyy HH:mm:ss'): string {
 }
 
   mostrarTodas(): void {
+    this.userModifiedColumns = true;
     this.columnas.update(cols => cols.map(c => ({ ...c, visible: true })));
   }
 
   ocultarTodas(): void {
+    this.userModifiedColumns = true;
     this.columnas.update(cols => cols.map(c => ({ ...c, visible: false })));
   }
 }
