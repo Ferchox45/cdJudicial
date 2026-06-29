@@ -44,6 +44,7 @@ export class RecibirComponent {
 get columnas(): TablaColumna[] {
   return [
     { field: 'folioApelacion', label: 'Folio de Apelación', visible: true },
+    { field: 'nomenclatura', label: 'Nomenclatura', visible: true },
     { field: 'cargoOrigen', label: 'Cargo de Origen', visible: true },
     { field: 'nombreTurna', label: 'Turnado por', visible: true },
     { field: 'fechaTurno', label: 'Fecha y Hora de Turno', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy HH:mm' },

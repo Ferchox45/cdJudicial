@@ -1,7 +1,7 @@
 <div class="bg-white border border-gray-200 rounded-lg">
 
   <app-table-reutilizable
-    [columns]="columnas"
+    [columns]="columnasVisibles()"
     [data]="busqueda.resultados()"
     [paginaActual]="busqueda.paginaActual()"
     [totalPaginas]="busqueda.totalPaginas()"

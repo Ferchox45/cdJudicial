@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://festival-transmission-breathing-venture.trycloudflare.com',
+  apiUrl: 'https://rip-apply-introducing-corn.trycloudflare.com',
   baseUrl: '/',
 };
