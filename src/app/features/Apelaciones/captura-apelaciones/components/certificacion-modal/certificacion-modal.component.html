@@ -1,6 +1,6 @@
 @if (visible()) {
   <div class="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
       <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 shrink-0">
         <h3 class="text-lg font-bold text-gray-800">Certificación</h3>
         <button type="button" (click)="close.emit()" aria-label="Cerrar"
@@ -13,10 +13,7 @@
 
       <div class="flex-1 min-h-0 overflow-auto bg-gray-50 p-6">
         @if (textoCertificacion) {
-          <pre
-            class="text-xs font-mono text-gray-800 whitespace-pre-wrap leading-relaxed m-0"
-            style="column-count: 2; column-gap: 2rem; column-rule: 1px solid #e5e7eb;"
-          >{{ textoCertificacion }}</pre>
+          <pre class="text-xs font-mono text-gray-800 whitespace-pre-wrap leading-relaxed m-0">{{ textoCertificacion }}</pre>
         } @else {
           <div class="flex items-center justify-center h-full text-gray-400 text-sm">
             Cargando certificación...

@@ -253,10 +253,9 @@
             <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
               Asunto <span class="text-red-500">*</span>
             </label>
-            <textarea rows="3" formControlName="asunto" placeholder="Describa el asunto..."
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
-                     focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
-            </textarea>
+              <textarea rows="3" formControlName="asunto" placeholder="Describa el asunto..."
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                       focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none"></textarea>
               @if (form().get('asunto')?.invalid && form().get('asunto')?.touched) {
               <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
             }
@@ -266,11 +265,10 @@
             <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">
               Lugar de los Hechos <span class="text-red-500">*</span>
             </label>
-            <textarea rows="3" formControlName="lugarHechos"
-              placeholder="Indique el lugar donde ocurrieron los hechos..."
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
-                     focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
-            </textarea>
+              <textarea rows="3" formControlName="lugarHechos"
+                placeholder="Indique el lugar donde ocurrieron los hechos..."
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
+                       focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none"></textarea>
             @if (form().get('lugarHechos')?.invalid && form().get('lugarHechos')?.touched) {
             <span class="text-red-600 text-xs mt-1 font-medium">Campo obligatorio</span>
             }
@@ -280,10 +278,9 @@
         @if (busquedaExitosa()) {
           <div class="col-span-1 md:col-span-3">
             <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Magistrados</label>
-            <textarea rows="2" formControlName="magistrados" readonly
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-gray-50
-                     focus:outline-none resize-none cursor-not-allowed">
-            </textarea>
+              <textarea rows="2" formControlName="magistrados" readonly
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-gray-50
+                       focus:outline-none resize-none cursor-not-allowed"></textarea>
           </div>
         }
 
@@ -297,8 +294,7 @@
           <textarea rows="3" formControlName="observaciones"
             placeholder="Añade cualquier nota u observación importante..."
             class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm
-                   focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">
-          </textarea>
+                   focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none"></textarea>
         </div>
 
       </div>
