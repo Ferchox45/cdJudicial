@@ -1,6 +1,6 @@
-<div class="min-h-screen flex">
+<div class="min-h-screen flex flex-col md:flex-row">
 
-  <div class="flex flex-col justify-center px-16 py-12 w-1/2 bg-white">
+  <div class="flex flex-col justify-center px-4 sm:px-8 md:px-16 py-12 w-full md:w-1/2 bg-white">
 
     <h1 class="text-4xl font-black text-gray-900 leading-tight mb-3">
       Configura tu acceso
@@ -43,13 +43,17 @@
       <!-- Selector: Perfil -->
       <div class="mb-4">
         <select (change)="onPerfilChange($event)"
-          [disabled]="cargandoAreas() || cargandoPerfil() || paso() === 'areas' || perfiles().length === 0"
-          class="w-full px-4 py-3 rounded-lg text-sm border border-gray-300 bg-white text-gray-700
+          [disabled]="cargandoAreas() || cargandoPerfil()"
+          class="w-full px-4 py-3 rounded-lg text-sm border border-gray-300
                  focus:outline-none focus:ring-2 focus:ring-forest focus:border-transparent
                  cursor-pointer appearance-none
                  bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22none%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%221.5%22%3E%3Cpath%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')]
-                 bg-size-[20px] bg-position-[right_12px_center] bg-no-repeat pr-10
-                 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100">
+                 bg-size-[20px] bg-position-[right_12px_center] bg-no-repeat pr-10"
+          [class.bg-gray-100]="paso() === 'areas'"
+          [class.text-gray-500]="paso() === 'areas'"
+          [class.opacity-50]="paso() === 'areas'"
+          [class.bg-white]="paso() === 'perfiles'"
+          [class.text-gray-700]="paso() === 'perfiles'">
           <option value="-1">Selecciona un perfil</option>
           @for (p of perfiles(); track p.idSistemaPerfil; let i = $index) {
             <option [value]="i">{{ p.descripcion }}</option>
@@ -60,13 +64,17 @@
       <!-- Selector: Subárea (opcional) -->
       <div class="mb-4">
         <select (change)="onSubareaChange($event)"
-          [disabled]="cargandoAreas() || cargandoPerfil() || paso() === 'areas' || subareas().length === 0"
-          class="w-full px-4 py-3 rounded-lg text-sm border border-gray-300 bg-white text-gray-700
+          [disabled]="cargandoAreas() || cargandoPerfil()"
+          class="w-full px-4 py-3 rounded-lg text-sm border border-gray-300
                  focus:outline-none focus:ring-2 focus:ring-forest focus:border-transparent
                  cursor-pointer appearance-none
                  bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22none%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%221.5%22%3E%3Cpath%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')]
-                 bg-size-[20px] bg-position-[right_12px_center] bg-no-repeat pr-10
-                 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100">
+                 bg-size-[20px] bg-position-[right_12px_center] bg-no-repeat pr-10"
+          [class.bg-gray-100]="paso() === 'areas'"
+          [class.text-gray-500]="paso() === 'areas'"
+          [class.opacity-50]="paso() === 'areas'"
+          [class.bg-white]="paso() === 'perfiles'"
+          [class.text-gray-700]="paso() === 'perfiles'">
           <option value="-1">Selecciona una subárea (opcional)</option>
           @for (s of subareas(); track s.idSubArea; let i = $index) {
             <option [value]="i">{{ s.descripcion }}</option>
@@ -135,7 +143,7 @@
 
   </div>
 
-  <div class="w-1/2 relative overflow-hidden">
+  <div class="hidden md:block w-1/2 relative overflow-hidden">
     <img
       src="assets/images/Fondo_Acceso.jpg"
       alt="Acceso al sistema judicial"
