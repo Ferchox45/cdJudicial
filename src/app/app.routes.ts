@@ -9,25 +9,32 @@ export const routes: Routes = [
   {
     path: '',
     redirectTo: 'login',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
 
   // 2. RUTA DEL LOGIN
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
+    loadComponent: () =>
+      import('./features/auth/login/login.component').then((m) => m.LoginComponent),
   },
 
   // 3. RUTA DE SELECCIÓN DE PERMISOS (standalone, sin layout dashboard)
   {
     path: 'seleccion-permisos',
-    loadComponent: () => import('./features/permisos/components/seleccion-permisos/seleccion-permisos.component').then(m => m.SeleccionPermisosComponent)
+    loadComponent: () =>
+      import('./features/permisos/components/seleccion-permisos/seleccion-permisos.component').then(
+        (m) => m.SeleccionPermisosComponent,
+      ),
   },
 
   // 3b. RUTA DE ACCESO DENEGADO
   {
     path: 'acceso-denegado',
-    loadComponent: () => import('./shared/components/access-denied/access-denied.component').then(m => m.AccessDeniedComponent)
+    loadComponent: () =>
+      import('./shared/components/access-denied/access-denied.component').then(
+        (m) => m.AccessDeniedComponent,
+      ),
   },
 
   // 4. RUTAS PRIVADAS (Dashboard y sub-módulos)
@@ -38,49 +45,60 @@ export const routes: Routes = [
     children: [
       {
         path: 'inicio',
-        loadComponent: () => import('./features/dashboard/components/home/home.component').then(m => m.HomeComponent),
+        loadComponent: () =>
+          import('./features/dashboard/components/home/home.component').then(
+            (m) => m.HomeComponent,
+          ),
         data: { breadcrumb: 'Inicio' },
-        canActivate: [seccionesGuard]
+        canActivate: [seccionesGuard],
       },
 
       // --- MÓDULO APELACIONES ---
       {
         path: 'capturaApelacion',
         data: { breadcrumb: 'Captura de Apelación' },
-        loadChildren: () => import('./features/apelaciones/captura-apelaciones/captura-apelaciones.routes').then(m => m.CAPTURA_APELACIONES_ROUTES)
+        loadChildren: () =>
+          import('./features/apelaciones/captura-apelaciones/captura-apelaciones.routes').then(
+            (m) => m.CAPTURA_APELACIONES_ROUTES,
+          ),
       },
 
       // --- MÓDULO BUSCADORES ---
       {
         path: '',
-        loadChildren: () => import('./features/buscadores/buscadores.routes').then(m => m.BUSCADORES_ROUTES)
+        loadChildren: () =>
+          import('./features/buscadores/buscadores.routes').then((m) => m.BUSCADORES_ROUTES),
       },
 
       // --- MÓDULO ESTADÍSTICAS ---
       {
         path: '',
-        loadChildren: () => import('./features/estadisticas/estadisticas-plana/estadisticas.routes').then(m => m.ESTADISTICAS_ROUTES)
+        loadChildren: () =>
+          import('./features/estadisticas/estadisticas-plana/estadisticas.routes').then(
+            (m) => m.ESTADISTICAS_ROUTES,
+          ),
       },
 
       // --- MÓDULO TURNOS ---
       {
         path: 'turnos',
         data: { breadcrumb: 'Turnar a Sala' },
-        loadChildren: () => import('./features/turnos/turnos.routes').then(m => m.TURNOS_ROUTES)
+        loadChildren: () => import('./features/turnos/turnos.routes').then((m) => m.TURNOS_ROUTES),
       },
 
       // --- MÓDULO SEGUIMIENTO ---
       {
         path: '',
-        loadChildren: () => import('./features/seguimiento/seguimiento.routes').then(m => m.SEGUIMIENTO_ROUTES),
+        loadChildren: () =>
+          import('./features/seguimiento/seguimiento.routes').then((m) => m.SEGUIMIENTO_ROUTES),
       },
-    ]
+    ],
   },
 
   // 5. WILDCARD (Ruta no encontrada)
   {
     path: '**',
     redirectTo: 'inicio',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ];

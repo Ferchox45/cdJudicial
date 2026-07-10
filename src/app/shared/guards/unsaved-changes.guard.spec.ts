@@ -23,7 +23,7 @@ describe('unsavedChangesGuard', () => {
   it('should show confirmation dialog when there are unsaved changes', () => {
     const component = createComponent(true);
     const result = TestBed.runInInjectionContext(() =>
-      unsavedChangesGuard(component, null as any, null as any)
+      unsavedChangesGuard(component, null as any, null as any),
     ) as any;
     expect(typeof result.subscribe).toBe('function');
   });

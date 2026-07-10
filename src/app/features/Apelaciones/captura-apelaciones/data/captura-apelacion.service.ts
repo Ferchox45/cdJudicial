@@ -23,16 +23,12 @@ export class ApelacionApiService {
 
   getCatalogoCaptura(idMateria: number): Observable<CapturaApelacionCatalogos> {
     const call$ = this.http
-      .get<{ data: CapturaApelacionCatalogos }>(
-        `${this.apiEndpoint}/api/apelaciones/catalogos`,
-        { params: { idMateria } }
-      )
+      .get<{ data: CapturaApelacionCatalogos }>(`${this.apiEndpoint}/api/apelaciones/catalogos`, {
+        params: { idMateria },
+      })
       .pipe(map((res) => res.data));
 
-    return this.cache.manejarCache(
-      `${CACHE_KEYS_APELACION.CAPTURA}_${idMateria}`,
-      call$
-    );
+    return this.cache.manejarCache(`${CACHE_KEYS_APELACION.CAPTURA}_${idMateria}`, call$);
   }
 
   // Métodos sin Caché
@@ -40,38 +36,54 @@ export class ApelacionApiService {
   getLocalidades(idMunicipio: number): Observable<any[]> {
     return this.http
       .get<{ data: { localidades: any[] } }>(
-        `${this.apiEndpoint}/api/apelaciones/${idMunicipio}/localidades`
+        `${this.apiEndpoint}/api/apelaciones/${idMunicipio}/localidades`,
       )
-      .pipe(timeout(15000), map((res) => res.data.localidades));
+      .pipe(
+        timeout(15000),
+        map((res) => res.data.localidades),
+      );
   }
 
   getTiposApelacion(idApelacion: number): Observable<any[]> {
     return this.http
       .get<{ data: { tiposApelacion: any[] } }>(
-        `${this.apiEndpoint}/api/apelaciones/${idApelacion}/tipos-apelacion`
+        `${this.apiEndpoint}/api/apelaciones/${idApelacion}/tipos-apelacion`,
       )
-      .pipe(timeout(15000), map((res) => res.data.tiposApelacion));
+      .pipe(
+        timeout(15000),
+        map((res) => res.data.tiposApelacion),
+      );
   }
 
   buscarPorFolio(folio: string): Observable<BusquedaRapida> {
     const param = encodeURIComponent(folio.trim());
     return this.http
       .get<{ data: BusquedaRapida }>(
-        `${this.apiEndpoint}/api/apelaciones/detalle?folioOficialia=${param}`
+        `${this.apiEndpoint}/api/apelaciones/detalle?folioOficialia=${param}`,
       )
-      .pipe(timeout(15000), map((res) => res.data));
+      .pipe(
+        timeout(15000),
+        map((res) => res.data),
+      );
   }
 
-  certificarApelacion(id: number, idPantalla: number | null, idAreaSistemaUsuario: number | null): Observable<{ certificacion: string }> {
+  certificarApelacion(
+    id: number,
+    idPantalla: number | null,
+    idAreaSistemaUsuario: number | null,
+  ): Observable<{ certificacion: string }> {
     const params: Record<string, number> = {};
     if (idPantalla != null) params['idPantalla'] = idPantalla;
     if (idAreaSistemaUsuario != null) params['idAreaSistemaUsuario'] = idAreaSistemaUsuario;
     return this.http
       .get<{ data: { certificacion: string } }>(
         `${this.apiEndpoint}/api/apelaciones/${id}/certificacion`,
-        { params }
+        { params },
       )
-      .pipe(timeout(15000), map((res) => res.data));
+      .pipe(
+        timeout(15000),
+        map((res) => res.data),
+      );
   }
 
   guardarApelacion(payload: ApelacionPayload): Observable<ApelacionSaveResponse> {

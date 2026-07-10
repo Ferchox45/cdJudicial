@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal, TemplateRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+  TemplateRef,
+} from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { PaginacionComponent } from '../paginacion/paginacion.component';
 import { TablaColumna } from './models/tabla-columna.model';
@@ -39,13 +49,13 @@ export class TablaReutilizableComponent {
   private userModifiedColumns = false;
 
   columnas = signal<TablaColumna[]>([]);
-  columnasVisibles = computed(() => this.columnas().filter(c => c.visible));
+  columnasVisibles = computed(() => this.columnas().filter((c) => c.visible));
 
   constructor() {
     effect(() => {
       const cols = this.columns();
       if (cols.length > 0 && !this.userModifiedColumns) {
-        this.columnas.set(cols.map(c => ({...c})));
+        this.columnas.set(cols.map((c) => ({ ...c })));
       }
     });
   }
@@ -65,8 +75,8 @@ export class TablaReutilizableComponent {
 
   toggleColumna(field: string): void {
     this.userModifiedColumns = true;
-    this.columnas.update(cols =>
-      cols.map(c => c.field === field ? { ...c, visible: !c.visible } : c)
+    this.columnas.update((cols) =>
+      cols.map((c) => (c.field === field ? { ...c, visible: !c.visible } : c)),
     );
   }
 
@@ -82,8 +92,8 @@ export class TablaReutilizableComponent {
     return col.cellClass(row[col.field], row);
   }
 
-formatDate(value: string, format: string = 'dd/MM/yyyy HH:mm:ss'): string {
-  if (!value || value === '—' || value === '-') {
+  formatDate(value: string, format: string = 'dd/MM/yyyy HH:mm:ss'): string {
+    if (!value || value === '—' || value === '-') {
       return '—';
     }
     try {
@@ -94,17 +104,17 @@ formatDate(value: string, format: string = 'dd/MM/yyyy HH:mm:ss'): string {
   }
 
   onSelectAllChange(event: Event): void {
-  const checked = (event.target as HTMLInputElement).checked;
-  this.selectAllChange.emit(checked);
-}
+    const checked = (event.target as HTMLInputElement).checked;
+    this.selectAllChange.emit(checked);
+  }
 
   mostrarTodas(): void {
     this.userModifiedColumns = true;
-    this.columnas.update(cols => cols.map(c => ({ ...c, visible: true })));
+    this.columnas.update((cols) => cols.map((c) => ({ ...c, visible: true })));
   }
 
   ocultarTodas(): void {
     this.userModifiedColumns = true;
-    this.columnas.update(cols => cols.map(c => ({ ...c, visible: false })));
+    this.columnas.update((cols) => cols.map((c) => ({ ...c, visible: false })));
   }
 }

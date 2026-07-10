@@ -30,30 +30,30 @@ export class RecibirFacade {
   readonly porPagina = computed(() => this._porPagina());
   readonly paginaActual = computed(() => this._paginacion().page);
   readonly totalResultados = computed(() => this._paginacion().total);
-  readonly totalPaginas = computed(() =>
-    Math.ceil(this._paginacion().total / this._paginacion().limit) || 1,
+  readonly totalPaginas = computed(
+    () => Math.ceil(this._paginacion().total / this._paginacion().limit) || 1,
   );
 
   readonly seleccionCount = computed(() => this.idsSeleccionados().length);
   readonly haySeleccion = computed(() => this.idsSeleccionados().length > 0);
 
   toggleSeleccion(id: number): void {
-    this.idsSeleccionados.update(ids => {
-      if (ids.includes(id)) return ids.filter(i => i !== id);
+    this.idsSeleccionados.update((ids) => {
+      if (ids.includes(id)) return ids.filter((i) => i !== id);
       return [...ids, id];
     });
   }
 
   toggleSeleccionTodos(ids: number[]): void {
     const actuales = this.idsSeleccionados();
-    const todosSeleccionados = ids.every(id => actuales.includes(id));
+    const todosSeleccionados = ids.every((id) => actuales.includes(id));
     if (todosSeleccionados) {
       this.idsSeleccionados.set([]);
     } else {
       this.idsSeleccionados.set([...ids]);
     }
-    this.pendientes.update(rows =>
-      rows.map(r => ({ ...r, seleccionado: !todosSeleccionados })),
+    this.pendientes.update((rows) =>
+      rows.map((r) => ({ ...r, seleccionado: !todosSeleccionados })),
     );
   }
 
@@ -79,14 +79,26 @@ export class RecibirFacade {
 
     this.cargando.set(true);
 
-    this.service.getPendientesRecibir({ idSala: sala, idPerfil: perfil, pagina: page, limite: this.porPagina(), idAreaSistemaUsuario: idArea, idPantalla: idPant })
+    this.service
+      .getPendientesRecibir({
+        idSala: sala,
+        idPerfil: perfil,
+        pagina: page,
+        limite: this.porPagina(),
+        idAreaSistemaUsuario: idArea,
+        idPantalla: idPant,
+      })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.cargando.set(false)),
       )
       .subscribe({
         next: (res) => {
-          const resultados = res.resultados.map(r => ({ ...r, id: Number(r.id), seleccionado: false }));
+          const resultados = res.resultados.map((r) => ({
+            ...r,
+            id: Number(r.id),
+            seleccionado: false,
+          }));
           this._cache.set(page, resultados);
           this.pendientes.set(resultados);
           this._paginacion.set({ ...res.paginacion, total: res.paginacion.total });
@@ -117,14 +129,18 @@ export class RecibirFacade {
       return;
     }
 
-    this.service.recibir(ids.map(Number), idArea, idPant)
+    this.service
+      .recibir(ids.map(Number), idArea, idPant)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.recibiendo.set(false)),
       )
       .subscribe({
         next: (res) => {
-          this.modal.success('Recepción exitosa', `Se recibieron ${res.afectados} de ${res.total} movimientos correctamente`);
+          this.modal.success(
+            'Recepción exitosa',
+            `Se recibieron ${res.afectados} de ${res.total} movimientos correctamente`,
+          );
           this.idsSeleccionados.set([]);
           this._cache.clear();
           this._ejecutarCarga(1, false);
@@ -140,7 +156,7 @@ export class RecibirFacade {
 
     if (this._cache.has(pagina)) {
       this.pendientes.set(this._cache.get(pagina)!);
-      this._paginacion.update(p => ({ ...p, page: pagina }));
+      this._paginacion.update((p) => ({ ...p, page: pagina }));
       return;
     }
 

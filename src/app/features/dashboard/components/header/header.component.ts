@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { SessionStateService } from '../../../permisos/services/session-state.service';
 import { AuthService } from '../../../auth/services/auth.service';
@@ -25,7 +34,7 @@ export class MainHeaderComponent {
   perfilDropdownAbierto = signal(false);
 
   togglePerfilDropdown(): void {
-    this.perfilDropdownAbierto.update(v => !v);
+    this.perfilDropdownAbierto.update((v) => !v);
   }
 
   cerrarPerfilDropdown(): void {

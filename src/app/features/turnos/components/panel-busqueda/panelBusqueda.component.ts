@@ -18,9 +18,11 @@ export class PanelBusquedaTurnosComponent {
   }
 
   updateForm(field: keyof TurnoSearchForm, value: string): void {
-    this.facade.form.update(f => ({ ...f, [field]: value }));
+    this.facade.form.update((f) => ({ ...f, [field]: value }));
   }
 
   abierto = true;
-  toggle(): void { this.abierto = !this.abierto; }
+  toggle(): void {
+    this.abierto = !this.abierto;
+  }
 }

@@ -19,18 +19,27 @@ export class SeguimientoService {
   private http = inject(HttpClient);
   private apiEndpoint = environment.apiUrl;
 
-  getOpcionesTurnar(idPerfil: number, idAreaSistemaUsuario: number, idPantalla: number): Observable<OpcionesTurnar> {
+  getOpcionesTurnar(
+    idPerfil: number,
+    idAreaSistemaUsuario: number,
+    idPantalla: number,
+  ): Observable<OpcionesTurnar> {
     return this.http
       .get<ApiResponseEnvelope<OpcionesTurnar>>(
         `${this.apiEndpoint}/api/movimientos/turnar/opciones`,
         { params: { idPerfil, idAreaSistemaUsuario, idPantalla } },
       )
-      .pipe(map(res => res.data));
+      .pipe(map((res) => res.data));
   }
 
-  getApelacionesTurnar(
-    params: { idSala: number; idPerfil: number; pagina: number; limite: number; idAreaSistemaUsuario: number; idPantalla: number },
-  ): Observable<PagedResult<ApelacionTurnable>> {
+  getApelacionesTurnar(params: {
+    idSala: number;
+    idPerfil: number;
+    pagina: number;
+    limite: number;
+    idAreaSistemaUsuario: number;
+    idPantalla: number;
+  }): Observable<PagedResult<ApelacionTurnable>> {
     let httpParams = new HttpParams()
       .set('idSala', params.idSala)
       .set('idPerfil', params.idPerfil)
@@ -46,7 +55,7 @@ export class SeguimientoService {
       )
       .pipe(
         timeout(15000),
-        map(res => ({
+        map((res) => ({
           resultados: res.data.data,
           paginacion: { total: res.data.total, page: res.data.page, limit: res.data.limit },
         })),
@@ -66,12 +75,17 @@ export class SeguimientoService {
         `${this.apiEndpoint}/api/movimientos/turnar`,
         payload,
       )
-      .pipe(map(res => res.data));
+      .pipe(map((res) => res.data));
   }
 
-  getPendientesRecibir(
-    params: { idSala: number; idPerfil: number; pagina: number; limite: number; idAreaSistemaUsuario: number; idPantalla: number },
-  ): Observable<PagedResult<MovimientoPendiente>> {
+  getPendientesRecibir(params: {
+    idSala: number;
+    idPerfil: number;
+    pagina: number;
+    limite: number;
+    idAreaSistemaUsuario: number;
+    idPantalla: number;
+  }): Observable<PagedResult<MovimientoPendiente>> {
     let httpParams = new HttpParams()
       .set('idSala', params.idSala)
       .set('idPerfil', params.idPerfil)
@@ -87,20 +101,25 @@ export class SeguimientoService {
       )
       .pipe(
         timeout(15000),
-        map(res => ({
+        map((res) => ({
           resultados: res.data.data,
           paginacion: { total: res.data.total, page: res.data.page, limit: res.data.limit },
         })),
       );
   }
 
-  recibir(ids: number[], idAreaSistemaUsuario: number, idPantalla: number): Observable<BatchResponse> {
+  recibir(
+    ids: number[],
+    idAreaSistemaUsuario: number,
+    idPantalla: number,
+  ): Observable<BatchResponse> {
     return this.http
-      .post<ApiResponseEnvelope<BatchResponse>>(
-        `${this.apiEndpoint}/api/movimientos/recibir`,
-        { ids, idAreaSistemaUsuario, idPantalla },
-      )
-      .pipe(map(res => res.data));
+      .post<ApiResponseEnvelope<BatchResponse>>(`${this.apiEndpoint}/api/movimientos/recibir`, {
+        ids,
+        idAreaSistemaUsuario,
+        idPantalla,
+      })
+      .pipe(map((res) => res.data));
   }
 
   getCatalogosHistorial(): Observable<{ nomenclaturas: CatalogoItem[] }> {
@@ -108,13 +127,19 @@ export class SeguimientoService {
       .get<ApiResponseEnvelope<{ nomenclaturas: CatalogoItem[] }>>(
         `${this.apiEndpoint}/api/estados/catalogos`,
       )
-      .pipe(map(res => ({ nomenclaturas: res.data.nomenclaturas })));
+      .pipe(map((res) => ({ nomenclaturas: res.data.nomenclaturas })));
   }
 
-  getHistorial(params: { idSala: number; folioApelacion?: string; idNomenclatura?: number }): Observable<HistorialResponse> {
+  getHistorial(params: {
+    idSala: number;
+    folioApelacion?: string;
+    idNomenclatura?: number;
+  }): Observable<HistorialResponse> {
     let httpParams = new HttpParams().set('idSala', params.idSala);
-    if (params.folioApelacion?.trim()) httpParams = httpParams.set('folioApelacion', params.folioApelacion.trim());
-    if (params.idNomenclatura != null) httpParams = httpParams.set('idNomenclatura', params.idNomenclatura);
+    if (params.folioApelacion?.trim())
+      httpParams = httpParams.set('folioApelacion', params.folioApelacion.trim());
+    if (params.idNomenclatura != null)
+      httpParams = httpParams.set('idNomenclatura', params.idNomenclatura);
     return this.http
       .get<ApiResponseEnvelope<HistorialResponse>>(
         `${this.apiEndpoint}/api/movimientos/historial`,
@@ -122,7 +147,7 @@ export class SeguimientoService {
       )
       .pipe(
         timeout(15000),
-        map(res => res.data),
+        map((res) => res.data),
       );
   }
 }

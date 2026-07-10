@@ -20,9 +20,7 @@ export class AnexoApiService {
 
   getCatalogoAnexo(): Observable<CapturaAnexoCatalogos> {
     const call$ = this.http
-      .get<{ data: { anexos: any[] } }>(
-        `${this.apiEndpoint}/api/apelaciones/anexos/catalogos`
-      )
+      .get<{ data: { anexos: any[] } }>(`${this.apiEndpoint}/api/apelaciones/anexos/catalogos`)
       .pipe(map((res) => ({ anexo: res?.data?.anexos ?? [] })));
 
     return this.cache.manejarCache(CACHE_KEYS_ANEXO.ANEXO, call$);

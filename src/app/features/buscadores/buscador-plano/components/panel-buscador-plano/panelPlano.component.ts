@@ -13,7 +13,6 @@ import { SearchFormPlana } from '../../models/buscador-plano.model';
   templateUrl: './panelPlano.component.html',
 })
 export class PanelBusquedaPlanoComponent {
-
   readonly catalogos = inject(CatalogosFacade);
 
   readonly buscarPlana = inject(BusquedaPlanaFacade);
@@ -23,9 +22,11 @@ export class PanelBusquedaPlanoComponent {
   }
 
   updateForm(field: keyof SearchFormPlana, value: string): void {
-    this.buscarPlana.form.update(f => ({ ...f, [field]: value }));
+    this.buscarPlana.form.update((f) => ({ ...f, [field]: value }));
   }
 
   abierto = true;
-  toggle(): void { this.abierto = !this.abierto; }
+  toggle(): void {
+    this.abierto = !this.abierto;
+  }
 }

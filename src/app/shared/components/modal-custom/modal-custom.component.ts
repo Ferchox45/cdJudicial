@@ -1,5 +1,12 @@
 import { A11yModule } from '@angular/cdk/a11y';
-import { ChangeDetectionStrategy, Component, computed, HostListener, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  HostListener,
+  input,
+  output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 let modalIdCounter = 0;
@@ -9,7 +16,7 @@ let modalIdCounter = 0;
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, A11yModule],
-  templateUrl: './modal-custom.component.html'
+  templateUrl: './modal-custom.component.html',
 })
 export class CustomModalComponent {
   readonly show = input(false);
@@ -26,7 +33,7 @@ export class CustomModalComponent {
   readonly modalId = `modal-${++modalIdCounter}`;
 
   readonly role = computed(() =>
-    this.type() === 'error' || this.type() === 'success' ? 'alert' : 'dialog'
+    this.type() === 'error' || this.type() === 'success' ? 'alert' : 'dialog',
   );
 
   @HostListener('document:keydown.escape')

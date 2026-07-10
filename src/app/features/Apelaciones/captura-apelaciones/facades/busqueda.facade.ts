@@ -1,6 +1,11 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { AnexoBusquedaRapida, BusquedaRapida, Parte, RelacionBusqueda } from '../models/busqueda-rap.model';
+import {
+  AnexoBusquedaRapida,
+  BusquedaRapida,
+  Parte,
+  RelacionBusqueda,
+} from '../models/busqueda-rap.model';
 import { ApelacionApiService } from '../data/captura-apelacion.service';
 import {
   mapearPartesDesdeRelaciones,
@@ -12,10 +17,24 @@ import {
 import { DelitoDisponible } from '../models/apelacion-aux.model';
 
 const CAMPOS_BUSQUEDA = [
-  'materiaId', 'apelacionId', 'tipoApelacionId', 'tipoEscritoId',
-  'juzgadoId', 'municipioId', 'localidadId', 'magistradoId', 'etniaId',
-  'expedienteCausa', 'fechaAuto', 'fojas', 'expedienteAcumulado',
-  'folioOficio', 'esReposicion', 'observaciones', 'lugarHechos', 'asunto',
+  'materiaId',
+  'apelacionId',
+  'tipoApelacionId',
+  'tipoEscritoId',
+  'juzgadoId',
+  'municipioId',
+  'localidadId',
+  'magistradoId',
+  'etniaId',
+  'expedienteCausa',
+  'fechaAuto',
+  'fojas',
+  'expedienteAcumulado',
+  'folioOficio',
+  'esReposicion',
+  'observaciones',
+  'lugarHechos',
+  'asunto',
   'magistrados',
 ];
 
@@ -27,7 +46,6 @@ export interface ResultadoBusqueda {
 
 @Injectable()
 export class BusquedaFacade {
-
   private apelacionService = inject(ApelacionApiService);
 
   readonly buscando = signal(false);
@@ -42,9 +60,9 @@ export class BusquedaFacade {
   readonly sala = signal<string | null>(null);
   readonly importadoNS = signal<boolean | null>(null);
 
-  onExito?:  (resultado: ResultadoBusqueda) => void;
-  onError?:  (msg: string) => void;
-  onNuevo?:  () => void;
+  onExito?: (resultado: ResultadoBusqueda) => void;
+  onError?: (msg: string) => void;
+  onNuevo?: () => void;
 
   buscar(form: FormGroup, delitosDisponibles: DelitoDisponible[]): void {
     const folio = form.get('busquedaRapida')?.value?.trim();
@@ -86,7 +104,7 @@ export class BusquedaFacade {
         this.anexos.set([]);
         this.onError?.(
           `No se encontró ninguna apelación con el folio "${folio}".
-           Por favor, verifique el folio e intente de nuevo.`
+           Por favor, verifique el folio e intente de nuevo.`,
         );
         form.reset();
         form.patchValue({ busquedaRapida: folio });
@@ -139,7 +157,7 @@ export class BusquedaFacade {
   private cargarEnFormulario(
     form: FormGroup,
     d: BusquedaRapida,
-    delitosDisponibles: DelitoDisponible[]
+    delitosDisponibles: DelitoDisponible[],
   ): void {
     this.apelacionId.set(d.id);
     this.importadoNS.set(d.importadoNS ?? null);
@@ -148,26 +166,26 @@ export class BusquedaFacade {
     this.folioOficialia.set(d.folioOficilia ?? null);
     this.sala.set(d.sala ?? null);
     form.patchValue({
-      folioTentativo:      d.folioTentativo,
-      expedienteCausa:     d.expedienteCausa,
+      folioTentativo: d.folioTentativo,
+      expedienteCausa: d.expedienteCausa,
       expedienteAcumulado: d.expedienteAcumulado,
-      folioOficio:         d.folioOficio,
-      fojas:               d.fojas,
-      esReposicion:        d.esReposicion,
-      fechaAuto:           toDateInput(d.fechaAuto),
-      observaciones:       d.observaciones ?? '',
-      materiaId:           d.catMateria?.id ?? null,
-      apelacionId:         d.catApelacion?.id ?? null,
-      tipoApelacionId:     d.tipoApelacion?.id ?? null,
-      tipoEscritoId:       d.tipoEscrito?.id ?? null,
-      juzgadoId:           d.catJuzgado?.id ?? null,
-      magistradoId:        d.catMagistrado?.id ?? null,
-      etniaId:             d.catEtnia?.id ?? null,
-      lugarHechos:         d.lugarHechos ?? null,
-      magistrados:         d.magistrados ?? '',
-      asunto:              d.asunto ?? null,
-      municipioId:         d.catMunicipio?.id ?? null,
-      localidadId:         d.catLocalidad?.id ?? null,
+      folioOficio: d.folioOficio,
+      fojas: d.fojas,
+      esReposicion: d.esReposicion,
+      fechaAuto: toDateInput(d.fechaAuto),
+      observaciones: d.observaciones ?? '',
+      materiaId: d.catMateria?.id ?? null,
+      apelacionId: d.catApelacion?.id ?? null,
+      tipoApelacionId: d.tipoApelacion?.id ?? null,
+      tipoEscritoId: d.tipoEscrito?.id ?? null,
+      juzgadoId: d.catJuzgado?.id ?? null,
+      magistradoId: d.catMagistrado?.id ?? null,
+      etniaId: d.catEtnia?.id ?? null,
+      lugarHechos: d.lugarHechos ?? null,
+      magistrados: d.magistrados ?? '',
+      asunto: d.asunto ?? null,
+      municipioId: d.catMunicipio?.id ?? null,
+      localidadId: d.catLocalidad?.id ?? null,
     });
 
     this.bloquearCampos(form);

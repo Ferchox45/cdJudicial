@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://rip-apply-introducing-corn.trycloudflare.com',
+  apiUrl: 'https://ice-pam-digit-italia.trycloudflare.com',
   baseUrl: '/',
 };

@@ -1,6 +1,7 @@
 <!-- paginacion.component.html -->
-<div class="flex flex-col md:flex-row items-center justify-between px-4 md:px-5 py-4 border-t border-gray-100 bg-bg-light gap-4">
-
+<div
+  class="flex flex-col md:flex-row items-center justify-between px-4 md:px-5 py-4 border-t border-gray-100 bg-bg-light gap-4"
+>
   <!-- Info + selector -->
   <div class="flex items-center gap-4 flex-wrap justify-center">
     <span class="text-sm text-gray-500">
@@ -10,10 +11,10 @@
     <div class="flex items-center gap-2">
       <span class="text-xs text-gray-400">Mostrar:</span>
       <select
-        class="border border-gray-200 rounded-md py-1 px-2 text-sm text-gray-700 bg-white transition-colors cursor-pointer
-               focus:outline-none focus:border-strong-coffee focus:ring-1 focus:ring-strong-coffee"
+        class="border border-gray-200 rounded-md py-1 px-2 text-sm text-gray-700 bg-white transition-colors cursor-pointer focus:outline-none focus:border-strong-coffee focus:ring-1 focus:ring-strong-coffee"
         [value]="porPagina()"
-        (change)="cambiarLimit($event)">
+        (change)="cambiarLimit($event)"
+      >
         <option [value]="5">5</option>
         <option [value]="10">10</option>
         <option [value]="20">20</option>
@@ -24,22 +25,25 @@
 
   <!-- Botones -->
   <div class="flex items-center gap-1.5 flex-wrap justify-center">
-
-    <button type="button"
-      class="h-8 px-2.5 rounded-md text-sm border border-transparent hover:bg-gray-200 transition-colors
-             disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed text-gray-600"
+    <button
+      type="button"
+      class="h-8 px-2.5 rounded-md text-sm border border-transparent hover:bg-gray-200 transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed text-gray-600"
       [disabled]="paginaActual() === 1"
-      (click)="irAPagina(paginaActual() - 1)">
+      (click)="irAPagina(paginaActual() - 1)"
+    >
       Ant
     </button>
 
     @for (p of paginasVisibles(); track $index) {
       @if (p === '...') {
-        <span class="h-8 px-2 flex items-end justify-center text-gray-400 tracking-widest text-sm pb-1 select-none">
+        <span
+          class="h-8 px-2 flex items-end justify-center text-gray-400 tracking-widest text-sm pb-1 select-none"
+        >
           ...
         </span>
       } @else {
-        <button type="button"
+        <button
+          type="button"
           class="min-w-8 h-8 md:min-w-11 md:h-11 px-2 rounded-md text-sm font-medium transition-colors border cursor-pointer"
           [class.bg-strong-coffee]="p === paginaActual()"
           [class.text-white]="p === paginaActual()"
@@ -47,19 +51,20 @@
           [class.bg-zinc-100]="p !== paginaActual()"
           [class.border-zinc-200]="p !== paginaActual()"
           [class.text-gray-700]="p !== paginaActual()"
-          (click)="irAPagina($any(p))">
+          (click)="irAPagina($any(p))"
+        >
           {{ p }}
         </button>
       }
     }
 
-    <button type="button"
-      class="h-8 px-2.5 rounded-md text-sm border border-transparent hover:bg-gray-200 transition-colors
-             disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed text-gray-600"
+    <button
+      type="button"
+      class="h-8 px-2.5 rounded-md text-sm border border-transparent hover:bg-gray-200 transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed text-gray-600"
       [disabled]="paginaActual() === totalPaginas() || totalPaginas() === 0"
-      (click)="irAPagina(paginaActual() + 1)">
+      (click)="irAPagina(paginaActual() + 1)"
+    >
       Sig
     </button>
-
   </div>
 </div>

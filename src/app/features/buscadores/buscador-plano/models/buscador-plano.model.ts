@@ -1,4 +1,4 @@
-export interface SearchFormPlana{
+export interface SearchFormPlana {
   folioOficialia: string | null;
   folioApelacion: string | null;
   idSala: string | null;
@@ -48,22 +48,22 @@ export interface BusquedaPlanoDTO {
   fechaFin?: string;
 }
 
-export interface ApiResponsePlana{
-    data:{
+export interface ApiResponsePlana {
+  data: {
     planos: ResultadoBusquedaPlana[];
     total: number;
-    page:  number;
+    page: number;
     limit: number;
   };
 }
 
-export interface PaginacionPlana{
+export interface PaginacionPlana {
   total: number;
-  page:  number;
+  page: number;
   limit: number;
 }
 
-export interface PagedResultPlana{
+export interface PagedResultPlana {
   resultados: ResultadoBusquedaPlana[];
   paginacion: PaginacionPlana;
 }

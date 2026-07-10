@@ -1,68 +1,112 @@
 @if (show()) {
-  <div cdkTrapFocus [cdkTrapFocus]="show()" class="fixed inset-0 z-9999 flex items-center justify-center p-4">
-
+  <div
+    cdkTrapFocus
+    [cdkTrapFocus]="show()"
+    class="fixed inset-0 z-9999 flex items-center justify-center p-4"
+  >
     <!-- Fondo oscuro -->
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300" (click)="onCancel()"></div>
+    <div
+      class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300"
+      (click)="onCancel()"
+    ></div>
 
     <!-- Tarjeta del Modal -->
-    <div [attr.role]="role()" [attr.aria-labelledby]="modalId + '-title'" [attr.aria-describedby]="modalId + '-desc'"
-         class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 md:p-8 text-center transform transition-all duration-300 scale-100 opacity-100">
-
+    <div
+      [attr.role]="role()"
+      [attr.aria-labelledby]="modalId + '-title'"
+      [attr.aria-describedby]="modalId + '-desc'"
+      class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 md:p-8 text-center transform transition-all duration-300 scale-100 opacity-100"
+    >
       <!-- Botón Cerrar (X) -->
-      <button type="button" (click)="onCancel()" aria-label="Cerrar modal"
-        class="absolute top-4 right-4 bg-gray-400 hover:bg-gray-500 text-white rounded-full w-7 h-7 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300">
-  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-  </svg>
-</button>
+      <button
+        type="button"
+        (click)="onCancel()"
+        aria-label="Cerrar modal"
+        class="absolute top-4 right-4 bg-gray-400 hover:bg-gray-500 text-white rounded-full w-7 h-7 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
       <!-- Icono Dinámico -->
-      <div class="mx-auto flex h-16 w-16 items-center justify-center mb-5 shadow-sm"
-           [ngClass]="{
-             'bg-orange-50 text-orange-500 rounded-2xl': type() === 'info',
-             'bg-red-50 text-red-600 rounded-full': type() === 'error',
-             'bg-green-50 text-forest rounded-full': type() === 'success'
-           }">
-
+      <div
+        class="mx-auto flex h-16 w-16 items-center justify-center mb-5 shadow-sm"
+        [ngClass]="{
+          'bg-orange-50 text-orange-500 rounded-2xl': type() === 'info',
+          'bg-red-50 text-red-600 rounded-full': type() === 'error',
+          'bg-green-50 text-forest rounded-full': type() === 'success',
+        }"
+      >
         @if (type() === 'info') {
           <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <circle cx="12" cy="12" r="9" stroke-width="2" stroke="currentColor" fill="none"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01" />
+            <circle cx="12" cy="12" r="9" stroke-width="2" stroke="currentColor" fill="none" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2.5"
+              d="M12 8v4m0 4h.01"
+            />
           </svg>
         } @else if (type() === 'error') {
           <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
           </svg>
         } @else {
           <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2.5"
+              d="M5 13l4 4L19 7"
+            />
           </svg>
         }
       </div>
 
       <!-- Textos -->
       <h3 [id]="modalId + '-title'" class="text-xl font-bold text-gray-900 mb-2">{{ title() }}</h3>
-      <p [id]="modalId + '-desc'" class="text-sm text-gray-500 mb-8 leading-relaxed">{{ message() }}</p>
+      <p [id]="modalId + '-desc'" class="text-sm text-gray-500 mb-8 leading-relaxed">
+        {{ message() }}
+      </p>
 
       <!-- Botones Dinámicos -->
       @if (type() === 'info') {
         <div class="flex gap-3 w-full">
-          <button cdkFocusInitial (click)="onCancel()"
-                  class="flex-1 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-100 hover:bg-gray-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300 active:scale-95">
+          <button
+            cdkFocusInitial
+            (click)="onCancel()"
+            class="flex-1 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-100 hover:bg-gray-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300 active:scale-95"
+          >
             {{ cancelText() }}
           </button>
 
-          <button (click)="onConfirm()"
-                  class="flex-1 rounded-xl px-4 py-3 text-sm font-semibold text-white bg-orange-400 hover:bg-orange-500 shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400 active:scale-95">
+          <button
+            (click)="onConfirm()"
+            class="flex-1 rounded-xl px-4 py-3 text-sm font-semibold text-white bg-orange-400 hover:bg-orange-500 shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400 active:scale-95"
+          >
             {{ confirmText() }}
           </button>
         </div>
       } @else {
-        <button cdkFocusInitial (click)="onConfirm()"
-                class="w-full rounded-xl px-4 py-3 text-sm font-bold text-white shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-95"
-                [ngClass]="{
-                  'bg-red-600 hover:bg-red-700 focus:ring-red-600': type() === 'error',
-                  'bg-forest hover:opacity-90 focus:ring-forest': type() === 'success'
-                }">
+        <button
+          cdkFocusInitial
+          (click)="onConfirm()"
+          class="w-full rounded-xl px-4 py-3 text-sm font-bold text-white shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-95"
+          [ngClass]="{
+            'bg-red-600 hover:bg-red-700 focus:ring-red-600': type() === 'error',
+            'bg-forest hover:opacity-90 focus:ring-forest': type() === 'success',
+          }"
+        >
           {{ confirmText() }}
         </button>
       }

@@ -1,10 +1,10 @@
-import { CatalogoItem } from "../../../../core/models/catalogo-global.model";
+import { CatalogoItem } from '../../../../core/models/catalogo-global.model';
 export interface Anexo {
-  idAnexo:   number;
-  cantidad:  number;
-  tipo:      string;
-  esValor:   boolean;
-  monto:     number | null;
+  idAnexo: number;
+  cantidad: number;
+  tipo: string;
+  esValor: boolean;
+  monto: number | null;
   otroAnexo: string;
 }
 

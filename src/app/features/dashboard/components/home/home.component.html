@@ -1,104 +1,157 @@
 <div class="max-w-5xl mx-auto flex flex-col items-center py-8 md:py-12 px-4">
+  <div class="text-center mb-10">
+    <h1 class="text-2xl md:text-4xl font-bold text-heading mb-3">
+      Sistema de Gestión Judicial en Material Penal
+    </h1>
+    <p class="text-gray-500 text-sm md:text-base max-w-xl mx-auto">
+      Plataforma digital del Tribunal de Oaxaca para la gestión eficiente de trámites judiciales en
+      línea.
+    </p>
+  </div>
 
-      <div class="text-center mb-10">
-        <h1 class="text-2xl md:text-4xl font-bold text-heading mb-3">
-          Sistema de Gestión Judicial en Material Penal
-        </h1>
-        <p class="text-gray-500 text-sm md:text-base max-w-xl mx-auto">
-          Plataforma digital del Tribunal de Oaxaca para la gestión eficiente de trámites judiciales en línea.
-        </p>
-      </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full max-w-4xl">
+    @if (tieneApelaciones()) {
+      <app-action-card
+        ruta="/capturaApelacion"
+        title="Apelaciones"
+        description="Gestión, seguimiento y resolución de apelaciones de manera digital."
+      >
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+      </app-action-card>
+    }
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full max-w-4xl">
+    @if (tieneBuscadorPlano()) {
+      <app-action-card
+        ruta="/buscadorPlano"
+        title="Buscador Plano"
+        description="Búsqueda profunda y plana de registros con filtros avanzados."
+      >
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M8 10h6M8 13h4"
+          />
+        </svg>
+      </app-action-card>
+    }
 
-        @if (tieneApelaciones()) {
-          <app-action-card
-            ruta="/capturaApelacion"
-            title="Apelaciones"
-            description="Gestión, seguimiento y resolución de apelaciones de manera digital.">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-          </app-action-card>
-        }
+    @if (tieneBuscadorHistorico()) {
+      <app-action-card
+        ruta="/buscadorHistorico"
+        title="Buscador Histórico"
+        description="Búsqueda profunda y plana de registros con filtros avanzados."
+      >
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M10 8v3l2 1.5"
+          />
+        </svg>
+      </app-action-card>
+    }
 
-        @if (tieneBuscadorPlano()) {
-          <app-action-card
-            ruta="/buscadorPlano"
-            title="Buscador Plano"
-            description="Búsqueda profunda y plana de registros con filtros avanzados.">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h6M8 13h4"/>
-            </svg>
-          </app-action-card>
-        }
+    @if (tieneEstadisticas()) {
+      <app-action-card
+        ruta="/estadisticas"
+        title="Estadísticas de Apelaciones"
+        description="Realice búsquedas y estadísticas de apelaciones del sistema."
+      >
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+          />
+        </svg>
+      </app-action-card>
+    }
 
-        @if (tieneBuscadorHistorico()) {
-          <app-action-card
-            ruta="/buscadorHistorico"
-            title="Buscador Histórico"
-            description="Búsqueda profunda y plana de registros con filtros avanzados.">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 8v3l2 1.5"/>
-            </svg>
-          </app-action-card>
-        }
+    @if (tieneTurnos()) {
+      <app-action-card ruta="/turnos" [title]="tituloTurnos()" [description]="descripcionTurnos()">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+          />
+        </svg>
+      </app-action-card>
+    }
 
-        @if (tieneEstadisticas()) {
-          <app-action-card
-            ruta="/estadisticas"
-            title="Estadísticas de Apelaciones"
-            description="Realice búsquedas y estadísticas de apelaciones del sistema.">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-            </svg>
-          </app-action-card>
-        }
+    @if (tieneRecibirToca()) {
+      <app-action-card
+        ruta="/recibirtoca"
+        title="Recibir Toca"
+        description="Recepción y registro de tocas provenientes de oficialía."
+      >
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+          />
+        </svg>
+      </app-action-card>
+    }
 
-        @if (tieneTurnos()) {
-          <app-action-card
-            ruta="/turnos"
-            [title]="tituloTurnos()"
-            [description]="descripcionTurnos()">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
-            </svg>
-          </app-action-card>
-        }
+    @if (tieneTurnarToca()) {
+      <app-action-card
+        ruta="/turnarToca"
+        title="Turnar Toca"
+        description="Turnado de tocas a sala, proyectista o magistrado."
+      >
+        <svg class="w-7 h-7 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
+          />
+        </svg>
+      </app-action-card>
+    }
 
-        @if (tieneRecibirToca()) {
-          <app-action-card
-            ruta="/recibirtoca"
-            title="Recibir Toca"
-            description="Recepción y registro de tocas provenientes de oficialía.">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-            </svg>
-          </app-action-card>
-        }
-
-        @if (tieneTurnarToca()) {
-          <app-action-card
-            ruta="/turnarToca"
-            title="Turnar Toca"
-            description="Turnado de tocas a sala, proyectista o magistrado.">
-            <svg class="w-7 h-7 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"/>
-            </svg>
-          </app-action-card>
-        }
-
-        @if (tieneHistorial()) {
-          <app-action-card
-            ruta="/historial"
-            title="Historial de Movimientos"
-            description="Historial cronológico de movimientos de la toca.">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-          </app-action-card>
-        }
-      </div>
-    </div>
+    @if (tieneHistorial()) {
+      <app-action-card
+        ruta="/historial"
+        title="Historial de Movimientos"
+        description="Historial cronológico de movimientos de la toca."
+      >
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+      </app-action-card>
+    }
+  </div>
+</div>

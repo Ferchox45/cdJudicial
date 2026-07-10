@@ -6,7 +6,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './action-card.component.html',
-  imports: [RouterLink]
+  imports: [RouterLink],
 })
 export class ActionCardComponent {
   title = input.required<string>();

@@ -33,9 +33,9 @@ export class CertificacionModalComponent {
   }
 
   protected imprimir(): void {
-  const win = window.open('', '_blank');
-  if (!win) return;
-win.document.write(`
+    const win = window.open('', '_blank');
+    if (!win) return;
+    win.document.write(`
   <!DOCTYPE html>
   <html>
   <head>
@@ -67,17 +67,16 @@ win.document.write(`
   </body>
   </html>
 `);
-  win.document.close();
-  win.focus();
-  win.print();
-}
+    win.document.close();
+    win.focus();
+    win.print();
+  }
 
-private escaparHtml(texto: string): string {
-  return texto
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
+  private escaparHtml(texto: string): string {
+    return texto
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
 }

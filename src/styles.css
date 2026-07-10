@@ -1,42 +1,40 @@
-
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Colores oficiales del poder judicial*/
 
 @theme {
-  --color-forest:       #315d53;
-  --color-sage:         #c1ded4;
-  --color-sage-dark:    #a8ccc0;
-  --color-sand:         #eadcbd;
-  --color-bronze:       #B2915B;
-  --color-bronze-dark:  #a4763e;
-  --color-cream:        #faf8f5;
-  --color-cream-dark:   #f4f1e7;
-  --color-beige:        #e6ddc7;
-  --color-strong-coffee: #6A4322;
-  --color-bon-white:    #F8F9FA;
-  --color-grey:         #6C757D;
+  --color-forest: #315d53;
+  --color-sage: #c1ded4;
+  --color-sage-dark: #a8ccc0;
+  --color-sand: #eadcbd;
+  --color-bronze: #b2915b;
+  --color-bronze-dark: #a4763e;
+  --color-cream: #faf8f5;
+  --color-cream-dark: #f4f1e7;
+  --color-beige: #e6ddc7;
+  --color-strong-coffee: #6a4322;
+  --color-bon-white: #f8f9fa;
+  --color-grey: #6c757d;
 
-  --color-page-bg:      #fafbfc;
-  --color-page-subtle:  #f1f4f2;
-  --color-heading:      #1e3e2b;
-  --color-sidebar-bg:   #d6e9dc;
+  --color-page-bg: #fafbfc;
+  --color-page-subtle: #f1f4f2;
+  --color-heading: #1e3e2b;
+  --color-sidebar-bg: #d6e9dc;
   --color-sidebar-border: #b8d4c0;
   --color-row-selected: #eef6f3;
-  --color-bg-light:     #fafafa;
+  --color-bg-light: #fafafa;
 
   --text-3xs: 8px;
   --text-2xs: 9px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }
-
-
-

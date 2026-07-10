@@ -1,99 +1,140 @@
 <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
-
-  <div class="bg-forest px-5 py-3.5 flex items-center justify-between cursor-pointer select-none border-b border-forest/20"
-    (click)="toggle()">
+  <div
+    class="bg-forest px-5 py-3.5 flex items-center justify-between cursor-pointer select-none border-b border-forest/20"
+    (click)="toggle()"
+  >
     <div class="flex items-center gap-2.5 text-white">
       <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <path
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        />
       </svg>
       <h2 class="text-sm font-bold text-white uppercase tracking-wide m-0">Opciones de Búsqueda</h2>
     </div>
-    <svg class="w-4 h-4 text-white transition-transform duration-200"
+    <svg
+      class="w-4 h-4 text-white transition-transform duration-200"
       [class.rotate-180]="!abierto"
-      fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
     </svg>
   </div>
 
   @if (abierto) {
     <div class="p-4 md:p-6 flex flex-col gap-6 md:gap-10">
-
       <section>
         <div class="flex items-center gap-2 mb-2">
           <span class="text-bronze flex">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+              <path
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
             </svg>
           </span>
-          <h3 class="font-bold text-bronze uppercase tracking-widest text-sm m-0">Datos del Turno</h3>
+          <h3 class="font-bold text-bronze uppercase tracking-widest text-sm m-0">
+            Datos del Turno
+          </h3>
         </div>
-        <hr class="mb-4 md:mb-5 opacity-40 border-t-2 border-solid border-bronze"/>
+        <hr class="mb-4 md:mb-5 opacity-40 border-t-2 border-solid border-bronze" />
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
-
           <div class="flex flex-col gap-1.5">
             <label for="sala" class="text-xs font-bold text-gray-700">Sala</label>
-            <select id="sala" name="sala"
+            <select
+              id="sala"
+              name="sala"
               [ngModel]="form.idSala"
               (ngModelChange)="updateForm('idSala', $event)"
-              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
-                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-[disabled]="facade.cargandoCatalogos() || facade.perfilTipo() === 'oficialia'">
-<option value="">{{ facade.cargandoCatalogos() ? 'Cargando...' : 'Seleccione Sala' }}</option>
-@for (item of facade.salas(); track item.id) {
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+              [disabled]="facade.cargandoCatalogos() || facade.perfilTipo() === 'oficialia'"
+            >
+              <option value="">
+                {{ facade.cargandoCatalogos() ? 'Cargando...' : 'Seleccione Sala' }}
+              </option>
+              @for (item of facade.salas(); track item.id) {
                 <option [value]="item.id">{{ item.descripcion }}</option>
               }
             </select>
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label for="folioOficialia" class="text-xs font-bold text-gray-700">Folio Oficialía</label>
-            <input id="folioOficialia" type="text" name="folioOficialia"
+            <label for="folioOficialia" class="text-xs font-bold text-gray-700"
+              >Folio Oficialía</label
+            >
+            <input
+              id="folioOficialia"
+              type="text"
+              name="folioOficialia"
               [ngModel]="form.folioOficialia"
               (ngModelChange)="updateForm('folioOficialia', $event)"
-              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
-                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-              placeholder="Ej. 12345/2023">
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+              placeholder="Ej. 12345/2023"
+            />
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label for="folioApelacion" class="text-xs font-bold text-gray-700">Folio Apelación</label>
-            <input id="folioApelacion" type="text" name="folioApelacion"
+            <label for="folioApelacion" class="text-xs font-bold text-gray-700"
+              >Folio Apelación</label
+            >
+            <input
+              id="folioApelacion"
+              type="text"
+              name="folioApelacion"
               [ngModel]="form.folioApelacion"
               (ngModelChange)="updateForm('folioApelacion', $event)"
-              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
-                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
-              placeholder="Número de folio">
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+              placeholder="Número de folio"
+            />
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label for="fechaRecepcionInicio" class="text-xs font-bold text-gray-700">Fecha Recepción Inicio</label>
-            <input id="fechaRecepcionInicio" type="date" name="fechaRecepcionInicio"
+            <label for="fechaRecepcionInicio" class="text-xs font-bold text-gray-700"
+              >Fecha Recepción Inicio</label
+            >
+            <input
+              id="fechaRecepcionInicio"
+              type="date"
+              name="fechaRecepcionInicio"
               [ngModel]="form.fechaRecepcionInicio"
               (ngModelChange)="updateForm('fechaRecepcionInicio', $event)"
-              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
-                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+            />
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label for="fechaRecepcionFin" class="text-xs font-bold text-gray-700">Fecha Recepción Fin</label>
-            <input id="fechaRecepcionFin" type="date" name="fechaRecepcionFin"
+            <label for="fechaRecepcionFin" class="text-xs font-bold text-gray-700"
+              >Fecha Recepción Fin</label
+            >
+            <input
+              id="fechaRecepcionFin"
+              type="date"
+              name="fechaRecepcionFin"
               [ngModel]="form.fechaRecepcionFin"
               (ngModelChange)="updateForm('fechaRecepcionFin', $event)"
-              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
-                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+            />
           </div>
 
           <div class="flex flex-col gap-1.5">
             <label for="idNomenclatura" class="text-xs font-bold text-gray-700">Nomenclatura</label>
-            <select id="idNomenclatura" name="idNomenclatura"
+            <select
+              id="idNomenclatura"
+              name="idNomenclatura"
               [ngModel]="form.idNomenclatura"
               (ngModelChange)="updateForm('idNomenclatura', $event)"
-              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
-                    focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
-              <option value="">{{ facade.cargandoCatalogos() ? 'Cargando...' : 'Seleccione Nomenclatura' }}</option>
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+            >
+              <option value="">
+                {{ facade.cargandoCatalogos() ? 'Cargando...' : 'Seleccione Nomenclatura' }}
+              </option>
               @for (item of facade.nomenclaturas(); track item.id) {
                 <option [value]="item.id">{{ item.descripcion }}</option>
               }
@@ -102,11 +143,13 @@
 
           <div class="flex flex-col gap-1.5">
             <label for="estado" class="text-xs font-bold text-gray-700">Estado</label>
-            <select id="estado" name="estado"
+            <select
+              id="estado"
+              name="estado"
               [ngModel]="form.estado"
               (ngModelChange)="updateForm('estado', $event)"
-              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition
-                     focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest">
+              class="w-full border border-gray-300 rounded-md px-3 py-3 md:py-2 text-sm bg-white transition focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest"
+            >
               <option value="">Seleccione un estado</option>
               @if (facade.perfilTipo() !== 'oficialia') {
                 <option value="0">Pendiente</option>
@@ -115,11 +158,8 @@
               <option value="2">Importado</option>
             </select>
           </div>
-
         </div>
       </section>
-
     </div>
   }
-
 </div>

@@ -11,8 +11,8 @@ export const seccionesGuard: CanActivateFn = (route) => {
   const router = inject(Router);
 
   const fullPath = route.pathFromRoot
-    .map(r => r.routeConfig?.path ?? '')
-    .filter(p => p.length > 0)
+    .map((r) => r.routeConfig?.path ?? '')
+    .filter((p) => p.length > 0)
     .join('/');
   const ruta = '/' + fullPath;
 
@@ -30,7 +30,7 @@ export const seccionesGuard: CanActivateFn = (route) => {
   if (!idAreaSistemaUsuario || !idPerfil) return router.parseUrl('/acceso-denegado');
 
   return permisosService.getSecciones({ idAreaSistemaUsuario, idPantalla, idPerfil }).pipe(
-    tap(secciones => session.setSecciones(secciones)),
+    tap((secciones) => session.setSecciones(secciones)),
     map(() => true),
     catchError(() => of(true)),
   );

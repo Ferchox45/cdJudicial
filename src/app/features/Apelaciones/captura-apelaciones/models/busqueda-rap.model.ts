@@ -1,12 +1,12 @@
-import { CatalogoItem } from "../../../../core/models/catalogo-global.model";
+import { CatalogoItem } from '../../../../core/models/catalogo-global.model';
 
 export interface Parte {
-  id:           number;
-  nombre:       string;
-  sexo:         string;
-  tipoParte:    string; // 'Promovente', 'Procesado', etc.
-  direccion:    string;
-  menorEdad:    boolean;
+  id: number;
+  nombre: string;
+  sexo: string;
+  tipoParte: string; // 'Promovente', 'Procesado', etc.
+  direccion: string;
+  menorEdad: boolean;
   seleccionada: boolean;
   roleOrigin?: 'ofendido' | 'procesado';
 }
@@ -17,18 +17,18 @@ export interface DelitoBusqueda {
 }
 
 export interface ParteBusqueda {
-  id:        number;
-  nombre:    string;
+  id: number;
+  nombre: string;
   direccion: string | null;
   menorEdad: boolean;
-  sexo:      CatalogoItem;
+  sexo: CatalogoItem;
   tipoParte: CatalogoItem;
 }
 
 export interface RelacionBusqueda {
-  id:              string;
-  ofendido:        ParteBusqueda | null;
-  procesado:       ParteBusqueda | null;
+  id: string;
+  ofendido: ParteBusqueda | null;
+  procesado: ParteBusqueda | null;
   delitosRelacion: DelitoBusqueda[];
 }
 
@@ -44,32 +44,31 @@ export interface AnexoBusquedaRapida {
 }
 
 export interface BusquedaRapida {
-  id:              number;
-  importadoNS:     boolean;
-  folioOficilia:   string;
-  folioTentativo:  string;
-  folioOficio:     string;
-  folioApelacion:  string;
+  id: number;
+  importadoNS: boolean;
+  folioOficilia: string;
+  folioTentativo: string;
+  folioOficio: string;
+  folioApelacion: string;
   expedienteCausa: string;
   expedienteAcumulado: string;
-  fojas:           number;
-  esReposicion:    boolean;
-  fechaAuto:       string | null;
-  observaciones:   string | null;
-  asunto:          string | null;
-  lugarHechos:     string | null;
-  catMateria:      CatalogoItem | null;
-  catApelacion:    CatalogoItem | null;
-  tipoApelacion:   CatalogoItem | null;
-  tipoEscrito:     CatalogoItem | null;
-  catJuzgado:         CatalogoItem | null;
-  catMunicipio:       CatalogoItem | null;
-  catLocalidad:       CatalogoItem | null;
-  catEtnia:           CatalogoItem | null;
-  catMagistrado:      CatalogoItem | null;
-  magistrados?:       string;
-  sala?:              string;
-  relaciones:      RelacionBusqueda[];
-  anexos:          AnexoBusquedaRapida[];
+  fojas: number;
+  esReposicion: boolean;
+  fechaAuto: string | null;
+  observaciones: string | null;
+  asunto: string | null;
+  lugarHechos: string | null;
+  catMateria: CatalogoItem | null;
+  catApelacion: CatalogoItem | null;
+  tipoApelacion: CatalogoItem | null;
+  tipoEscrito: CatalogoItem | null;
+  catJuzgado: CatalogoItem | null;
+  catMunicipio: CatalogoItem | null;
+  catLocalidad: CatalogoItem | null;
+  catEtnia: CatalogoItem | null;
+  catMagistrado: CatalogoItem | null;
+  magistrados?: string;
+  sala?: string;
+  relaciones: RelacionBusqueda[];
+  anexos: AnexoBusquedaRapida[];
 }
-

@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/action-sidebar/action-sidebar.component';
+import {
+  ActionSidebarComponent,
+  SidebarAction,
+} from '../../../shared/components/action-sidebar/action-sidebar.component';
 import { TablaReutilizableComponent } from '../../../shared/components/table-reutilizable/tablaReutilizable.component';
 import { TablaColumna } from '../../../shared/components/table-reutilizable/models/tabla-columna.model';
 import { RecibirFacade } from '../facades/recibir.facade';
@@ -41,26 +44,32 @@ export class RecibirComponent {
     ];
   }
 
-get columnas(): TablaColumna[] {
-  return [
-    { field: 'folioApelacion', label: 'Folio de Apelación', visible: true },
-    { field: 'nomenclatura', label: 'Nomenclatura', visible: true },
-    { field: 'cargoOrigen', label: 'Cargo de Origen', visible: true },
-    { field: 'nombreTurna', label: 'Turnado por', visible: true },
-    { field: 'fechaTurno', label: 'Fecha y Hora de Turno', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy HH:mm' },
-    { field: 'cargoDestino', label: 'Cargo Destino', visible: true },
-    { field: 'seleccionado', label: 'Seleccionar', visible: true, type: 'checkbox' },
-  ];
-}
+  get columnas(): TablaColumna[] {
+    return [
+      { field: 'folioApelacion', label: 'Folio de Apelación', visible: true },
+      { field: 'nomenclatura', label: 'Nomenclatura', visible: true },
+      { field: 'cargoOrigen', label: 'Cargo de Origen', visible: true },
+      { field: 'nombreTurna', label: 'Turnado por', visible: true },
+      {
+        field: 'fechaTurno',
+        label: 'Fecha y Hora de Turno',
+        visible: true,
+        type: 'date',
+        dateFormat: 'dd/MM/yyyy HH:mm',
+      },
+      { field: 'cargoDestino', label: 'Cargo Destino', visible: true },
+      { field: 'seleccionado', label: 'Seleccionar', visible: true, type: 'checkbox' },
+    ];
+  }
 
   get todosSeleccionados(): boolean {
-    const ids = this.facade.pendientes().map(p => Number(p.id));
+    const ids = this.facade.pendientes().map((p) => Number(p.id));
     const seleccionados = this.facade.idsSeleccionados();
-    return ids.length > 0 && ids.every(id => seleccionados.includes(id));
+    return ids.length > 0 && ids.every((id) => seleccionados.includes(id));
   }
 
   toggleTodos(): void {
-    const ids = this.facade.pendientes().map(p => Number(p.id));
+    const ids = this.facade.pendientes().map((p) => Number(p.id));
     this.facade.toggleSeleccionTodos(ids);
   }
 

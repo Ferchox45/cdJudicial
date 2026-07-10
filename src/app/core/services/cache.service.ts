@@ -24,12 +24,12 @@ export class CacheService {
 
     // HTTP
     const request$ = httpCall$.pipe(
-      tap(data => this.saveToStorage(key, data)),
+      tap((data) => this.saveToStorage(key, data)),
       shareReplay(1),
-      catchError(err => {
+      catchError((err) => {
         this.memCache.delete(key);
         throw err;
-      })
+      }),
     );
 
     this.memCache.set(key, { obs: request$, ts: Date.now() });
@@ -44,7 +44,9 @@ export class CacheService {
   private saveToStorage<T>(key: string, data: T): void {
     try {
       sessionStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }));
-    } catch { console.warn('Storage lleno o deshabilitado'); }
+    } catch {
+      console.warn('Storage lleno o deshabilitado');
+    }
   }
 
   private getFromStorage<T>(key: string): T | null {
@@ -57,6 +59,8 @@ export class CacheService {
         return null;
       }
       return data;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   }
 }

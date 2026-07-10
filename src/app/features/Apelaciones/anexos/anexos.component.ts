@@ -19,11 +19,10 @@ import { OnUnsavedChanges } from '../../../shared/guards/on-unsaved-changes';
   templateUrl: './anexos.component.html',
 })
 export class AnexosComponent implements OnInit, OnUnsavedChanges {
-
   private apelacionService = inject(AnexoApiService);
-  private contextoService  = inject(ApelacionContextService);
-  private modalService     = inject(ModalService);
-  private sessionState      = inject(SessionStateService);
+  private contextoService = inject(ApelacionContextService);
+  private modalService = inject(ModalService);
+  private sessionState = inject(SessionStateService);
 
   readonly cargando = signal(false);
   readonly error = signal<string | null>(null);
@@ -40,12 +39,12 @@ export class AnexosComponent implements OnInit, OnUnsavedChanges {
   readonly anexos = signal<Anexo[]>([]);
 
   nuevoAnexo = {
-    idAnexo:    null as number | null,
-    tipo:       '',
-    cantidad:   1,
+    idAnexo: null as number | null,
+    tipo: '',
+    cantidad: 1,
     tieneMonto: false,
-    monto:      0,
-    otroAnexo:  '',
+    monto: 0,
+    otroAnexo: '',
   };
 
   get esOtro(): boolean {
@@ -57,7 +56,10 @@ export class AnexosComponent implements OnInit, OnUnsavedChanges {
     this.folioTramite = this.contextoService.folioOficialia();
     this.sala = this.contextoService.sala();
     if (!this.idApelacion) {
-      this.modalService.error('Error', 'No hay una apelación activa en memoria. Por favor, inicie desde la captura.');
+      this.modalService.error(
+        'Error',
+        'No hay una apelación activa en memoria. Por favor, inicie desde la captura.',
+      );
       setTimeout(() => this.onBack(), 3000);
       return;
     }
@@ -69,7 +71,7 @@ export class AnexosComponent implements OnInit, OnUnsavedChanges {
     this.cargarAnexos();
   }
 
-cargarAnexos(): void {
+  cargarAnexos(): void {
     this.cargando.set(true);
     this.error.set(null);
 
@@ -85,7 +87,7 @@ cargarAnexos(): void {
           this.apelacionService.invalidarAnexos();
           this.cargarAnexos();
         }, 5000);
-      }
+      },
     });
   }
 
@@ -93,13 +95,13 @@ cargarAnexos(): void {
     if (id === -1) {
       this.nuevoAnexo.tipo = 'Otro Anexo';
     } else {
-      const found = this.tiposAnexo().find(t => t.id === id);
+      const found = this.tiposAnexo().find((t) => t.id === id);
       this.nuevoAnexo.tipo = found?.descripcion ?? '';
       this.nuevoAnexo.otroAnexo = '';
     }
   }
 
-agregarAnexo(): void {
+  agregarAnexo(): void {
     if (!this.nuevoAnexo.idAnexo) {
       this.modalService.error('Error', 'Debes seleccionar un tipo de anexo.');
       return;
@@ -111,26 +113,27 @@ agregarAnexo(): void {
     }
 
     const anexo: Anexo = {
-      idAnexo:   this.nuevoAnexo.idAnexo,
-      cantidad:  this.nuevoAnexo.cantidad,
-      tipo:      this.esOtro ? this.nuevoAnexo.otroAnexo.trim() : this.nuevoAnexo.tipo,
-      esValor:   this.nuevoAnexo.tieneMonto,
-      monto:     this.nuevoAnexo.tieneMonto ? this.nuevoAnexo.monto : null,
+      idAnexo: this.nuevoAnexo.idAnexo,
+      cantidad: this.nuevoAnexo.cantidad,
+      tipo: this.esOtro ? this.nuevoAnexo.otroAnexo.trim() : this.nuevoAnexo.tipo,
+      esValor: this.nuevoAnexo.tieneMonto,
+      monto: this.nuevoAnexo.tieneMonto ? this.nuevoAnexo.monto : null,
       otroAnexo: this.esOtro ? this.nuevoAnexo.otroAnexo.trim() : '',
     };
 
-    this.anexos.update(list => [...list, anexo]);
+    this.anexos.update((list) => [...list, anexo]);
     this.nuevoAnexo = {
       idAnexo: null,
       tipo: '',
       cantidad: 1,
       tieneMonto: false,
       monto: 0,
-      otroAnexo: '' };
+      otroAnexo: '',
+    };
   }
 
   eliminarAnexo(index: number): void {
-    this.anexos.update(list => list.filter((_, i) => i !== index));
+    this.anexos.update((list) => list.filter((_, i) => i !== index));
   }
 
   guardar(): void {
@@ -139,18 +142,22 @@ agregarAnexo(): void {
       return;
     }
     if (!this.anexos().length) {
-      this.modalService.info('Sin anexos', 'No has agregado ningún anexo para guardar.', 'Agregar anexos');
+      this.modalService.info(
+        'Sin anexos',
+        'No has agregado ningún anexo para guardar.',
+        'Agregar anexos',
+      );
       return;
     }
 
     const payload = {
       idApelacion: this.idApelacion,
-      anexos: this.anexos().map(a => {
+      anexos: this.anexos().map((a) => {
         const anexoFormateado: any = {
-          idAnexo:   a.idAnexo,
-          cantidad:  a.cantidad,
-          esValor:   a.esValor,
-          monto:     a.esValor ? a.monto : null
+          idAnexo: a.idAnexo,
+          cantidad: a.cantidad,
+          esValor: a.esValor,
+          monto: a.esValor ? a.monto : null,
         };
 
         if (a.idAnexo === -1) {
@@ -165,19 +172,22 @@ agregarAnexo(): void {
 
     this.guardando.set(true);
 
-    this.apelacionService.guardarAnexos(payload)
-      .pipe(finalize(() => {
-        this.guardando.set(false);
-      }))
+    this.apelacionService
+      .guardarAnexos(payload)
+      .pipe(
+        finalize(() => {
+          this.guardando.set(false);
+        }),
+      )
       .subscribe({
         next: () => {
           this.anexosGuardados.set(true);
-          this.modalService.success('Guardado correctamente','Anexos guardados correctamente.');
+          this.modalService.success('Guardado correctamente', 'Anexos guardados correctamente.');
         },
         error: (err) => {
           const msg = err?.error?.message ?? 'Error al guardar los anexos.';
           this.modalService.error('Error', msg);
-        }
+        },
       });
   }
 

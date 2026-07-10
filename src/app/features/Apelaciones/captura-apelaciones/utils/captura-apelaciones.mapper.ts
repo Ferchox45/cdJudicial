@@ -1,10 +1,15 @@
-import { BusquedaRapida,
+import {
+  BusquedaRapida,
   DelitoBusqueda,
   Parte,
   ParteBusqueda,
   RelacionBusqueda,
 } from '../models/busqueda-rap.model';
-import { ApelacionFormValue, ApelacionPayload, DelitoDisponible } from '../models/apelacion-aux.model';
+import {
+  ApelacionFormValue,
+  ApelacionPayload,
+  DelitoDisponible,
+} from '../models/apelacion-aux.model';
 import { CatalogoItem } from '../../../../core/models/catalogo-global.model';
 
 /** Convierte string ISO → "YYYY-MM-DD" para inputs tipo date */
@@ -44,9 +49,7 @@ export function mapearParteComun(p: ParteBusqueda & { menorEdad?: unknown }): Pa
  * Extrae las partes únicas de una respuesta de búsqueda,
  * marcando su roleOrigin según su posición en las relaciones.
  */
-export function mapearPartesDesdeRelaciones(
-  relaciones: BusquedaRapida['relaciones']
-): Parte[] {
+export function mapearPartesDesdeRelaciones(relaciones: BusquedaRapida['relaciones']): Parte[] {
   const partesMap = new Map<number, Parte>();
 
   relaciones?.forEach((rel) => {
@@ -68,17 +71,11 @@ export function mapearPartesDesdeRelaciones(
 }
 
 /** Convierte las relaciones de la API al modelo local RelacionBusqueda */
-export function mapearRelaciones(
-  relaciones: BusquedaRapida['relaciones']
-): RelacionBusqueda[] {
+export function mapearRelaciones(relaciones: BusquedaRapida['relaciones']): RelacionBusqueda[] {
   return (relaciones ?? []).map((rel) => ({
     id: rel.id.toString(),
-    procesado: rel.procesado
-      ? { ...rel.procesado, id: Number(rel.procesado.id) }
-      : null,
-    ofendido: rel.ofendido
-      ? { ...rel.ofendido, id: Number(rel.ofendido.id) }
-      : null,
+    procesado: rel.procesado ? { ...rel.procesado, id: Number(rel.procesado.id) } : null,
+    ofendido: rel.ofendido ? { ...rel.ofendido, id: Number(rel.ofendido.id) } : null,
     delitosRelacion: rel.delitosRelacion.map((dr) => ({
       id: Number(dr.id),
       delito: {
@@ -90,9 +87,7 @@ export function mapearRelaciones(
 }
 
 /** Convierte catálogo de delitos al formato interno con estado de selección */
-export function mapearDelitosDisponibles(
-  delitos: CatalogoItem[]
-): DelitoDisponible[] {
+export function mapearDelitosDisponibles(delitos: CatalogoItem[]): DelitoDisponible[] {
   return (delitos ?? []).map((d) => ({
     id: d.id,
     delito: d.descripcion,
@@ -103,11 +98,11 @@ export function mapearDelitosDisponibles(
 /** Sincroniza el estado "seleccionado" de los delitos con las relaciones cargadas */
 export function sincronizarSeleccionDelitos(
   delitosDisponibles: DelitoDisponible[],
-  relaciones: RelacionBusqueda[]
+  relaciones: RelacionBusqueda[],
 ): DelitoDisponible[] {
   const idsEnRelaciones = new Set<number>();
   relaciones.forEach((rel) =>
-    rel.delitosRelacion.forEach((dr) => idsEnRelaciones.add(dr.delito.id))
+    rel.delitosRelacion.forEach((dr) => idsEnRelaciones.add(dr.delito.id)),
   );
 
   return delitosDisponibles.map((d) => ({
@@ -128,16 +123,14 @@ export function buildPayload(
   tiposPartes: CatalogoItem[],
   idAreaSistemaUsuario: number | null,
   idPantalla: number | null,
-  idTramite?: number | null
+  idTramite?: number | null,
 ): ApelacionPayload {
   const esIndigena = raw.materiaId === 6;
 
   const partesPayload = partes.map((p) => {
-    const sexoCat = sexos.find(
-      (s) => s.descripcion.toUpperCase() === p.sexo?.toUpperCase()
-    );
+    const sexoCat = sexos.find((s) => s.descripcion.toUpperCase() === p.sexo?.toUpperCase());
     const tipoParteCat = tiposPartes.find(
-      (tp) => tp.descripcion.toUpperCase() === p.tipoParte?.toUpperCase()
+      (tp) => tp.descripcion.toUpperCase() === p.tipoParte?.toUpperCase(),
     );
 
     let idTipoParte = tipoParteCat?.id;
@@ -201,15 +194,13 @@ export function buildPayload(
 }
 
 /** Construye una nueva Parte a partir del valor del formulario */
-export function buildNuevaParte(
-  formValue: {
-    nombre: string;
-    sexo: string;
-    tipoParte: string;
-    direccion: string;
-    esMenor: boolean;
-  }
-): Parte {
+export function buildNuevaParte(formValue: {
+  nombre: string;
+  sexo: string;
+  tipoParte: string;
+  direccion: string;
+  esMenor: boolean;
+}): Parte {
   return {
     id: Date.now(),
     nombre: formValue.nombre,
@@ -230,7 +221,7 @@ export function buildNuevaParte(
 export function buildNuevaRelacion(
   procesado: Parte,
   ofendido: Parte,
-  delitosSeleccionados: DelitoDisponible[]
+  delitosSeleccionados: DelitoDisponible[],
 ): RelacionBusqueda {
   const mapearParteABusqueda = (p: Parte): ParteBusqueda => ({
     id: Number(p.id),

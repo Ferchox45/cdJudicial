@@ -29,9 +29,9 @@ export class HomeComponent {
   });
 
   private existePantalla(ruta: string): boolean {
-    return this.sessionState.modulosPantallas().some(m =>
-      m.pantallas.some(p => p.descripcion === ruta)
-    );
+    return this.sessionState
+      .modulosPantallas()
+      .some((m) => m.pantallas.some((p) => p.descripcion === ruta));
   }
 
   tieneApelaciones = computed(() => this.existePantalla('/capturaApelacion'));

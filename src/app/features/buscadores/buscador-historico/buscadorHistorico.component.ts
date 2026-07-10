@@ -14,65 +14,63 @@ import { BuscarFacade } from './facades/buscar.facade';
   imports: [
     ActionSidebarComponent,
     PanelBusquedaHistoricoComponent,
-    PanelResultadosHistoricoComponent
-],
+    PanelResultadosHistoricoComponent,
+  ],
   templateUrl: './buscadorHistorico.component.html',
-
 })
 export class BuscadorHistoricoComponent {
-
-    private readonly catalogoFacade = inject (CatalogoFacade);
-    readonly buscarFacade = inject (BuscarFacade);
+  private readonly catalogoFacade = inject(CatalogoFacade);
+  readonly buscarFacade = inject(BuscarFacade);
 
   get sidebarActions(): SidebarAction[] {
-    const buscando   = this.buscarFacade.buscando();
-    const exportando = this.buscarFacade.exportando();  // solo Excel/CSV
-    const generando  = this.buscarFacade.generando();   // solo PDF/Reporte
+    const buscando = this.buscarFacade.buscando();
+    const exportando = this.buscarFacade.exportando(); // solo Excel/CSV
+    const generando = this.buscarFacade.generando(); // solo PDF/Reporte
 
-    const ocupado = buscando || exportando || generando;  // bloqueo global
+    const ocupado = buscando || exportando || generando; // bloqueo global
 
     return [
       {
-        id:      'buscar',
-        label:   'Buscar',
-        icon:    'buscar',
-        primary:  true,
-        loading:  buscando,
+        id: 'buscar',
+        label: 'Buscar',
+        icon: 'buscar',
+        primary: true,
+        loading: buscando,
         disabled: ocupado,
       },
       {
-        id:       'exportar',
-        label:    'Exportar',
-        icon:     'exportar',
-        loading:   exportando,
-        disabled:  ocupado,
+        id: 'exportar',
+        label: 'Exportar',
+        icon: 'exportar',
+        loading: exportando,
+        disabled: ocupado,
       },
       {
-        id:       'limpiar',
-        label:    'Limpiar',
-        icon:     'limpiar',
-        disabled:  ocupado,
+        id: 'limpiar',
+        label: 'Limpiar',
+        icon: 'limpiar',
+        disabled: ocupado,
       },
       {
-        id:       'reporte',
-        label:    'Reporte',
-        icon:     'reporte',
-        loading:   generando,
-        disabled:  ocupado,
+        id: 'reporte',
+        label: 'Reporte',
+        icon: 'reporte',
+        loading: generando,
+        disabled: ocupado,
       },
     ];
   }
   onAction(id: string): void {
     const acciones: Record<string, () => void> = {
-      buscar:   () => this.buscarFacade.buscar(),
+      buscar: () => this.buscarFacade.buscar(),
       exportar: () => this.buscarFacade.exportarExcel(),
-      limpiar:  () => this.buscarFacade.limpiar(),
-      reporte:  () => this.buscarFacade.exportarPdf(),
+      limpiar: () => this.buscarFacade.limpiar(),
+      reporte: () => this.buscarFacade.exportarPdf(),
     };
     acciones[id]?.();
   }
 
   ngOnInit(): void {
-      this.catalogoFacade.cargar();
+    this.catalogoFacade.cargar();
   }
 }

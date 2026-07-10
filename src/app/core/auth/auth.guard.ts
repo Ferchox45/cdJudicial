@@ -13,6 +13,6 @@ export const authGuard = () => {
     map(() => {
       if (auth.isAuthenticated()) return true;
       return router.parseUrl('/login');
-    })
+    }),
   );
 };

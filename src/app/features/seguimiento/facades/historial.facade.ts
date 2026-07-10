@@ -36,13 +36,18 @@ export class HistorialFacade {
 
   cargarCatalogos(): void {
     this.cargandoCatalogos.set(true);
-    this.service.getCatalogosHistorial().pipe(
-      takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.cargandoCatalogos.set(false)),
-    ).subscribe({
-      next: (res) => this.nomenclaturas.set(res.nomenclaturas),
-      error: () => { /* ignorar */ },
-    });
+    this.service
+      .getCatalogosHistorial()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.cargandoCatalogos.set(false)),
+      )
+      .subscribe({
+        next: (res) => this.nomenclaturas.set(res.nomenclaturas),
+        error: () => {
+          /* ignorar */
+        },
+      });
   }
 
   buscar(): void {
@@ -53,7 +58,10 @@ export class HistorialFacade {
     }
 
     if (this.form.invalid) {
-      this.modal.info('Campos requeridos', 'Debe ingresar el folio de apelación y seleccionar una nomenclatura.');
+      this.modal.info(
+        'Campos requeridos',
+        'Debe ingresar el folio de apelación y seleccionar una nomenclatura.',
+      );
       return;
     }
 
@@ -67,7 +75,8 @@ export class HistorialFacade {
       idNomenclatura: raw.idNomenclatura,
     };
 
-    this.service.getHistorial(params)
+    this.service
+      .getHistorial(params)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.buscando.set(false)),
@@ -85,7 +94,10 @@ export class HistorialFacade {
             this.movimientos.set([]);
             this.folioOficialia.set('');
             this.folioApelacionInfo.set(null);
-            this.modal.info('Sin resultados', 'No se encontró el registro con el folio y la nomenclatura ingresada');
+            this.modal.info(
+              'Sin resultados',
+              'No se encontró el registro con el folio y la nomenclatura ingresada',
+            );
           }
         },
         error: (err: HttpErrorResponse) => {
@@ -93,7 +105,10 @@ export class HistorialFacade {
           this.folioOficialia.set('');
           this.folioApelacionInfo.set(null);
           if (err.status === 404) {
-            this.modal.info('Sin resultados', 'No se encontró el registro con el folio y la nomenclatura ingresada');
+            this.modal.info(
+              'Sin resultados',
+              'No se encontró el registro con el folio y la nomenclatura ingresada',
+            );
           } else {
             this.modal.error('Error de consulta', 'Ocurrió un error al consultar el historial.');
           }

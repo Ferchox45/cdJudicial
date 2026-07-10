@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { ActionSidebarComponent, SidebarAction } from '../../shared/components/action-sidebar/action-sidebar.component';
+import {
+  ActionSidebarComponent,
+  SidebarAction,
+} from '../../shared/components/action-sidebar/action-sidebar.component';
 import { PanelBusquedaTurnosComponent } from './components/panel-busqueda/panelBusqueda.component';
 import { PanelResultadosTurnosComponent } from './components/panel-resultados/panelResultados.component';
 import { TurnosFacade, TurnosPerfilTipo } from './facades/turnos.facade';
@@ -8,11 +11,7 @@ import { SessionStateService } from '../../features/permisos/services/session-st
   selector: 'app-turnos',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ActionSidebarComponent,
-    PanelBusquedaTurnosComponent,
-    PanelResultadosTurnosComponent,
-  ],
+  imports: [ActionSidebarComponent, PanelBusquedaTurnosComponent, PanelResultadosTurnosComponent],
   templateUrl: './turnos.component.html',
 })
 export class TurnosComponent implements OnInit {
@@ -20,9 +19,7 @@ export class TurnosComponent implements OnInit {
   private readonly sessionState = inject(SessionStateService);
 
   get titulo(): string {
-    return this.facade.perfilTipo() === 'comun'
-      ? 'Exportación de Tocas'
-      : 'Importación de Tocas';
+    return this.facade.perfilTipo() === 'comun' ? 'Exportación de Tocas' : 'Importación de Tocas';
   }
 
   get subtitulo(): string {
@@ -77,7 +74,7 @@ export class TurnosComponent implements OnInit {
         if (this.facade.perfilTipo() === 'oficialia') {
           const sala = this.sessionState.salaInfo();
           if (sala) {
-            this.facade.form.update(f => ({ ...f, idSala: String(sala.idSala) }));
+            this.facade.form.update((f) => ({ ...f, idSala: String(sala.idSala) }));
           }
         }
       },
@@ -90,7 +87,10 @@ export class TurnosComponent implements OnInit {
   ngOnInit(): void {
     this.facade.cargarCatalogos();
     const perfil = this.sessionState.perfilInfo()?.descripcion ?? '';
-    if (perfil.toLowerCase().includes('oficialía común') || perfil.toLowerCase().includes('comun')) {
+    if (
+      perfil.toLowerCase().includes('oficialía común') ||
+      perfil.toLowerCase().includes('comun')
+    ) {
       this.facade.perfilTipo.set('comun');
     } else {
       this.facade.perfilTipo.set('oficialia');
@@ -100,7 +100,7 @@ export class TurnosComponent implements OnInit {
     if (this.facade.perfilTipo() === 'oficialia') {
       const sala = this.sessionState.salaInfo();
       if (sala) {
-        this.facade.form.update(f => ({ ...f, idSala: String(sala.idSala) }));
+        this.facade.form.update((f) => ({ ...f, idSala: String(sala.idSala) }));
       }
     }
   }

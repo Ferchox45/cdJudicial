@@ -1,5 +1,13 @@
 import { A11yModule } from '@angular/cdk/a11y';
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../auth/services/auth.service';
 import { SessionStateService } from '../../../permisos/services/session-state.service';
@@ -35,7 +43,7 @@ export class MenulateralComponent {
   protected readonly gruposAbiertos = signal(new Set<string>());
 
   protected toggleGrupo(nombre: string): void {
-    this.gruposAbiertos.update(s => {
+    this.gruposAbiertos.update((s) => {
       const nuevo = new Set(s);
       if (nuevo.has(nombre)) nuevo.delete(nombre);
       else nuevo.add(nombre);
@@ -88,7 +96,7 @@ export class MenulateralComponent {
     if (descripcion.includes('turnos')) return 'transfer';
     if (descripcion.includes('turnar')) return 'transfer-vertical';
     if (descripcion.includes('recibir')) return 'inbox';
-    if (descripcion.includes('historial'))  return 'history';
+    if (descripcion.includes('historial')) return 'history';
     return 'default';
   }
 

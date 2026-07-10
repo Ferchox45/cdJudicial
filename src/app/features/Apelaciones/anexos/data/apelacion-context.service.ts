@@ -23,7 +23,7 @@ export interface SearchState {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApelacionContextService {
   apelacionId = signal<number | null>(null);

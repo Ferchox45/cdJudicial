@@ -6,7 +6,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
 
   const skipAuth = ['/auth/login', '/auth/refresh', '/auth/logout'];
-  if (skipAuth.some(u => req.url.includes(u))) return next(req);
+  if (skipAuth.some((u) => req.url.includes(u))) return next(req);
 
   const token = auth.getToken();
   if (token) {

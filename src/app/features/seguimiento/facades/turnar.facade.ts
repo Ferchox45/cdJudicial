@@ -4,10 +4,7 @@ import { finalize } from 'rxjs';
 import { SeguimientoService } from '../data/seguimiento.service';
 import { ModalService } from '../../../shared/components/modal-custom/services/modal.service';
 import { SessionStateService } from '../../permisos/services/session-state.service';
-import {
-  ApelacionTurnable,
-  OpcionesTurnar,
-} from '../models/seguimiento.model';
+import { ApelacionTurnable, OpcionesTurnar } from '../models/seguimiento.model';
 
 @Injectable({ providedIn: 'root' })
 export class TurnarFacade {
@@ -40,8 +37,8 @@ export class TurnarFacade {
   readonly porPagina = computed(() => this._porPagina());
   readonly paginaActual = computed(() => this._paginacion().page);
   readonly totalResultados = computed(() => this._paginacion().total);
-  readonly totalPaginas = computed(() =>
-    Math.ceil(this._paginacion().total / this._paginacion().limit) || 1,
+  readonly totalPaginas = computed(
+    () => Math.ceil(this._paginacion().total / this._paginacion().limit) || 1,
   );
 
   readonly tieneSalaSesion = computed(() => this.sessionState.idSala() != null);
@@ -54,8 +51,8 @@ export class TurnarFacade {
   readonly proyectistas = computed(() => this.opcionesTurnar()?.proyectistas ?? []);
   readonly magistrados = computed(() => this.opcionesTurnar()?.magistrados ?? []);
 
-  readonly modoSoloUnPerfil = computed(() =>
-    this.opcionesTurnar() != null && this.perfilesDestino().length <= 1,
+  readonly modoSoloUnPerfil = computed(
+    () => this.opcionesTurnar() != null && this.perfilesDestino().length <= 1,
   );
 
   readonly seleccionCount = computed(() => this.idsSeleccionados().length);
@@ -63,28 +60,29 @@ export class TurnarFacade {
 
   readonly requiereProyectista = computed(() => {
     if (this.proyectistas().length === 0 || this.destinoSeleccionado() == null) return false;
-    const destino = this.perfilesDestino().find(p => p.id === this.destinoSeleccionado());
+    const destino = this.perfilesDestino().find((p) => p.id === this.destinoSeleccionado());
     return destino != null && /proyectista/i.test(destino.descripcion);
   });
 
   readonly requiereMagistrado = computed(() => {
     if (this.magistrados().length === 0 || this.destinoSeleccionado() == null) return false;
-    const destino = this.perfilesDestino().find(p => p.id === this.destinoSeleccionado());
+    const destino = this.perfilesDestino().find((p) => p.id === this.destinoSeleccionado());
     return destino != null && /magistrado/i.test(destino.descripcion);
   });
 
-  readonly turnarHabilitado = computed(() =>
-    this.idsSeleccionados().length > 0
-    && this.destinoSeleccionado() != null
-    && (!this.requiereProyectista() || this.idGeneralDestino() != null)
-    && (!this.requiereMagistrado() || this.idGeneralDestino() != null),
+  readonly turnarHabilitado = computed(
+    () =>
+      this.idsSeleccionados().length > 0 &&
+      this.destinoSeleccionado() != null &&
+      (!this.requiereProyectista() || this.idGeneralDestino() != null) &&
+      (!this.requiereMagistrado() || this.idGeneralDestino() != null),
   );
 
   readonly tieneTurnables = computed(() => this.turnables().length > 0);
 
   toggleSeleccion(id: number): void {
-    this.idsSeleccionados.update(ids => {
-      if (ids.includes(id)) return ids.filter(i => i !== id);
+    this.idsSeleccionados.update((ids) => {
+      if (ids.includes(id)) return ids.filter((i) => i !== id);
       return [...ids, id];
     });
   }
@@ -125,7 +123,15 @@ export class TurnarFacade {
     if (perfil == null || sala == null || idArea == null || idPant == null) return;
 
     this.verificandoPendientes.set(true);
-    this.service.getPendientesRecibir({ idSala: sala, idPerfil: perfil, pagina: 1, limite: 1, idAreaSistemaUsuario: idArea, idPantalla: idPant })
+    this.service
+      .getPendientesRecibir({
+        idSala: sala,
+        idPerfil: perfil,
+        pagina: 1,
+        limite: 1,
+        idAreaSistemaUsuario: idArea,
+        idPantalla: idPant,
+      })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.verificandoPendientes.set(false)),
@@ -139,7 +145,9 @@ export class TurnarFacade {
             );
           }
         },
-        error: () => { /* ignorar */ },
+        error: () => {
+          /* ignorar */
+        },
       });
   }
 
@@ -150,7 +158,8 @@ export class TurnarFacade {
     if (perfil == null || idArea == null || idPant == null) return;
 
     this.cargandoCatalogos.set(true);
-    this.service.getOpcionesTurnar(perfil, idArea, idPant)
+    this.service
+      .getOpcionesTurnar(perfil, idArea, idPant)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.cargandoCatalogos.set(false)),
@@ -189,21 +198,22 @@ export class TurnarFacade {
 
     this.cargando.set(true);
 
-    this.service.getApelacionesTurnar({
-      idSala: sala,
-      idPerfil: perfil,
-      pagina: page,
-      limite: this.porPagina(),
-      idAreaSistemaUsuario: idArea,
-      idPantalla: idPant,
-    })
+    this.service
+      .getApelacionesTurnar({
+        idSala: sala,
+        idPerfil: perfil,
+        pagina: page,
+        limite: this.porPagina(),
+        idAreaSistemaUsuario: idArea,
+        idPantalla: idPant,
+      })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.cargando.set(false)),
       )
       .subscribe({
         next: (res) => {
-          const turnables = res.resultados.map(r => ({
+          const turnables = res.resultados.map((r) => ({
             ...r,
             idApelacion: Number(r.idApelacion),
             seleccionado: false,
@@ -234,21 +244,25 @@ export class TurnarFacade {
 
     this.turnando.set(true);
 
-    this.service.turnar({
-      ids,
-      idPerfilOrigen: perfil,
-      idPerfilDestino: destino,
-      idGeneralDestino: this.idGeneralDestino(),
-      idAreaSistemaUsuario: idArea,
-      idPantalla: idPant,
-    })
+    this.service
+      .turnar({
+        ids,
+        idPerfilOrigen: perfil,
+        idPerfilDestino: destino,
+        idGeneralDestino: this.idGeneralDestino(),
+        idAreaSistemaUsuario: idArea,
+        idPantalla: idPant,
+      })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.turnando.set(false)),
       )
       .subscribe({
         next: (res) => {
-          this.modal.success('Turno exitoso', `Se turnaron ${res.afectados} de ${res.total} tocas correctamente`);
+          this.modal.success(
+            'Turno exitoso',
+            `Se turnaron ${res.afectados} de ${res.total} tocas correctamente`,
+          );
           this.destinoSeleccionado.set(null);
           this.idGeneralDestino.set(null);
           this.idsSeleccionados.set([]);
@@ -266,7 +280,7 @@ export class TurnarFacade {
 
     if (this._cache.has(pagina)) {
       this.turnables.set(this._cache.get(pagina)!);
-      this._paginacion.update(p => ({ ...p, page: pagina }));
+      this._paginacion.update((p) => ({ ...p, page: pagina }));
       return;
     }
 

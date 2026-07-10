@@ -20,30 +20,49 @@ export class PanelResultadosTurnosComponent {
       { field: 'folioApelacion', label: 'Folio Apelación', visible: true },
       { field: 'nomenclatura', label: 'Nomenclatura', visible: true },
       { field: 'folioOficio', label: 'Folio de Oficio', visible: true },
-      { field: 'fechaRecepcion', label: 'Fecha de Recepción', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy HH:mm' },
+      {
+        field: 'fechaRecepcion',
+        label: 'Fecha de Recepción',
+        visible: true,
+        type: 'date',
+        dateFormat: 'dd/MM/yyyy HH:mm',
+      },
       { field: 'apelacion', label: 'Apelación', visible: true },
       { field: 'tipoApelacion', label: 'Tipo de Apelación', visible: true },
-      { field: 'estadoActual', label: 'Estatus', visible: true, cellClass: (v: string, row: any) => row['_colorEstatus'] ?? '' },
+      {
+        field: 'estadoActual',
+        label: 'Estatus',
+        visible: true,
+        cellClass: (v: string, row: any) => row['_colorEstatus'] ?? '',
+      },
       { field: 'seleccionado', label: 'Seleccionar', visible: true, type: 'checkbox' },
     ];
     const fechaCol: TablaColumna = esComun
-      ? { field: 'fechaExportacion', label: 'Fecha Exportación', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy HH:mm' }
-      : { field: 'fechaImportacion', label: 'Fecha Importación', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy HH:mm' };
-    return [
-      ...base.slice(0, 5),
-      fechaCol,
-      ...base.slice(5),
-    ];
+      ? {
+          field: 'fechaExportacion',
+          label: 'Fecha Exportación',
+          visible: true,
+          type: 'date',
+          dateFormat: 'dd/MM/yyyy HH:mm',
+        }
+      : {
+          field: 'fechaImportacion',
+          label: 'Fecha Importación',
+          visible: true,
+          type: 'date',
+          dateFormat: 'dd/MM/yyyy HH:mm',
+        };
+    return [...base.slice(0, 5), fechaCol, ...base.slice(5)];
   }
 
   get todosSeleccionados(): boolean {
-    const ids = this.facade.resultados().map(r => r.idToca);
+    const ids = this.facade.resultados().map((r) => r.idToca);
     const seleccionados = this.facade.idsSeleccionados();
-    return ids.length > 0 && ids.every(id => seleccionados.includes(id));
+    return ids.length > 0 && ids.every((id) => seleccionados.includes(id));
   }
 
   toggleTodos(): void {
-    const ids = this.facade.resultados().map(r => r.idToca);
+    const ids = this.facade.resultados().map((r) => r.idToca);
     this.facade.toggleSeleccionTodos(ids);
   }
 

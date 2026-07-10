@@ -25,7 +25,13 @@ export class PanelResultadosComponent {
     { field: 'salaAnterior', label: 'Sala Anterior', visible: true },
     { field: 'apelacion', label: 'Apelación', visible: true },
     { field: 'tipoApelacion', label: 'Tipo de Apelación', visible: true },
-    { field: 'fechaAuto', label: 'Fecha de Auto', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy' },
+    {
+      field: 'fechaAuto',
+      label: 'Fecha de Auto',
+      visible: true,
+      type: 'date',
+      dateFormat: 'dd/MM/yyyy',
+    },
     { field: 'expedienteCausa', label: 'Exp / Causa', visible: true },
     { field: 'tipoEscrito', label: 'Tipo de Escrito', visible: true },
     { field: 'folioOficio', label: 'Folio de Oficio', visible: true },
@@ -38,7 +44,12 @@ export class PanelResultadosComponent {
     { field: 'esReposicion', label: 'Reposición', visible: true, type: 'boolean' },
     { field: 'asunto', label: 'Asunto', visible: true },
     { field: 'lugarHechos', label: 'Lugar de los Hechos', visible: true },
-    { field: 'fechaHoraIngresoJuz', label: 'Fecha de Ingreso al Juzgado', visible: true, type: 'date' },
+    {
+      field: 'fechaHoraIngresoJuz',
+      label: 'Fecha de Ingreso al Juzgado',
+      visible: true,
+      type: 'date',
+    },
   ];
 
   readonly columnasVisibles = computed(() => {
@@ -47,8 +58,8 @@ export class PanelResultadosComponent {
 
     if (data.length === 0) return this.columnas;
 
-    return this.columnas.map(col => {
-      const llenas = data.filter(r => {
+    return this.columnas.map((col) => {
+      const llenas = data.filter((r) => {
         const valor = (r as any)[col.field];
         return valor != null && valor !== '';
       }).length;
@@ -63,6 +74,6 @@ export class PanelResultadosComponent {
     this.busqueda.seleccionarFila(r);
   }
   onBack(): void {
-        window.history.back();
+    window.history.back();
   }
 }

@@ -1,10 +1,14 @@
-import { ResultadoBusquedaPlana, SearchFormPlana, PagedResultPlana } from "../models/buscador-plano.model";
+import {
+  ResultadoBusquedaPlana,
+  SearchFormPlana,
+  PagedResultPlana,
+} from '../models/buscador-plano.model';
 import { Injectable, inject, signal, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BuscadorPlanoService } from "../data/buscadorPlano.service";
+import { BuscadorPlanoService } from '../data/buscadorPlano.service';
 import { ModalService } from '../../../../shared/components/modal-custom/services/modal.service';
 import { finalize } from 'rxjs';
-import { BusquedaPlanoMapper } from "../utils/buscadorPlano.mapper";
+import { BusquedaPlanoMapper } from '../utils/buscadorPlano.mapper';
 
 export const FORM_VACIO = {
   folioOficialia: '',
@@ -15,35 +19,34 @@ export const FORM_VACIO = {
   expedienteCausa: '',
   observacion: '',
   fechaInicio: '',
-  fechaFin: ''
-}
+  fechaFin: '',
+};
 
 @Injectable({ providedIn: 'root' })
 export class BusquedaPlanaFacade {
-
   private readonly busquedaService = inject(BuscadorPlanoService);
-  private readonly destroyRef      = inject(DestroyRef);
-  private readonly modal           = inject(ModalService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly modal = inject(ModalService);
   private _cache = new Map<number, ResultadoBusquedaPlana[]>();
 
   readonly form = signal<SearchFormPlana>({ ...FORM_VACIO });
 
   // ── Estado
-  readonly buscando   = signal(false);
+  readonly buscando = signal(false);
   readonly exportando = signal(false);
-  readonly generando  = signal(false);
+  readonly generando = signal(false);
 
   readonly resultados = signal<ResultadoBusquedaPlana[]>([]);
 
   private readonly _paginacion = signal({ total: 0, page: 1, limit: 10 });
-  private readonly _porPagina  = signal(10);
+  private readonly _porPagina = signal(10);
 
   // ── Computed
-  readonly porPagina       = computed(() => this._porPagina());
-  readonly paginaActual    = computed(() => this._paginacion().page);
+  readonly porPagina = computed(() => this._porPagina());
+  readonly paginaActual = computed(() => this._paginacion().page);
   readonly totalResultados = computed(() => this._paginacion().total);
-  readonly totalPaginas    = computed(() =>
-    Math.ceil(this._paginacion().total / this._paginacion().limit) || 1
+  readonly totalPaginas = computed(
+    () => Math.ceil(this._paginacion().total / this._paginacion().limit) || 1,
   );
 
   // ── Búsqueda
@@ -59,11 +62,10 @@ export class BusquedaPlanaFacade {
   private _ejecutarBusqueda(page: number, mostrarModal: boolean): void {
     this.buscando.set(true);
 
-    this.busquedaService.buscarPlana(this.form(), page, this.porPagina())
-      .subscribe({
-        next:  res => this._onSuccess(res, mostrarModal),
-        error: ()  => this._onError(),
-      });
+    this.busquedaService.buscarPlana(this.form(), page, this.porPagina()).subscribe({
+      next: (res) => this._onSuccess(res, mostrarModal),
+      error: () => this._onError(),
+    });
   }
 
   private _onSuccess(res: PagedResultPlana, mostrarModal: boolean): void {
@@ -75,7 +77,10 @@ export class BusquedaPlanaFacade {
     if (!mostrarModal) return;
 
     res.resultados.length === 0
-      ? this.modal.info('Sin resultados', 'No se encontraron registros con los criterios ingresados.')
+      ? this.modal.info(
+          'Sin resultados',
+          'No se encontraron registros con los criterios ingresados.',
+        )
       : this.modal.success('Búsqueda exitosa', `Se encontraron ${res.paginacion.total} registros.`);
   }
 
@@ -90,7 +95,7 @@ export class BusquedaPlanaFacade {
 
     if (this._cache.has(pagina)) {
       this.resultados.set(this._cache.get(pagina)!);
-      this._paginacion.update(p => ({ ...p, page: pagina }));
+      this._paginacion.update((p) => ({ ...p, page: pagina }));
       return;
     }
 
@@ -99,8 +104,7 @@ export class BusquedaPlanaFacade {
 
   cambiarPorPagina(limit: number): void {
     this._porPagina.set(limit);
-    if (this.resultados().length === 0)
-      return;
+    if (this.resultados().length === 0) return;
     this._limpiarCache();
     this._ejecutarBusqueda(1, false);
   }
@@ -112,14 +116,16 @@ export class BusquedaPlanaFacade {
       return;
     }
     this.exportando.set(true);
-    this.busquedaService.exportarExcel(this.form())
+    this.busquedaService
+      .exportarExcel(this.form())
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.exportando.set(false)),
       )
       .subscribe({
-        next:  (blob) => this.descargarArchivo(blob, 'xlsx'),
-        error: ()     => this.modal.error('Error al exportar', 'No se pudo generar el Excel. Intenta de nuevo.'),
+        next: (blob) => this.descargarArchivo(blob, 'xlsx'),
+        error: () =>
+          this.modal.error('Error al exportar', 'No se pudo generar el Excel. Intenta de nuevo.'),
       });
   }
 
@@ -130,23 +136,25 @@ export class BusquedaPlanaFacade {
       return;
     }
     this.generando.set(true);
-    this.busquedaService.exportarPdf(this.form())
+    this.busquedaService
+      .exportarPdf(this.form())
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.generando.set(false)),
       )
       .subscribe({
-        next:  (blob) => this.descargarArchivo(blob, 'pdf'),
-        error: ()     => this.modal.error('Error al exportar', 'No se pudo generar el PDF. Intenta de nuevo.'),
+        next: (blob) => this.descargarArchivo(blob, 'pdf'),
+        error: () =>
+          this.modal.error('Error al exportar', 'No se pudo generar el PDF. Intenta de nuevo.'),
       });
   }
 
   // ── Descarga genérica
   private descargarArchivo(blob: Blob, extension: 'xlsx' | 'pdf'): void {
-    const fecha  = new Date().toISOString().slice(0, 10);
-    const url    = URL.createObjectURL(blob);
+    const fecha = new Date().toISOString().slice(0, 10);
+    const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
-    anchor.href     = url;
+    anchor.href = url;
     anchor.download = `reporte_plano_${fecha}.${extension}`;
     anchor.click();
     URL.revokeObjectURL(url);
@@ -161,6 +169,6 @@ export class BusquedaPlanaFacade {
 
   private _limpiarCache(): void {
     this._cache.clear();
-    this._paginacion.update(p => ({ ...p, total: 0, page: 1 }));
+    this._paginacion.update((p) => ({ ...p, total: 0, page: 1 }));
   }
 }

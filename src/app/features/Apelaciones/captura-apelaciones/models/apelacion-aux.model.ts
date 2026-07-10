@@ -78,4 +78,3 @@ export interface ApelacionSaveResponse {
   message?: string;
   data: ApelacionSaveResponseData;
 }
-

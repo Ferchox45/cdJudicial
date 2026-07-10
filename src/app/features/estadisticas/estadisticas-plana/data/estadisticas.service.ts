@@ -1,60 +1,63 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { ResultadoBusquedaPlanaEstadistica, ApiResponseEstadisticas,
-  SearchFormPlanaEstadistica, PagedResult, ReporteAgrupado,
-  ApiResponseAgrupada} from '../models/estadisticas';
+import {
+  ResultadoBusquedaPlanaEstadistica,
+  ApiResponseEstadisticas,
+  SearchFormPlanaEstadistica,
+  PagedResult,
+  ReporteAgrupado,
+  ApiResponseAgrupada,
+} from '../models/estadisticas';
 import { BusquedaEstadisticaMapper } from '../util/estadisticasPlana.mapper';
 import { environment } from '../../../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class EstadisticaService {
-private http = inject(HttpClient);
-apiEndpoint = environment.apiUrl;
+  private http = inject(HttpClient);
+  apiEndpoint = environment.apiUrl;
 
-buscarEstadistica(
-  form: SearchFormPlanaEstadistica,
-  page: number,
-  limit: number
-): Observable<PagedResult> {
+  buscarEstadistica(
+    form: SearchFormPlanaEstadistica,
+    page: number,
+    limit: number,
+  ): Observable<PagedResult> {
+    const dto = BusquedaEstadisticaMapper.toDTO(form);
 
-  const dto = BusquedaEstadisticaMapper.toDTO(form);
+    let params = new HttpParams().set('page', page).set('limit', limit);
 
-  let params = new HttpParams()
-    .set('page', page)
-    .set('limit', limit);
-
-  Object.entries(dto).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      params = params.set(key, String(value));
-    }
-  });
-
-  return this.http.get<ApiResponseEstadisticas>(`${this.apiEndpoint}/api/estadisticas/plano/`, { params }).pipe(
-    map(response => ({
-      resultados: response.data.planos.map(item => this.mapItem(item)),
-      paginacion: {
-        total: response.data.total,
-        page:  response.data.page,
-        limit: response.data.limit,
+    Object.entries(dto).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        params = params.set(key, String(value));
       }
-    }))
-  );
-}
+    });
 
-private mapItem(item: any): ResultadoBusquedaPlanaEstadistica {
-  return {
-    ...item,
-    anioRecep:   item.añoRecep,
-    anioIngreso: item.añoIngreso,
-    añoRecep:    undefined,
-    añoIngreso:  undefined,
-  };
-}
+    return this.http
+      .get<ApiResponseEstadisticas>(`${this.apiEndpoint}/api/estadisticas/plano/`, { params })
+      .pipe(
+        map((response) => ({
+          resultados: response.data.planos.map((item) => this.mapItem(item)),
+          paginacion: {
+            total: response.data.total,
+            page: response.data.page,
+            limit: response.data.limit,
+          },
+        })),
+      );
+  }
 
-buscarAgrupada(
-    form: SearchFormPlanaEstadistica
+  private mapItem(item: any): ResultadoBusquedaPlanaEstadistica {
+    return {
+      ...item,
+      anioRecep: item.añoRecep,
+      anioIngreso: item.añoIngreso,
+      añoRecep: undefined,
+      añoIngreso: undefined,
+    };
+  }
+
+  buscarAgrupada(
+    form: SearchFormPlanaEstadistica,
   ): Observable<ResultadoBusquedaPlanaEstadistica[]> {
-
     const dto = BusquedaEstadisticaMapper.toDTO(form);
 
     let params = new HttpParams();
@@ -64,9 +67,9 @@ buscarAgrupada(
       }
     });
 
-    return this.http.get<ApiResponseAgrupada>(`${this.apiEndpoint}/api/estadisticas/agrupado/`, { params }).pipe(
-      map(response => this.aplanarAgrupado(response.data.agrupados))
-    );
+    return this.http
+      .get<ApiResponseAgrupada>(`${this.apiEndpoint}/api/estadisticas/agrupado/`, { params })
+      .pipe(map((response) => this.aplanarAgrupado(response.data.agrupados)));
   }
 
   // Aplana el JSON anidado a una lista plana de ResultadoBusquedaPlanaEstadistica
@@ -90,22 +93,22 @@ buscarAgrupada(
 
               for (const tipoApelacion of Object.keys(tipos)) {
                 filas.push({
-                  idApelacion:             null,
+                  idApelacion: null,
                   sala,
-                  tramite:                 null,
-                  folioOficialia:          null,
+                  tramite: null,
+                  folioOficialia: null,
                   nomenclatura,
-                  folioToca:               null,
+                  folioToca: null,
                   apelacion,
                   tipoApelacion,
-                  tipoEscrito:             null,
-                  fechaHoraRecepcion:      null,
+                  tipoEscrito: null,
+                  fechaHoraRecepcion: null,
                   fechaHoraIngresoJuzgado: null,
-                  juzgadoOrigen:           null,
-                  mesRecep:                mes,
-                  anioRecep:               Number(anio),
-                  mesIngreso:              null,
-                  anioIngreso:             null,
+                  juzgadoOrigen: null,
+                  mesRecep: mes,
+                  anioRecep: Number(anio),
+                  mesIngreso: null,
+                  anioIngreso: null,
                 });
               }
             }
@@ -116,30 +119,29 @@ buscarAgrupada(
 
     return filas;
   }
-exportarExcel(filtros: any, imagenBase64: string | null = null): Observable<Blob> {
-  const body = {
-    filtros,
-    imagenBase64, // null si no hay gráfica activa, el back lo maneja
-  };
+  exportarExcel(filtros: any, imagenBase64: string | null = null): Observable<Blob> {
+    const body = {
+      filtros,
+      imagenBase64, // null si no hay gráfica activa, el back lo maneja
+    };
 
-  return this.http.post(`${this.apiEndpoint}/api/estadisticas/exportar`, body, {
-    responseType: 'blob',
-  });
-}
+    return this.http.post(`${this.apiEndpoint}/api/estadisticas/exportar`, body, {
+      responseType: 'blob',
+    });
+  }
 
   // Devuelve la jerarquía intacta para la tabla HTML
-buscarAgrupadaJerarquica(form: SearchFormPlanaEstadistica): Observable<ReporteAgrupado[]> {
-  const dto = BusquedaEstadisticaMapper.toDTO(form);
-  let params = new HttpParams();
-  Object.entries(dto).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      params = params.set(key, String(value));
-    }
-  });
+  buscarAgrupadaJerarquica(form: SearchFormPlanaEstadistica): Observable<ReporteAgrupado[]> {
+    const dto = BusquedaEstadisticaMapper.toDTO(form);
+    let params = new HttpParams();
+    Object.entries(dto).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        params = params.set(key, String(value));
+      }
+    });
 
-  return this.http.get<ApiResponseAgrupada>(`${this.apiEndpoint}/api/estadisticas/agrupado/`, { params }).pipe(
-    map(response => response.data.agrupados)
-  );
-}
-
+    return this.http
+      .get<ApiResponseAgrupada>(`${this.apiEndpoint}/api/estadisticas/agrupado/`, { params })
+      .pipe(map((response) => response.data.agrupados));
+  }
 }

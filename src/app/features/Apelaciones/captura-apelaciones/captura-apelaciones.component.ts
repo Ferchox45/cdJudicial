@@ -1,8 +1,24 @@
-
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject, signal, effect } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  inject,
+  signal,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/action-sidebar/action-sidebar.component';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  FormControl,
+  Validators,
+} from '@angular/forms';
+import {
+  ActionSidebarComponent,
+  SidebarAction,
+} from '../../../shared/components/action-sidebar/action-sidebar.component';
 import { PanelIdentificacionComponent } from './components/panel-identificacion/panel-identificacion.component';
 import { PanelPartesComponent } from './components/panel-partes/panel-partes.component';
 import { PanelRelacionesComponent } from './components/panel-relaciones/panel-relaciones.component';
@@ -11,7 +27,7 @@ import { CertificacionModalComponent } from './components/certificacion-modal/ce
 import { ApelacionApiService } from './data/captura-apelacion.service';
 import { Parte, RelacionBusqueda } from './models/busqueda-rap.model';
 import { CatalogosFacade } from './facades/catalogos.facade';
-import { GuardarFacade} from './facades/guardar.facade';
+import { GuardarFacade } from './facades/guardar.facade';
 import { BusquedaFacade } from './facades/busqueda.facade';
 import { Router } from '@angular/router';
 import { buildNuevaParte, buildNuevaRelacion } from './utils/captura-apelaciones.mapper';
@@ -27,48 +43,51 @@ import { OnUnsavedChanges } from '../../../shared/guards/on-unsaved-changes';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CatalogosFacade, BusquedaFacade, GuardarFacade],
   imports: [
-    CommonModule, ReactiveFormsModule,
+    CommonModule,
+    ReactiveFormsModule,
     ActionSidebarComponent,
-    PanelIdentificacionComponent, PanelPartesComponent, PanelRelacionesComponent,
-    ModalAnexosComponent, CertificacionModalComponent,
+    PanelIdentificacionComponent,
+    PanelPartesComponent,
+    PanelRelacionesComponent,
+    ModalAnexosComponent,
+    CertificacionModalComponent,
   ],
   templateUrl: './captura-apelaciones.component.html',
 })
 export class CapturaApelacionesComponent implements OnInit, OnDestroy, OnUnsavedChanges {
-
   cat = inject(CatalogosFacade);
   bus = inject(BusquedaFacade);
   grd = inject(GuardarFacade);
   private router = inject(Router);
-  private fb  = inject(FormBuilder);
+  private fb = inject(FormBuilder);
   private modal = inject(ModalService);
   private apelacionService = inject(ApelacionApiService);
   private sessionState = inject(SessionStateService);
   private contextoService = inject(ApelacionContextService);
 
   identificacionOpen = true;
-  partesOpen         = true;
+  partesOpen = true;
   datosGeneralesOpen = true;
   relacionesFinalesOpen = false;
   activeTab: 'partes' | 'relaciones' = 'partes';
-  fechaActual = signal(new Date);
+  fechaActual = signal(new Date());
 
   mostrarModalAnexos = signal(false);
   mostrarCertificacion = signal(false);
-  certBase64          = signal('');
-  folioGuardado       = signal('');
-  salaGuardada        = signal('');
+  certBase64 = signal('');
+  folioGuardado = signal('');
+  salaGuardada = signal('');
 
-  form!:      FormGroup;
+  form!: FormGroup;
   parteForm!: FormGroup;
 
-  partes:     Parte[]            = [];
+  partes: Parte[] = [];
   relaciones: RelacionBusqueda[] = [];
   delitosDisponibles = signal<DelitoDisponible[]>([]);
   idsProcesadosSeleccionados = new Set<number>();
   idsOfendidosSeleccionados = new Set<number>();
   busquedaDelitoTexto = new FormControl('');
-  mostrarFormParte    = false;
+  mostrarFormParte = false;
 
   guardando = signal(false);
 
@@ -76,10 +95,21 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy, OnUnsaved
     const isSaving = this.guardando();
     const importado = this.bus.importadoNS() === true;
     return [
-      { id: 'nuevo',   label: 'Nuevo',   icon: 'nuevo',   primary: true, disabled: isSaving },
-      { id: 'guardar', label: 'Guardar', icon: 'guardar', loading: isSaving, disabled: isSaving || importado },
-      { id: 'buscar',  label: 'Buscar',  icon: 'buscar',  disabled: isSaving },
-      { id: 'anexo',   label: 'Anexos',  icon: 'anexo',   disabled: !this.bus.tieneAnexos() || isSaving },
+      { id: 'nuevo', label: 'Nuevo', icon: 'nuevo', primary: true, disabled: isSaving },
+      {
+        id: 'guardar',
+        label: 'Guardar',
+        icon: 'guardar',
+        loading: isSaving,
+        disabled: isSaving || importado,
+      },
+      { id: 'buscar', label: 'Buscar', icon: 'buscar', disabled: isSaving },
+      {
+        id: 'anexo',
+        label: 'Anexos',
+        icon: 'anexo',
+        disabled: !this.bus.tieneAnexos() || isSaving,
+      },
       { id: 'certificar', label: 'Certificar', icon: 'certificar', disabled: isSaving },
     ];
   }
@@ -88,15 +118,25 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy, OnUnsaved
 
   get esIndigena(): boolean {
     const id = this.form.get('materiaId')?.value;
-    const desc = this.cat.materias().find(m => m.id === id)?.descripcion ?? '';
-    return desc.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() === 'indigena'
+    const desc = this.cat.materias().find((m) => m.id === id)?.descripcion ?? '';
+    return (
+      desc
+        .trim()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase() === 'indigena'
+    );
   }
-  get procesados()       { return this.partes.filter(p => p.roleOrigin === 'procesado'); }
-  get ofendidos()        { return this.partes.filter(p => p.roleOrigin === 'ofendido');  }
+  get procesados() {
+    return this.partes.filter((p) => p.roleOrigin === 'procesado');
+  }
+  get ofendidos() {
+    return this.partes.filter((p) => p.roleOrigin === 'ofendido');
+  }
   get delitosFiltrados() {
     const q = this.busquedaDelitoTexto.value?.trim().toLowerCase() ?? '';
     const dd = this.delitosDisponibles();
-    return q ? dd.filter(d => d.delito.toLowerCase().includes(q)) : dd;
+    return q ? dd.filter((d) => d.delito.toLowerCase().includes(q)) : dd;
   }
 
   ngOnInit(): void {
@@ -120,43 +160,52 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy, OnUnsaved
     return this.form.dirty || this.partes.length > 0 || this.relaciones.length > 0;
   }
 
-  ngOnDestroy(): void { clearInterval(this.intervalId); }
+  ngOnDestroy(): void {
+    clearInterval(this.intervalId);
+  }
 
-private wireCallbacks(): void {
-  this.cat.onDelitosListos = (d) => { this.delitosDisponibles.set(d); };
-  this.cat.onError = (m) => this.modal.error('Error', m);
+  private wireCallbacks(): void {
+    this.cat.onDelitosListos = (d) => {
+      this.delitosDisponibles.set(d);
+    };
+    this.cat.onError = (m) => this.modal.error('Error', m);
 
-  this.bus.onExito = ({ partes, relaciones, delitosDisponibles }) => {
-    this.partes = partes; this.relaciones = relaciones; this.delitosDisponibles.set(delitosDisponibles);
-  };
-  this.bus.onError = (m) => this.modal.error('Error', m);
-  this.bus.onNuevo = () => { this.limpiarEstadoCaptura(); this.contextoService.clearSearchState(); };
-
-      this.grd.onExito    = () =>{
-    this.guardando.set(false);
-    if (this.bus.apelacionId()) {
-      this.modal.success('Éxito', 'Apelación guardada correctamente.');
-      this.bus.resetNuevo(this.form);
-      this.form.reset();
+    this.bus.onExito = ({ partes, relaciones, delitosDisponibles }) => {
+      this.partes = partes;
+      this.relaciones = relaciones;
+      this.delitosDisponibles.set(delitosDisponibles);
+    };
+    this.bus.onError = (m) => this.modal.error('Error', m);
+    this.bus.onNuevo = () => {
       this.limpiarEstadoCaptura();
-    } else {
-      this.mostrarModalAnexos.set(true);
-      const materiaActual = this.esIndigena ? 6 : 5;
-      this.actualizarFolioTentativo(materiaActual);
-    }
-  };
+      this.contextoService.clearSearchState();
+    };
 
-  this.grd.onTerminar = () => {
-    this.guardando.set(false);
-    this.limpiarEstadoCaptura();
-    this.actualizarFolioTentativo(5);
-  };
+    this.grd.onExito = () => {
+      this.guardando.set(false);
+      if (this.bus.apelacionId()) {
+        this.modal.success('Éxito', 'Apelación guardada correctamente.');
+        this.bus.resetNuevo(this.form);
+        this.form.reset();
+        this.limpiarEstadoCaptura();
+      } else {
+        this.mostrarModalAnexos.set(true);
+        const materiaActual = this.esIndigena ? 6 : 5;
+        this.actualizarFolioTentativo(materiaActual);
+      }
+    };
 
-  this.grd.onError    = (m) => {
-    this.guardando.set(false);
-    this.modal.error('Error', m);
-  };
-}
+    this.grd.onTerminar = () => {
+      this.guardando.set(false);
+      this.limpiarEstadoCaptura();
+      this.actualizarFolioTentativo(5);
+    };
+
+    this.grd.onError = (m) => {
+      this.guardando.set(false);
+      this.modal.error('Error', m);
+    };
+  }
 
   private guardarEstadoBusqueda(): void {
     this.contextoService.saveSearchState({
@@ -207,15 +256,11 @@ private wireCallbacks(): void {
     this.bus.importadoNS.set(s.importadoNS ?? null);
 
     const savedIds = new Set(
-      (s.delitosDisponibles ?? [])
-        .filter((d: any) => d.seleccionado)
-        .map((d: any) => d.id)
+      (s.delitosDisponibles ?? []).filter((d: any) => d.seleccionado).map((d: any) => d.id),
     );
 
     this.cat.onDelitosListos = (delitos) => {
-      this.delitosDisponibles.set(
-        delitos.map(d => ({ ...d, seleccionado: savedIds.has(d.id) }))
-      );
+      this.delitosDisponibles.set(delitos.map((d) => ({ ...d, seleccionado: savedIds.has(d.id) })));
       if (this.bus.bloquearSeccion()) {
         this.bus.bloquearCampos(this.form);
       }
@@ -229,31 +274,51 @@ private wireCallbacks(): void {
 
   private buildForm(): void {
     this.form = this.fb.group({
-      busquedaRapida:      [''],
-      materiaId:           [null, Validators.required],
-      magistradoId:        [null],
-      apelacionId:         [null], tipoApelacionId:     [null], tipoEscritoId:       [null],
-      juzgadoId:           [null], municipioId:         [null], localidadId:         [null],
-      etniaId:             [null], expedienteCausa:     [null], expedienteAcumulado: [null],
-      fechaAuto:           [null],   folioOficio:         [null],   fojas:               [null],
-      otroEtnia:           [null],
-      asunto:              [null],   lugarHechos:         [null],
-      esReposicion:        [false], observaciones:      [null],
-      magistrados:         [{ value: '', disabled: true }],
-      folioTentativo:      [{ value: '', disabled: true }],
+      busquedaRapida: [''],
+      materiaId: [null, Validators.required],
+      magistradoId: [null],
+      apelacionId: [null],
+      tipoApelacionId: [null],
+      tipoEscritoId: [null],
+      juzgadoId: [null],
+      municipioId: [null],
+      localidadId: [null],
+      etniaId: [null],
+      expedienteCausa: [null],
+      expedienteAcumulado: [null],
+      fechaAuto: [null],
+      folioOficio: [null],
+      fojas: [null],
+      otroEtnia: [null],
+      asunto: [null],
+      lugarHechos: [null],
+      esReposicion: [false],
+      observaciones: [null],
+      magistrados: [{ value: '', disabled: true }],
+      folioTentativo: [{ value: '', disabled: true }],
     });
     this.parteForm = this.fb.group({
-      nombre: ['', Validators.required], sexo: ['', Validators.required],
-      tipoParte: ['', Validators.required], direccion: [''], esMenor: [false],
+      nombre: ['', Validators.required],
+      sexo: ['', Validators.required],
+      tipoParte: ['', Validators.required],
+      direccion: [''],
+      esMenor: [false],
     });
   }
 
   handleAction(id: string): void {
     const actions: Record<string, () => void> = {
-      nuevo:   () => { this.bus.resetNuevo(this.form); this.form.reset(); this.contextoService.clearSearchState(); },
+      nuevo: () => {
+        this.bus.resetNuevo(this.form);
+        this.form.reset();
+        this.contextoService.clearSearchState();
+      },
       guardar: () => {
         if (this.bus.importadoNS()) {
-          this.modal.info('Apelación importada', 'Esta apelación ya fue importada a un sistema externo y no puede ser modificada.');
+          this.modal.info(
+            'Apelación importada',
+            'Esta apelación ya fue importada a un sistema externo y no puede ser modificada.',
+          );
           return;
         }
         this.form.markAllAsTouched();
@@ -262,7 +327,10 @@ private wireCallbacks(): void {
           return;
         }
         if (this.partes.length === 0) {
-          this.modal.info('Partes requeridas', 'Debe agregar al menos una parte antes de guardar la apelación.');
+          this.modal.info(
+            'Partes requeridas',
+            'Debe agregar al menos una parte antes de guardar la apelación.',
+          );
           return;
         }
         this.guardando.set(true);
@@ -286,7 +354,7 @@ private wireCallbacks(): void {
         const id = this.bus.apelacionId();
         if (!id) return;
         this.guardarEstadoBusqueda();
-        const anexosPrevios = (this.bus.anexos() ?? []).map(a => ({
+        const anexosPrevios = (this.bus.anexos() ?? []).map((a) => ({
           idAnexo: a.idAnexo,
           cantidad: a.cantidad,
           tipo: a.descripcion,
@@ -308,27 +376,33 @@ private wireCallbacks(): void {
           }
           return;
         }
-        this.apelacionService.certificarApelacion(id, this.sessionState.idPantalla(), this.sessionState.idAreaSistemaUsuario()).subscribe({
-          next: (res) => {
-            this.certBase64.set(res.certificacion);
-            this.mostrarCertificacion.set(true);
-          },
-          error: () => this.modal.error('Error', 'Error al certificar la apelación.'),
-        });
+        this.apelacionService
+          .certificarApelacion(
+            id,
+            this.sessionState.idPantalla(),
+            this.sessionState.idAreaSistemaUsuario(),
+          )
+          .subscribe({
+            next: (res) => {
+              this.certBase64.set(res.certificacion);
+              this.mostrarCertificacion.set(true);
+            },
+            error: () => this.modal.error('Error', 'Error al certificar la apelación.'),
+          });
       },
       buscar: () => this.router.navigate(['capturaApelacion/busquedaApelacion']),
     };
     actions[id]?.();
   }
 
-  actualizarFecha = effect((limpiarFechaHora)=>{
-    const interval = setInterval(()=>{
+  actualizarFecha = effect((limpiarFechaHora) => {
+    const interval = setInterval(() => {
       this.fechaActual.set(new Date());
-    },1000);
+    }, 1000);
 
-  limpiarFechaHora(()=>{
-    clearInterval(interval);
-     })
+    limpiarFechaHora(() => {
+      clearInterval(interval);
+    });
   });
 
   agregarParte(): void {
@@ -342,9 +416,9 @@ private wireCallbacks(): void {
   }
 
   agregarRelacionDesdePanel(): void {
-    const procesadosSel = this.procesados.filter(p => this.idsProcesadosSeleccionados.has(p.id));
-    const ofendidosSel = this.ofendidos.filter(p => this.idsOfendidosSeleccionados.has(p.id));
-    const delitosSel = this.delitosDisponibles().filter(d => d.seleccionado);
+    const procesadosSel = this.procesados.filter((p) => this.idsProcesadosSeleccionados.has(p.id));
+    const ofendidosSel = this.ofendidos.filter((p) => this.idsOfendidosSeleccionados.has(p.id));
+    const delitosSel = this.delitosDisponibles().filter((d) => d.seleccionado);
     if (procesadosSel.length === 0 || ofendidosSel.length === 0) return;
 
     const nuevas: RelacionBusqueda[] = [];
@@ -354,7 +428,9 @@ private wireCallbacks(): void {
       }
     }
     this.relaciones = [...this.relaciones, ...nuevas];
-    this.delitosDisponibles.set(this.delitosDisponibles().map(d => ({ ...d, seleccionado: false })));
+    this.delitosDisponibles.set(
+      this.delitosDisponibles().map((d) => ({ ...d, seleccionado: false })),
+    );
     this.idsProcesadosSeleccionados = new Set();
     this.idsOfendidosSeleccionados = new Set();
     this.relacionesFinalesOpen = true;
@@ -362,12 +438,18 @@ private wireCallbacks(): void {
 
   eliminarDelitoDeRelacion(e: { relId: string; delitoId: number | string }): void {
     this.relaciones = this.relaciones
-      .map(r => r.id === e.relId ? { ...r, delitosRelacion: r.delitosRelacion.filter(d => d.id !== Number(e.delitoId)) } : r)
-      .filter(r => r.delitosRelacion.length > 0);
+      .map((r) =>
+        r.id === e.relId
+          ? { ...r, delitosRelacion: r.delitosRelacion.filter((d) => d.id !== Number(e.delitoId)) }
+          : r,
+      )
+      .filter((r) => r.delitosRelacion.length > 0);
   }
 
   toggleDelito(d: DelitoDisponible): void {
-    this.delitosDisponibles.update(dd => dd.map(x => x.id === d.id ? { ...x, seleccionado: !x.seleccionado } : x));
+    this.delitosDisponibles.update((dd) =>
+      dd.map((x) => (x.id === d.id ? { ...x, seleccionado: !x.seleccionado } : x)),
+    );
   }
 
   toggleProcesado(id: number): void {
@@ -381,7 +463,7 @@ private wireCallbacks(): void {
     this.idsOfendidosSeleccionados = next;
   }
   marcarTodosProcesados(): void {
-    const ids = this.procesados.map(p => p.id);
+    const ids = this.procesados.map((p) => p.id);
     if (this.idsProcesadosSeleccionados.size === ids.length) {
       this.idsProcesadosSeleccionados = new Set();
     } else {
@@ -389,7 +471,7 @@ private wireCallbacks(): void {
     }
   }
   marcarTodosOfendidos(): void {
-    const ids = this.ofendidos.map(p => p.id);
+    const ids = this.ofendidos.map((p) => p.id);
     if (this.idsOfendidosSeleccionados.size === ids.length) {
       this.idsOfendidosSeleccionados = new Set();
     } else {
@@ -398,15 +480,15 @@ private wireCallbacks(): void {
   }
 
   private limpiarEstadoCaptura(): void {
-    this.partes                      = [];
-    this.relaciones                  = [];
-    this.idsProcesadosSeleccionados  = new Set();
-    this.idsOfendidosSeleccionados   = new Set();
-    this.delitosDisponibles.update(dd => dd.map(d => ({ ...d, seleccionado: false })));
+    this.partes = [];
+    this.relaciones = [];
+    this.idsProcesadosSeleccionados = new Set();
+    this.idsOfendidosSeleccionados = new Set();
+    this.delitosDisponibles.update((dd) => dd.map((d) => ({ ...d, seleccionado: false })));
     this.busquedaDelitoTexto.setValue('');
   }
   private actualizarFolioTentativo(materia?: number): void {
-  const materiaNum = materia ?? (this.esIndigena ? 6 : 5);
-  this.cat.cargar(this.form, materiaNum);
+    const materiaNum = materia ?? (this.esIndigena ? 6 : 5);
+    this.cat.cargar(this.form, materiaNum);
   }
 }

@@ -24,21 +24,31 @@ export interface GuardarConfig {
 
 @Injectable()
 export class GuardarFacade {
-
   private apelacionService = inject(ApelacionApiService);
-  private contextoService  = inject(ApelacionContextService);
-  private router           = inject(Router);
-  private sessionState      = inject(SessionStateService);
+  private contextoService = inject(ApelacionContextService);
+  private router = inject(Router);
+  private sessionState = inject(SessionStateService);
 
   guardando = false;
 
   // Callbacks
-  onExito?:    () => void;
+  onExito?: () => void;
   onTerminar?: () => void;
-  onError?:    (msg: string) => void;
+  onError?: (msg: string) => void;
 
-guardar(config: GuardarConfig): void {
-    const { form, relaciones, partes, sexos, tiposPartes, folioGuardado, salaGuardada, onModalInvalido, esActualizacion, idTramite } = config;
+  guardar(config: GuardarConfig): void {
+    const {
+      form,
+      relaciones,
+      partes,
+      sexos,
+      tiposPartes,
+      folioGuardado,
+      salaGuardada,
+      onModalInvalido,
+      esActualizacion,
+      idTramite,
+    } = config;
 
     // Construimos el JSON con lo que sea que tenga el form
     const payload = buildPayload(
@@ -49,7 +59,7 @@ guardar(config: GuardarConfig): void {
       tiposPartes,
       this.sessionState.idAreaSistemaUsuario(),
       this.sessionState.idPantalla(),
-      idTramite
+      idTramite,
     );
     // Despues validamos. Si es inválido, detenemos el flujo para que NO se envíe al servidor
     if (form.invalid) {

@@ -12,9 +12,7 @@ import { SearchFormHistorico } from '../../models/buscador-historico.model';
   imports: [FormsModule],
   templateUrl: './panelBusquedaHistorico.component.html',
 })
-
 export class PanelBusquedaHistoricoComponent {
-
   readonly catalogoFacade = inject(CatalogoFacade);
   readonly buscarFacade = inject(BuscarFacade);
 
@@ -23,9 +21,11 @@ export class PanelBusquedaHistoricoComponent {
   }
 
   updateForm(field: keyof SearchFormHistorico, value: string): void {
-    this.buscarFacade.form.update(f => ({ ...f, [field]: value }));
+    this.buscarFacade.form.update((f) => ({ ...f, [field]: value }));
   }
 
   abierto = true;
-  toggle(): void { this.abierto = !this.abierto; }
+  toggle(): void {
+    this.abierto = !this.abierto;
+  }
 }

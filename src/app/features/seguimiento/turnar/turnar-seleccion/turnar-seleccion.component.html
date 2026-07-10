@@ -1,6 +1,5 @@
 <div class="p-4 bg-gray-50 border-t border-gray-200">
   <div class="flex flex-col gap-3 max-w-md">
-
     <!-- Destino -->
     <div>
       <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">
@@ -9,7 +8,8 @@
       <select
         [ngModel]="facade.destinoSeleccionado()"
         (ngModelChange)="facade.seleccionarDestino($event)"
-        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest cursor-pointer">
+        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest cursor-pointer"
+      >
         <option [ngValue]="null" disabled>Seleccione un perfil destino</option>
         @for (p of facade.perfilesDestino(); track p.id) {
           <option [ngValue]="p.id">{{ p.descripcion }}</option>
@@ -26,7 +26,8 @@
         <select
           [ngModel]="facade.idGeneralDestino()"
           (ngModelChange)="facade.seleccionarIdGeneralDestino($event)"
-          class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest cursor-pointer">
+          class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest cursor-pointer"
+        >
           <option [ngValue]="null" disabled>Seleccione un proyectista</option>
           @for (p of facade.proyectistas(); track p.idGeneral) {
             <option [ngValue]="p.idGeneral">{{ p.nombre }}</option>
@@ -44,7 +45,8 @@
         <select
           [ngModel]="facade.idGeneralDestino()"
           (ngModelChange)="facade.seleccionarIdGeneralDestino($event)"
-          class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest cursor-pointer">
+          class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-forest/40 focus:border-forest cursor-pointer"
+        >
           <option [ngValue]="null" disabled>Seleccione un magistrado</option>
           @for (m of facade.magistrados(); track m.idGeneral) {
             <option [ngValue]="m.idGeneral">{{ m.nombre }}</option>
@@ -52,6 +54,5 @@
         </select>
       </div>
     }
-
   </div>
 </div>

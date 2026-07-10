@@ -14,15 +14,17 @@ import { CatalogosFacade } from '../../../../apelaciones/busqueda-apelaciones/fa
 export class PanelBusquedaEstadisticaComponent {
   // Usando la nueva API de outputs de Angular
   readonly catalogos = inject(CatalogosFacade);
-  readonly buscarEstadisticas = inject(BusquedaEstadisticaFacade)
+  readonly buscarEstadisticas = inject(BusquedaEstadisticaFacade);
 
   abierto = true;
-  toggle(): void { this.abierto = !this.abierto; }
+  toggle(): void {
+    this.abierto = !this.abierto;
+  }
 
   get form(): SearchFormPlanaEstadistica {
-      return this.buscarEstadisticas.form();
-    }
-    updateForm(field: keyof SearchFormPlanaEstadistica, value: string): void {
-      this.buscarEstadisticas.form.update(f => ({ ...f, [field]: value }));
-    }
+    return this.buscarEstadisticas.form();
+  }
+  updateForm(field: keyof SearchFormPlanaEstadistica, value: string): void {
+    this.buscarEstadisticas.form.update((f) => ({ ...f, [field]: value }));
+  }
 }

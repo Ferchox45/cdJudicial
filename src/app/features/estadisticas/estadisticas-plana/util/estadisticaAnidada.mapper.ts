@@ -3,24 +3,22 @@ import { ResultadoBusquedaPlanaEstadistica } from '../models/estadisticas';
 import { CampoAgrupacion, GrupoAgrupado, FilaDato } from '../models/agrupacion';
 
 export class EstadisticaAnidadaMapper {
-
-static construirArbol(
-    datos:  ResultadoBusquedaPlanaEstadistica[],
-    campos: CampoAgrupacion[]
+  static construirArbol(
+    datos: ResultadoBusquedaPlanaEstadistica[],
+    campos: CampoAgrupacion[],
   ): GrupoAgrupado[] {
     return this._agrupar(datos, campos, 0, '');
   }
 
   private static _agrupar(
-    datos:    ResultadoBusquedaPlanaEstadistica[],
-    campos:   CampoAgrupacion[],
-    nivel:    number,
-    prefijo:  string
+    datos: ResultadoBusquedaPlanaEstadistica[],
+    campos: CampoAgrupacion[],
+    nivel: number,
+    prefijo: string,
   ): GrupoAgrupado[] {
-
     if (nivel >= campos.length) return [];
 
-    const campo  = campos[nivel];
+    const campo = campos[nivel];
     const grupos = new Map<string, ResultadoBusquedaPlanaEstadistica[]>();
 
     for (const item of datos) {
@@ -36,18 +34,18 @@ static construirArbol(
       const esUltimoNivel = nivel === campos.length - 1;
 
       const hijos: (GrupoAgrupado | FilaDato)[] = esUltimoNivel
-        ? items.map(item => ({
-            tipo:   'dato' as const,
+        ? items.map((item) => ({
+            tipo: 'dato' as const,
             celdas: this._toCeldas(item),
-            total:  1,
+            total: 1,
           }))
         : this._agrupar(items, campos, nivel + 1, id);
 
       resultado.push({
         id,
-        valor:     valorGrupo,
+        valor: valorGrupo,
         nivel,
-        total:     items.length,
+        total: items.length,
         hijos,
         expandido: nivel === 0, // solo el primer nivel abierto por default
       });
@@ -57,17 +55,17 @@ static construirArbol(
   }
 
   private static _toCeldas(
-    item: ResultadoBusquedaPlanaEstadistica
+    item: ResultadoBusquedaPlanaEstadistica,
   ): Record<CampoAgrupacion, string | number | null> {
     return {
-      sala:          item.sala,
-      folioOficialia:item.folioOficialia,
-      folioToca:     item.folioToca,
-      nomenclatura:  item.nomenclatura,
-      apelacion:     item.apelacion,
+      sala: item.sala,
+      folioOficialia: item.folioOficialia,
+      folioToca: item.folioToca,
+      nomenclatura: item.nomenclatura,
+      apelacion: item.apelacion,
       tipoApelacion: item.tipoApelacion,
-      mesRecep:      item.mesRecep,
-      anioRecep:     item.anioRecep,
+      mesRecep: item.mesRecep,
+      anioRecep: item.anioRecep,
     };
   }
 }

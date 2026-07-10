@@ -5,20 +5,28 @@ import { SpinnerComponent } from '../spinner/spinner.component';
 export interface SidebarAction {
   id: string;
   label: string;
-  icon: 'nuevo' | 'guardar' | 'buscar' |
-        'anexo' | 'exportar' | 'limpiar'|
-        'reporte'| 'resultado' | 'grafica'
-        | 'certificar' | 'turnar';
+  icon:
+    | 'nuevo'
+    | 'guardar'
+    | 'buscar'
+    | 'anexo'
+    | 'exportar'
+    | 'limpiar'
+    | 'reporte'
+    | 'resultado'
+    | 'grafica'
+    | 'certificar'
+    | 'turnar';
   primary?: boolean;
   disabled?: boolean;
   loading?: boolean;
 }
 
 const DEFAULT_ACTIONS: SidebarAction[] = [
-  { id: 'nuevo',   label: 'Nuevo',   icon: 'nuevo',   primary: true },
+  { id: 'nuevo', label: 'Nuevo', icon: 'nuevo', primary: true },
   { id: 'guardar', label: 'Guardar', icon: 'guardar' },
-  { id: 'buscar',  label: 'Buscar',  icon: 'buscar'  },
-  { id: 'anexo',   label: 'Anexo',   icon: 'anexo'   },
+  { id: 'buscar', label: 'Buscar', icon: 'buscar' },
+  { id: 'anexo', label: 'Anexo', icon: 'anexo' },
 ];
 
 @Component({

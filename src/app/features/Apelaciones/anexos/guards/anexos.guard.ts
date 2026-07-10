@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { ApelacionContextService} from '../data/apelacion-context.service';
+import { ApelacionContextService } from '../data/apelacion-context.service';
 
 export const anexosGuard: CanActivateFn = (route, state) => {
   const contextService = inject(ApelacionContextService);
@@ -14,4 +14,3 @@ export const anexosGuard: CanActivateFn = (route, state) => {
     return router.parseUrl('/capturaApelacion');
   }
 };
-

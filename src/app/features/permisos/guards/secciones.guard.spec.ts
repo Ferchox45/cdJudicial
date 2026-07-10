@@ -8,8 +8,11 @@ import { seccionesGuard } from './secciones.guard';
 import { Seccion } from '../models/permisos.types';
 
 function buildRoute(paths: string[]): ActivatedRouteSnapshot {
-  const route = { routeConfig: { path: paths[paths.length - 1] }, pathFromRoot: [] as any[] } as any;
-  route.pathFromRoot = paths.map(p => ({ routeConfig: { path: p } } as any));
+  const route = {
+    routeConfig: { path: paths[paths.length - 1] },
+    pathFromRoot: [] as any[],
+  } as any;
+  route.pathFromRoot = paths.map((p) => ({ routeConfig: { path: p } }) as any);
   return route;
 }
 

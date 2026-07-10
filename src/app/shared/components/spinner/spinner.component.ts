@@ -32,10 +32,10 @@ export class SpinnerComponent {
 
   readonly colorClass = computed(() => {
     const map: Record<SpinnerColor, string> = {
-      white:   'text-white',
+      white: 'text-white',
       emerald: 'text-emerald-600',
-      forest:  'text-emerald-900',
-      gray:    'text-gray-400',
+      forest: 'text-emerald-900',
+      gray: 'text-gray-400',
       current: 'text-current',
     };
     return map[this.color()];

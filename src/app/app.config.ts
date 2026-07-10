@@ -18,5 +18,5 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideCharts(withDefaultRegisterables()),
     { provide: APP_BASE_HREF, useValue: environment.baseUrl },
-  ]
+  ],
 };

@@ -18,13 +18,16 @@ export class PermisosService {
   getAreas(): Observable<Area[]> {
     return this.http
       .get<ApiResponse<Area[]>>(`${this.API}/api/permisos/areas`)
-      .pipe(map(r => r.data));
+      .pipe(map((r) => r.data));
   }
 
   ingresar(idArea: number, idAreaSistema: number): Observable<ConfiguracionArea> {
     return this.http
-      .post<ApiResponse<ConfiguracionArea>>(`${this.API}/api/permisos/ingresar`, { idArea, idAreaSistema })
-      .pipe(map(r => r.data));
+      .post<ApiResponse<ConfiguracionArea>>(`${this.API}/api/permisos/ingresar`, {
+        idArea,
+        idAreaSistema,
+      })
+      .pipe(map((r) => r.data));
   }
 
   getModulosPantallas(dto: {
@@ -33,7 +36,7 @@ export class PermisosService {
   }): Observable<ModuloPantalla[]> {
     return this.http
       .post<ApiResponse<ModuloPantalla[]>>(`${this.API}/api/permisos/modulos-pantallas`, dto)
-      .pipe(map(r => r.data));
+      .pipe(map((r) => r.data));
   }
 
   getSecciones(dto: {
@@ -43,6 +46,6 @@ export class PermisosService {
   }): Observable<Seccion[]> {
     return this.http
       .post<ApiResponse<Seccion[]>>(`${this.API}/api/permisos/secciones`, dto)
-      .pipe(map(r => r.data));
+      .pipe(map((r) => r.data));
   }
 }

@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/action-sidebar/action-sidebar.component';
+import {
+  ActionSidebarComponent,
+  SidebarAction,
+} from '../../../shared/components/action-sidebar/action-sidebar.component';
 import { TablaReutilizableComponent } from '../../../shared/components/table-reutilizable/tablaReutilizable.component';
 import { TablaColumna } from '../../../shared/components/table-reutilizable/models/tabla-columna.model';
 import { HistorialFacade } from '../facades/historial.facade';
@@ -26,10 +29,22 @@ export class HistorialComponent {
       { field: 'paso', label: 'Paso por:', visible: true },
       { field: 'nombreTurna', label: 'Turnó', visible: true },
       { field: 'cargoTurna', label: 'Cargo Turnó', visible: true },
-      { field: 'fechaTurno', label: 'Fecha de Turnado', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy HH:mm' },
+      {
+        field: 'fechaTurno',
+        label: 'Fecha de Turnado',
+        visible: true,
+        type: 'date',
+        dateFormat: 'dd/MM/yyyy HH:mm',
+      },
       { field: 'nombreRecibe', label: 'Recibió', visible: true },
       { field: 'cargoRecibe', label: 'Cargo Recibió', visible: true },
-      { field: 'fechaRecibe', label: 'Fecha de Recepción', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy HH:mm' },
+      {
+        field: 'fechaRecibe',
+        label: 'Fecha de Recepción',
+        visible: true,
+        type: 'date',
+        dateFormat: 'dd/MM/yyyy HH:mm',
+      },
     ];
   }
 

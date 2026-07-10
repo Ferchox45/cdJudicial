@@ -32,10 +32,11 @@ export class AuthService {
       this.initialized.set(true);
       return;
     }
-    this.http.post<LoginResponse>(`${this.API}/api/auth/refresh`, {})
+    this.http
+      .post<LoginResponse>(`${this.API}/api/auth/refresh`, {})
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.initialized.set(true))
+        finalize(() => this.initialized.set(true)),
       )
       .subscribe({
         next: (res) => {
@@ -47,12 +48,13 @@ export class AuthService {
         },
         error: () => {
           this.isAuthenticated.set(false);
-        }
+        },
       });
   }
 
   login(usuario: string, contrasenia: string) {
-    return this.http.post<LoginResponse | null>(`${this.API}/api/auth/login`, { usuario, contrasenia })
+    return this.http
+      .post<LoginResponse | null>(`${this.API}/api/auth/login`, { usuario, contrasenia })
       .pipe(
         switchMap((res) => {
           if (res?.data?.access_token) {
@@ -66,14 +68,14 @@ export class AuthService {
 
   checkAuthenticatorStatus() {
     return this.http.get<{ status: string; data: AuthenticatorStatus }>(
-      `${this.API}/api/auth/authenticator/status`
+      `${this.API}/api/auth/authenticator/status`,
     );
   }
 
   verifyAuthenticatorCode(codigo: string) {
     return this.http.post<{ status: string; message: string; data: any }>(
       `${this.API}/api/auth/authenticator/verify`,
-      { codigo }
+      { codigo },
     );
   }
 
@@ -82,13 +84,14 @@ export class AuthService {
   }
 
   refresh() {
-    return this.http.post<LoginResponse>(`${this.API}/api/auth/refresh`, {})
-      .pipe(tap((res) => {
+    return this.http.post<LoginResponse>(`${this.API}/api/auth/refresh`, {}).pipe(
+      tap((res) => {
         if (res?.data?.access_token) {
           this.accessToken.set(res.data.access_token);
           this.isAuthenticated.set(true);
         }
-      }));
+      }),
+    );
   }
 
   logout() {
@@ -109,14 +112,13 @@ export class AuthService {
   }
 
   private getProfile(): Observable<void> {
-    return this.http.get<ProfileResponse>(`${this.API}/api/auth/profile`)
-      .pipe(
-        tap((res) => {
-          this.userNombre.set(res.data.nombre);
-          this.userFoto.set(res.data.foto ? `data:image/png;base64,${res.data.foto}` : null);
-        }),
-        map(() => undefined),
-        catchError(() => of(undefined)),
-      );
+    return this.http.get<ProfileResponse>(`${this.API}/api/auth/profile`).pipe(
+      tap((res) => {
+        this.userNombre.set(res.data.nombre);
+        this.userFoto.set(res.data.foto ? `data:image/png;base64,${res.data.foto}` : null);
+      }),
+      map(() => undefined),
+      catchError(() => of(undefined)),
+    );
   }
 }

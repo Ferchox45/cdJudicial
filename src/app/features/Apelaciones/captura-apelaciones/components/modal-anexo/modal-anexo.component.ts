@@ -9,8 +9,8 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 })
 export class ModalAnexosComponent {
   readonly visible = input(false);
-  readonly folio   = input('');
-  readonly sala    = input('');
+  readonly folio = input('');
+  readonly sala = input('');
   readonly continuar = output<void>();
-  readonly terminar  = output<void>();
+  readonly terminar = output<void>();
 }

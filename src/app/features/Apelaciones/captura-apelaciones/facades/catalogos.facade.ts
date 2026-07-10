@@ -9,7 +9,6 @@ import { CatalogoItem } from '../../../../core/models/catalogo-global.model';
 
 @Injectable()
 export class CatalogosFacade {
-
   private apelacionService = inject(ApelacionApiService);
   private destroy$ = new Subject<void>();
 
@@ -34,7 +33,7 @@ export class CatalogosFacade {
   readonly timeoutMsg = signal(false);
 
   onDelitosListos?: (delitos: DelitoDisponible[]) => void;
-  onError?:        (msg: string) => void;
+  onError?: (msg: string) => void;
 
   cargar(form: FormGroup, idMateria: number): void {
     this.cargando.set(true);
@@ -53,7 +52,7 @@ export class CatalogosFacade {
         this.setControlesDisabled(form, false);
         this.onDelitosListos?.(mapearDelitosDisponibles(this.delitos()));
       },
-        error: () => {
+      error: () => {
         clearTimeout(timer);
         this.error.set('No se pudo conectar con el servidor. Reintentando...');
         this.cargando.set(false);
@@ -66,57 +65,55 @@ export class CatalogosFacade {
     });
   }
 
-escucharMunicipio(form: FormGroup): void {
-  form.get('municipioId')?.valueChanges
-    .pipe(
-      takeUntil(this.destroy$),
-      tap(() => {
-        this.localidades.set([]);
-        this.cargandoLocalidades.set(true);
-        form.get('localidadId')?.setValue(null, { emitEvent: false });
-      }),
-      switchMap(municipioId =>
-        municipioId
-          ? this.apelacionService.getLocalidades(municipioId)
-          : of([])
+  escucharMunicipio(form: FormGroup): void {
+    form
+      .get('municipioId')
+      ?.valueChanges.pipe(
+        takeUntil(this.destroy$),
+        tap(() => {
+          this.localidades.set([]);
+          this.cargandoLocalidades.set(true);
+          form.get('localidadId')?.setValue(null, { emitEvent: false });
+        }),
+        switchMap((municipioId) =>
+          municipioId ? this.apelacionService.getLocalidades(municipioId) : of([]),
+        ),
       )
-    )
-    .subscribe({
-      next: localidades => {
-        this.localidades.set(localidades);
-        this.cargandoLocalidades.set(false);
-      },
-      error: () => {
-        this.cargandoLocalidades.set(false);
-      }
-    });
-}
+      .subscribe({
+        next: (localidades) => {
+          this.localidades.set(localidades);
+          this.cargandoLocalidades.set(false);
+        },
+        error: () => {
+          this.cargandoLocalidades.set(false);
+        },
+      });
+  }
 
-escucharApelacion(form: FormGroup): void {
-  form.get('apelacionId')?.valueChanges
-    .pipe(
-      takeUntil(this.destroy$),
-      tap(() => {
-        this.tiposApelaciones.set([]);
-        this.cargandoTiposApelacion.set(true);
-        form.get('tipoApelacionId')?.setValue(null, { emitEvent: false });
-      }),
-      switchMap(apelacionId =>
-        apelacionId
-          ? this.apelacionService.getTiposApelacion(apelacionId)
-          : of([])
+  escucharApelacion(form: FormGroup): void {
+    form
+      .get('apelacionId')
+      ?.valueChanges.pipe(
+        takeUntil(this.destroy$),
+        tap(() => {
+          this.tiposApelaciones.set([]);
+          this.cargandoTiposApelacion.set(true);
+          form.get('tipoApelacionId')?.setValue(null, { emitEvent: false });
+        }),
+        switchMap((apelacionId) =>
+          apelacionId ? this.apelacionService.getTiposApelacion(apelacionId) : of([]),
+        ),
       )
-    )
-    .subscribe({
-      next: tipos => {
-        this.tiposApelaciones.set(tipos);
-        this.cargandoTiposApelacion.set(false);
-      },
-      error: () => {
-        this.cargandoTiposApelacion.set(false);
-      },
-    });
-}
+      .subscribe({
+        next: (tipos) => {
+          this.tiposApelaciones.set(tipos);
+          this.cargandoTiposApelacion.set(false);
+        },
+        error: () => {
+          this.cargandoTiposApelacion.set(false);
+        },
+      });
+  }
 
   destruir(): void {
     this.destroy$.next();
@@ -140,8 +137,15 @@ escucharApelacion(form: FormGroup): void {
   }
 
   private setControlesDisabled(form: FormGroup, disabled: boolean): void {
-    ['materiaId', 'apelacionId', 'tipoApelacionId', 'tipoEscritoId',
-     'juzgadoId', 'municipioId', 'localidadId'].forEach((campo) => {
+    [
+      'materiaId',
+      'apelacionId',
+      'tipoApelacionId',
+      'tipoEscritoId',
+      'juzgadoId',
+      'municipioId',
+      'localidadId',
+    ].forEach((campo) => {
       const ctrl = form.get(campo);
       if (!ctrl) return;
       disabled ? ctrl.disable() : ctrl.enable();

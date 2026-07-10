@@ -12,7 +12,7 @@ type LoginStep = 'login' | 'setup2fa' | 'verify2fa';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, SpinnerComponent],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
 })
 export class LoginComponent {
   private auth = inject(AuthService);
@@ -31,7 +31,7 @@ export class LoginComponent {
   loading2fa = signal(false);
 
   togglePassword() {
-    this.showPassword.update(v => !v);
+    this.showPassword.update((v) => !v);
   }
 
   login() {
@@ -58,7 +58,7 @@ export class LoginComponent {
           const msg = body?.message || body?.error || body?.mensaje || '';
           this.error.set(msg || 'Error al iniciar sesión');
         }
-      }
+      },
     });
   }
 
@@ -82,7 +82,7 @@ export class LoginComponent {
     this.authenticatorError.set(null);
 
     this.auth.verifyAuthenticatorCode(this.codigo).subscribe({
-          next: () => {
+      next: () => {
         this.loading2fa.set(false);
         this.auth.finalizarAutenticacion();
         this.router.navigate(['/seleccion-permisos']);
@@ -96,7 +96,7 @@ export class LoginComponent {
         } else {
           this.authenticatorError.set('Error de conexión con el servidor.');
         }
-      }
+      },
     });
   }
 

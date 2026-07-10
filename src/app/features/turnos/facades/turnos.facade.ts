@@ -41,8 +41,8 @@ export class TurnosFacade {
   readonly porPagina = computed(() => this._porPagina());
   readonly paginaActual = computed(() => this._paginacion().page);
   readonly totalResultados = computed(() => this._paginacion().total);
-  readonly totalPaginas = computed(() =>
-    Math.ceil(this._paginacion().total / this._paginacion().limit) || 1
+  readonly totalPaginas = computed(
+    () => Math.ceil(this._paginacion().total / this._paginacion().limit) || 1,
   );
 
   readonly idsSeleccionados = signal<number[]>([]);
@@ -62,35 +62,38 @@ export class TurnosFacade {
 
   cargarCatalogos(): void {
     this.cargandoCatalogos.set(true);
-    this.service.getCatalogos().pipe(
-      takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.cargandoCatalogos.set(false)),
-    ).subscribe({
-      next: (cat) => {
-        this.salas.set(cat.salas);
-        this.nomenclaturas.set(cat.nomenclaturas);
-      },
-      error: () => this.modal.error('Error', 'No se pudieron cargar los catálogos.'),
-    });
+    this.service
+      .getCatalogos()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.cargandoCatalogos.set(false)),
+      )
+      .subscribe({
+        next: (cat) => {
+          this.salas.set(cat.salas);
+          this.nomenclaturas.set(cat.nomenclaturas);
+        },
+        error: () => this.modal.error('Error', 'No se pudieron cargar los catálogos.'),
+      });
   }
 
   toggleSeleccion(id: number): void {
-    this.idsSeleccionados.update(ids => {
-      if (ids.includes(id)) return ids.filter(i => i !== id);
+    this.idsSeleccionados.update((ids) => {
+      if (ids.includes(id)) return ids.filter((i) => i !== id);
       return [...ids, id];
     });
   }
 
   toggleSeleccionTodos(ids: number[]): void {
     const actuales = this.idsSeleccionados();
-    const todosSeleccionados = ids.every(id => actuales.includes(id));
+    const todosSeleccionados = ids.every((id) => actuales.includes(id));
     if (todosSeleccionados) {
       this.idsSeleccionados.set([]);
     } else {
       this.idsSeleccionados.set([...ids]);
     }
-    this.resultados.update(rows =>
-      rows.map(r => ({ ...r, seleccionado: !todosSeleccionados })),
+    this.resultados.update((rows) =>
+      rows.map((r) => ({ ...r, seleccionado: !todosSeleccionados })),
     );
   }
 
@@ -110,7 +113,8 @@ export class TurnosFacade {
     this.buscando.set(true);
     const filtros = TurnosMapper.toDTO(this.form(), perfil);
 
-    this.service.listar(filtros, page, this.porPagina())
+    this.service
+      .listar(filtros, page, this.porPagina())
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.buscando.set(false)),
@@ -122,10 +126,13 @@ export class TurnosFacade {
   }
 
   private _onSuccess(
-    res: { resultados: TurnoListItemDTO[]; paginacion: { total: number; page: number; limit: number } },
+    res: {
+      resultados: TurnoListItemDTO[];
+      paginacion: { total: number; page: number; limit: number };
+    },
     mostrarModal: boolean,
   ): void {
-    let resultados = res.resultados.map(r => {
+    let resultados = res.resultados.map((r) => {
       let estatus: string;
       if (r.estadoActual === 'importado') {
         estatus = 'Importado';
@@ -140,9 +147,11 @@ export class TurnosFacade {
         seleccionado: false,
         _estatus: estatus,
         _colorEstatus:
-          estatus === 'Pendiente' ? 'bg-gray-100 text-gray-700' :
-          estatus === 'Exportado' ? 'bg-blue-100 text-blue-700' :
-          'bg-green-100 text-green-700',
+          estatus === 'Pendiente'
+            ? 'bg-gray-100 text-gray-700'
+            : estatus === 'Exportado'
+              ? 'bg-blue-100 text-blue-700'
+              : 'bg-green-100 text-green-700',
       };
     });
 
@@ -153,7 +162,10 @@ export class TurnosFacade {
     if (!mostrarModal) return;
 
     if (resultados.length === 0) {
-      this.modal.info('Sin resultados', 'No se encontraron registros con los criterios ingresados.');
+      this.modal.info(
+        'Sin resultados',
+        'No se encontraron registros con los criterios ingresados.',
+      );
     } else {
       this.modal.success('Búsqueda exitosa', `Se encontraron ${res.paginacion.total} registros.`);
     }
@@ -168,7 +180,7 @@ export class TurnosFacade {
 
     if (this._cache.has(pagina)) {
       this.resultados.set(this._cache.get(pagina)!);
-      this._paginacion.update(p => ({ ...p, page: pagina }));
+      this._paginacion.update((p) => ({ ...p, page: pagina }));
       return;
     }
 
@@ -177,8 +189,7 @@ export class TurnosFacade {
 
   cambiarPorPagina(limit: number): void {
     this._porPagina.set(limit);
-    if (this.resultados().length === 0)
-      return;
+    if (this.resultados().length === 0) return;
     this._limpiarCache();
     this._ejecutarBusqueda(1, false);
   }
@@ -192,7 +203,7 @@ export class TurnosFacade {
 
   private _limpiarCache(): void {
     this._cache.clear();
-    this._paginacion.update(p => ({ ...p, total: 0, page: 1 }));
+    this._paginacion.update((p) => ({ ...p, total: 0, page: 1 }));
   }
 
   exportar(): void {
@@ -211,35 +222,44 @@ export class TurnosFacade {
     }
 
     this.exportando.set(true);
-    this.seguimientoService.getOpcionesTurnar(idPerfil, idArea, idPant).pipe(
-      switchMap(opciones => {
-        const destinoId = opciones.perfilesDestino[0]?.id;
-        if (destinoId == null) {
-          throw new Error('No hay destino disponible para exportar');
-        }
-        return this.seguimientoService.turnar({
-          ids,
-          idPerfilOrigen: idPerfil,
-          idPerfilDestino: destinoId,
-          idGeneralDestino: null,
-          idAreaSistemaUsuario: idArea,
-          idPantalla: idPant,
-        });
-      }),
-      takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.exportando.set(false)),
-    ).subscribe({
-      next: (res) => {
-        this.modal.success('Exportación exitosa', `Se exportaron ${res.afectados} de ${res.total} registros correctamente.`);
-        this.idsSeleccionados.set([]);
-        const pagina = this._paginacion().page;
-        this._limpiarCache();
-        this._ejecutarBusqueda(pagina, false);
-      },
-      error: (err) => {
-        this.modal.error('Error de exportación', err instanceof Error ? err.message : 'Ocurrió un error al exportar las apelaciones.');
-      },
-    });
+    this.seguimientoService
+      .getOpcionesTurnar(idPerfil, idArea, idPant)
+      .pipe(
+        switchMap((opciones) => {
+          const destinoId = opciones.perfilesDestino[0]?.id;
+          if (destinoId == null) {
+            throw new Error('No hay destino disponible para exportar');
+          }
+          return this.seguimientoService.turnar({
+            ids,
+            idPerfilOrigen: idPerfil,
+            idPerfilDestino: destinoId,
+            idGeneralDestino: null,
+            idAreaSistemaUsuario: idArea,
+            idPantalla: idPant,
+          });
+        }),
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.exportando.set(false)),
+      )
+      .subscribe({
+        next: (res) => {
+          this.modal.success(
+            'Exportación exitosa',
+            `Se exportaron ${res.afectados} de ${res.total} registros correctamente.`,
+          );
+          this.idsSeleccionados.set([]);
+          const pagina = this._paginacion().page;
+          this._limpiarCache();
+          this._ejecutarBusqueda(pagina, false);
+        },
+        error: (err) => {
+          this.modal.error(
+            'Error de exportación',
+            err instanceof Error ? err.message : 'Ocurrió un error al exportar las apelaciones.',
+          );
+        },
+      });
   }
 
   importar(): void {
@@ -250,8 +270,8 @@ export class TurnosFacade {
     }
 
     const idsMovimiento = this.resultados()
-      .filter(r => idsToca.includes(r.idToca))
-      .map(r => r.idMovimiento);
+      .filter((r) => idsToca.includes(r.idToca))
+      .map((r) => r.idMovimiento);
 
     if (idsMovimiento.length === 0) {
       this.modal.error('Sin selección', 'No se encontraron los movimientos seleccionados.');
@@ -266,20 +286,26 @@ export class TurnosFacade {
     }
 
     this.importando.set(true);
-    this.seguimientoService.recibir(idsMovimiento, idArea, idPant).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.importando.set(false)),
-    ).subscribe({
-      next: (res) => {
-        this.modal.success('Importación exitosa', `Se importaron ${res.afectados} de ${res.total} registros correctamente.`);
-        this.idsSeleccionados.set([]);
-        const pagina = this._paginacion().page;
-        this._limpiarCache();
-        this._ejecutarBusqueda(pagina, false);
-      },
-      error: () => {
-        this.modal.error('Error de importación', 'Ocurrió un error al importar las apelaciones.');
-      },
-    });
+    this.seguimientoService
+      .recibir(idsMovimiento, idArea, idPant)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.importando.set(false)),
+      )
+      .subscribe({
+        next: (res) => {
+          this.modal.success(
+            'Importación exitosa',
+            `Se importaron ${res.afectados} de ${res.total} registros correctamente.`,
+          );
+          this.idsSeleccionados.set([]);
+          const pagina = this._paginacion().page;
+          this._limpiarCache();
+          this._ejecutarBusqueda(pagina, false);
+        },
+        error: () => {
+          this.modal.error('Error de importación', 'Ocurrió un error al importar las apelaciones.');
+        },
+      });
   }
 }

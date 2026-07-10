@@ -11,11 +11,13 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((err) => {
-      if (err instanceof HttpErrorResponse && err.status === 401
-          && !req.url.includes('/auth/refresh')
-          && !req.url.includes('/auth/login')
-          && !req.url.includes('/auth/logout')) {
-
+      if (
+        err instanceof HttpErrorResponse &&
+        err.status === 401 &&
+        !req.url.includes('/auth/refresh') &&
+        !req.url.includes('/auth/login') &&
+        !req.url.includes('/auth/logout')
+      ) {
         if (!isRefreshing) {
           isRefreshing = true;
           refreshSubject = new Subject<boolean>();
@@ -36,7 +38,7 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
         }
 
         return refreshSubject.pipe(
-          filter(result => result),
+          filter((result) => result),
           take(1),
           switchMap(() => {
             const newReq = req.clone({

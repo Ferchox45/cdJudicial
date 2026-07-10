@@ -3,7 +3,10 @@ import { TablaResultadosComponent } from './components/tabla-resultados/tablaRes
 import { PanelBusquedaEstadisticaComponent } from './components/panel-busquedaPlana/panelBusquedaEstadistica.component';
 import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import { BusquedaEstadisticaFacade } from './facades/busquedaEstadistica.facade';
-import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/action-sidebar/action-sidebar.component';
+import {
+  ActionSidebarComponent,
+  SidebarAction,
+} from '../../../shared/components/action-sidebar/action-sidebar.component';
 import { TablaAnidadaComponent } from './components/tabla-anidada/tablaAnidada.component';
 import { CatalogosFacade } from '../../apelaciones/busqueda-apelaciones/facades/catalogos.facade';
 import { TableRow, ChartSlice } from './models/estadisticas';
@@ -12,11 +15,16 @@ import { TableRow, ChartSlice } from './models/estadisticas';
   selector: 'app-estadisticas-plana',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PanelBusquedaEstadisticaComponent, TablaResultadosComponent, GraficaTotalesComponent, ActionSidebarComponent, TablaAnidadaComponent],
+  imports: [
+    PanelBusquedaEstadisticaComponent,
+    TablaResultadosComponent,
+    GraficaTotalesComponent,
+    ActionSidebarComponent,
+    TablaAnidadaComponent,
+  ],
   templateUrl: './estadisticasPlana.component.html',
 })
 export class EstadisticasPlanaComponent {
-
   private readonly Catalogo = inject(CatalogosFacade);
   readonly buscarEstadisticas = inject(BusquedaEstadisticaFacade);
   graficaRef = viewChild<GraficaTotalesComponent>('graficaRef');
@@ -24,72 +32,71 @@ export class EstadisticasPlanaComponent {
   vistaActiva = signal<'resultados' | 'grafica'>('resultados');
   filaActiva = signal<TableRow | null>(null);
 
-onCeldaSeleccionada(event: { data: ChartSlice[]; title: string }): void {
-  this.buscarEstadisticas.chartActivo.set(event);
-}
+  onCeldaSeleccionada(event: { data: ChartSlice[]; title: string }): void {
+    this.buscarEstadisticas.chartActivo.set(event);
+  }
 
-onFilaSeleccionada(fila: TableRow): void {
-  this.filaActiva.set(fila);
-}
+  onFilaSeleccionada(fila: TableRow): void {
+    this.filaActiva.set(fila);
+  }
 
-    ngOnInit(): void {
-      this.Catalogo.cargar();
+  ngOnInit(): void {
+    this.Catalogo.cargar();
   }
 
   get sidebarActions(): SidebarAction[] {
-      const buscando   = this.buscarEstadisticas.buscando();
-      const exportando = this.buscarEstadisticas.exportando();
-      const ocupado = buscando || exportando;
+    const buscando = this.buscarEstadisticas.buscando();
+    const exportando = this.buscarEstadisticas.exportando();
+    const ocupado = buscando || exportando;
 
-      return [
-        {
-          id:      'buscar',
-          label:   'Buscar',
-          icon:    'buscar',
-          primary:  true,
-          loading:  buscando,
-          disabled: ocupado,
-        },
-          {
-      id:      'exportar',
-      label:   'Exportar',
-      icon:    'exportar',
-      loading:  exportando,
-      disabled: ocupado,
-    },
-          {
-        id:       'limpiar',
-        label:    'Limpiar',
-        icon:     'limpiar',
-        disabled:  ocupado,
-      },
-                {
-        id:       'resultado',
-        label:    'Resultado',
-        icon:     'resultado',
+    return [
+      {
+        id: 'buscar',
+        label: 'Buscar',
+        icon: 'buscar',
+        primary: true,
+        loading: buscando,
         disabled: ocupado,
       },
-                {
-        id:       'grafica',
-        label:    'Grafica',
-        icon:     'grafica',
-        disabled:  ocupado,
+      {
+        id: 'exportar',
+        label: 'Exportar',
+        icon: 'exportar',
+        loading: exportando,
+        disabled: ocupado,
       },
-  ];
-    }
-// estadisticas-plana.component.ts
-onAction(id: string): void {
-  const acciones: Record<string, () => void> = {
-    buscar:   () => this.buscarEstadisticas.buscarEstadistica(),
-    exportar: async () => {
-      const imagen = await this.graficaRef()?.getImageBase64() ?? null;
-      this.buscarEstadisticas.exportarExcel(imagen);
-    },
-    limpiar: () => this.buscarEstadisticas.limpiar(),
-    resultado: () => this.vistaActiva.set('resultados'),
-    grafica:    () => this.vistaActiva.set('grafica'),
-  };
-  acciones[id]?.();
-}
-
+      {
+        id: 'limpiar',
+        label: 'Limpiar',
+        icon: 'limpiar',
+        disabled: ocupado,
+      },
+      {
+        id: 'resultado',
+        label: 'Resultado',
+        icon: 'resultado',
+        disabled: ocupado,
+      },
+      {
+        id: 'grafica',
+        label: 'Grafica',
+        icon: 'grafica',
+        disabled: ocupado,
+      },
+    ];
+  }
+  // estadisticas-plana.component.ts
+  onAction(id: string): void {
+    const acciones: Record<string, () => void> = {
+      buscar: () => this.buscarEstadisticas.buscarEstadistica(),
+      exportar: async () => {
+        const imagen = (await this.graficaRef()?.getImageBase64()) ?? null;
+        this.buscarEstadisticas.exportarExcel(imagen);
+      },
+      limpiar: () => this.buscarEstadisticas.limpiar(),
+      resultado: () => this.vistaActiva.set('resultados'),
+      grafica: () => this.vistaActiva.set('grafica'),
+    };
+    acciones[id]?.();
+  }
 }

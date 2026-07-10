@@ -1,7 +1,6 @@
 // paginacion.component.ts
 import { ChangeDetectionStrategy, Component, input, output, computed } from '@angular/core';
 
-
 @Component({
   selector: 'app-paginacion',
   standalone: true,
@@ -10,29 +9,28 @@ import { ChangeDetectionStrategy, Component, input, output, computed } from '@an
   templateUrl: './paginacion.component.html',
 })
 export class PaginacionComponent {
-
   // ── Inputs
-  paginaActual    = input.required<number>();
-  totalPaginas    = input.required<number>();
+  paginaActual = input.required<number>();
+  totalPaginas = input.required<number>();
   totalResultados = input.required<number>();
-  porPagina       = input.required<number>();
+  porPagina = input.required<number>();
 
   // ── Outputs
-  paginaCambio  = output<number>();
-  limitCambio   = output<number>();
+  paginaCambio = output<number>();
+  limitCambio = output<number>();
 
   // ── Computed
   readonly paginasVisibles = computed<(number | '...')[]>(() => {
-    const total  = this.totalPaginas();
+    const total = this.totalPaginas();
     const actual = this.paginaActual();
 
     if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
 
     const paginas: (number | '...')[] = [1];
-    if (actual > 3)         paginas.push('...');
+    if (actual > 3) paginas.push('...');
 
     const inicio = Math.max(2, actual - 1);
-    const fin    = Math.min(total - 1, actual + 1);
+    const fin = Math.min(total - 1, actual + 1);
     for (let i = inicio; i <= fin; i++) paginas.push(i);
 
     if (actual < total - 2) paginas.push('...');

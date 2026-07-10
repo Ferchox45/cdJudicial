@@ -44,7 +44,8 @@ export class SessionStateService {
     if (!raw) return;
     try {
       const data = JSON.parse(raw);
-      if (data.idAreaSistemaUsuario != null) this.idAreaSistemaUsuario.set(data.idAreaSistemaUsuario);
+      if (data.idAreaSistemaUsuario != null)
+        this.idAreaSistemaUsuario.set(data.idAreaSistemaUsuario);
       if (data.idPerfil != null) this.idPerfil.set(data.idPerfil);
       if (data.idPantalla != null) this.idPantalla.set(data.idPantalla);
       if (data.idSala != null) this.idSala.set(data.idSala);
@@ -113,7 +114,7 @@ export class SessionStateService {
   }
 
   tieneSeccion(descripcion: string): boolean {
-    return this.secciones().some(s => s.descripcion === descripcion && s.activo);
+    return this.secciones().some((s) => s.descripcion === descripcion && s.activo);
   }
 
   setPantalla(id: number): void {

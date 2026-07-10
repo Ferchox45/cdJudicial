@@ -1,12 +1,18 @@
 <div class="min-h-screen flex w-full bg-cream font-sans">
-
-  <div class="hidden md:flex flex-col w-[35%] bg-forest items-center justify-center p-10 text-center relative shadow-xl z-10">
+  <div
+    class="hidden md:flex flex-col w-[35%] bg-forest items-center justify-center p-10 text-center relative shadow-xl z-10"
+  >
     <div class="mb-6 w-48 h-48 flex items-center justify-center">
-      <img src="assets/images/logo-oaxaca.png" alt="Escudo de Oaxaca" class="object-contain w-full h-full drop-shadow-md">
+      <img
+        src="assets/images/logo-oaxaca.png"
+        alt="Escudo de Oaxaca"
+        class="object-contain w-full h-full drop-shadow-md"
+      />
     </div>
 
     <h1 class="text-bronze font-bold text-2xl tracking-wide uppercase mb-2">
-        Tribunal Superior de Justicia Del <br> Estado de Oaxaca
+      Tribunal Superior de Justicia Del <br />
+      Estado de Oaxaca
     </h1>
 
     <div class="flex space-x-2 mt-12">
@@ -17,10 +23,15 @@
   </div>
 
   <div class="flex-1 flex flex-col bg-cream">
-
-    <div class="md:hidden w-full bg-forest flex flex-col items-center justify-center py-8 px-4 rounded-b-3xl shadow-lg">
+    <div
+      class="md:hidden w-full bg-forest flex flex-col items-center justify-center py-8 px-4 rounded-b-3xl shadow-lg"
+    >
       <div class="w-20 h-20 mb-3">
-        <img src="assets/images/logo-oaxaca.png" alt="Escudo de Oaxaca" class="object-contain w-full h-full">
+        <img
+          src="assets/images/logo-oaxaca.png"
+          alt="Escudo de Oaxaca"
+          class="object-contain w-full h-full"
+        />
       </div>
       <h1 class="text-bronze font-bold text-base tracking-wide uppercase text-center">
         Tribunal Superior de Justicia Del Estado de Oaxaca
@@ -29,18 +40,25 @@
 
     <div class="flex-1 flex flex-col justify-center items-center px-6 sm:px-8 py-8">
       <div class="w-full max-w-md">
-
         <div class="mb-8 text-left">
           <h2 class="text-2xl sm:text-3xl font-bold text-bronze mb-2">Bienvenido de nuevo</h2>
-          <p class="text-grey text-sm">Por favor, ingrese sus credenciales para acceder al sistema.</p>
+          <p class="text-grey text-sm">
+            Por favor, ingrese sus credenciales para acceder al sistema.
+          </p>
         </div>
 
         <form (ngSubmit)="login()" class="space-y-6">
-
           <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-grey">
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-grey"
+            >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                ></path>
               </svg>
             </div>
             <input
@@ -52,13 +70,21 @@
               required
               aria-required="true"
               [attr.aria-invalid]="!!error() && !usuario ? 'true' : null"
-              aria-describedby="error-usuario">
+              aria-describedby="error-usuario"
+            />
           </div>
 
           <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-grey">
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-grey"
+            >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                ></path>
               </svg>
             </div>
             <input
@@ -70,22 +96,55 @@
               required
               aria-required="true"
               [attr.aria-invalid]="!!error() && !contrasenia ? 'true' : null"
-              aria-describedby="error-password">
+              aria-describedby="error-password"
+            />
 
-            <button type="button" (click)="togglePassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-grey hover:text-forest transition-colors">
+            <button
+              type="button"
+              (click)="togglePassword()"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-grey hover:text-forest transition-colors"
+            >
               @if (!showPassword()) {
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
               }
               @if (showPassword()) {
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                  />
+                </svg>
               }
             </button>
           </div>
 
           @if (error()) {
-            <div id="error-usuario" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm mb-4 flex items-center space-x-2" role="alert">
+            <div
+              id="error-usuario"
+              class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm mb-4 flex items-center space-x-2"
+              role="alert"
+            >
               <svg class="w-5 h-5 shrink-0 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                ></path>
               </svg>
               <span id="error-password">{{ error() }}</span>
             </div>
@@ -94,8 +153,8 @@
           <button
             type="submit"
             [disabled]="isLoading()"
-            class="w-full bg-forest text-white py-3 rounded-lg font-medium mt-8 hover:bg-opacity-90 hover:shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center cursor-pointer justify-center gap-2">
-
+            class="w-full bg-forest text-white py-3 rounded-lg font-medium mt-8 hover:bg-opacity-90 hover:shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center cursor-pointer justify-center gap-2"
+          >
             @if (!isLoading()) {
               <span>Iniciar Sesión</span>
             } @else {
@@ -103,9 +162,7 @@
               <span>Verificando...</span>
             }
           </button>
-
         </form>
-
       </div>
     </div>
   </div>
@@ -114,14 +171,25 @@
 @if (loginStep() !== 'login') {
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-
       <div class="p-6 md:p-8">
         @switch (loginStep()) {
           @case ('setup2fa') {
             <div class="text-center mb-6">
-              <div class="mx-auto w-14 h-14 bg-forest/10 rounded-2xl flex items-center justify-center mb-4">
-                <svg class="w-7 h-7 text-forest" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              <div
+                class="mx-auto w-14 h-14 bg-forest/10 rounded-2xl flex items-center justify-center mb-4"
+              >
+                <svg
+                  class="w-7 h-7 text-forest"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
                 </svg>
               </div>
               <h3 class="text-xl font-bold text-gray-800 mb-1">Configurar Autenticador</h3>
@@ -130,9 +198,15 @@
 
             <div class="flex justify-center mb-6">
               @if (qrDataUrl()) {
-                <img [src]="qrDataUrl()" alt="Código QR" class="w-48 h-48 border border-gray-200 rounded-xl p-2">
+                <img
+                  [src]="qrDataUrl()"
+                  alt="Código QR"
+                  class="w-48 h-48 border border-gray-200 rounded-xl p-2"
+                />
               } @else {
-                <div class="w-48 h-48 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 text-sm">
+                <div
+                  class="w-48 h-48 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 text-sm"
+                >
                   Generando QR...
                 </div>
               }
@@ -151,18 +225,28 @@
             />
 
             @if (authenticatorError()) {
-              <div class="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm" role="alert">
+              <div
+                class="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm"
+                role="alert"
+              >
                 {{ authenticatorError() }}
               </div>
             }
 
             <div class="flex gap-3 mt-6">
-              <button type="button" (click)="cerrarModal2fa()"
-                class="flex-1 px-4 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <button
+                type="button"
+                (click)="cerrarModal2fa()"
+                class="flex-1 px-4 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
                 Cancelar
               </button>
-              <button type="button" (click)="verificarCodigo()" [disabled]="loading2fa()"
-                class="flex-1 px-4 py-3 text-sm font-bold text-white bg-forest rounded-lg hover:opacity-90 transition-colors disabled:opacity-70 flex items-center justify-center gap-2">
+              <button
+                type="button"
+                (click)="verificarCodigo()"
+                [disabled]="loading2fa()"
+                class="flex-1 px-4 py-3 text-sm font-bold text-white bg-forest rounded-lg hover:opacity-90 transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
+              >
                 @if (!loading2fa()) {
                   <span>Verificar</span>
                 } @else {
@@ -174,9 +258,21 @@
 
           @case ('verify2fa') {
             <div class="text-center mb-6">
-              <div class="mx-auto w-14 h-14 bg-forest/10 rounded-2xl flex items-center justify-center mb-4">
-                <svg class="w-7 h-7 text-forest" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              <div
+                class="mx-auto w-14 h-14 bg-forest/10 rounded-2xl flex items-center justify-center mb-4"
+              >
+                <svg
+                  class="w-7 h-7 text-forest"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
                 </svg>
               </div>
               <h3 class="text-xl font-bold text-gray-800 mb-1">Autenticación de dos factores</h3>
@@ -194,18 +290,28 @@
             />
 
             @if (authenticatorError()) {
-              <div class="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm" role="alert">
+              <div
+                class="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm"
+                role="alert"
+              >
                 {{ authenticatorError() }}
               </div>
             }
 
             <div class="flex gap-3 mt-6">
-              <button type="button" (click)="cerrarModal2fa()"
-                class="flex-1 px-4 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <button
+                type="button"
+                (click)="cerrarModal2fa()"
+                class="flex-1 px-4 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
                 Cancelar
               </button>
-              <button type="button" (click)="verificarCodigo()" [disabled]="loading2fa()"
-                class="flex-1 px-4 py-3 text-sm font-bold text-white bg-forest rounded-lg hover:opacity-90 transition-colors disabled:opacity-70 flex items-center justify-center gap-2">
+              <button
+                type="button"
+                (click)="verificarCodigo()"
+                [disabled]="loading2fa()"
+                class="flex-1 px-4 py-3 text-sm font-bold text-white bg-forest rounded-lg hover:opacity-90 transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
+              >
                 @if (!loading2fa()) {
                   <span>Verificar</span>
                 } @else {

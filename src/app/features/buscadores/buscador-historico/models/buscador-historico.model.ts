@@ -1,32 +1,32 @@
-import { CatalogoItem } from "../../../../core/models/catalogo-global.model";
-export interface CatalogoBusquedaHistorica{
-salas: CatalogoItem[];
+import { CatalogoItem } from '../../../../core/models/catalogo-global.model';
+export interface CatalogoBusquedaHistorica {
+  salas: CatalogoItem[];
 }
 
 export interface ResultadoBusquedaHistorica {
-  toca:            string | null;
+  toca: string | null;
   expedienteCausa: string | null;
-  fechaApelacion:  string | null;
+  fechaApelacion: string | null;
   fechaRecepcionApelacion: string | null;
-  imputado:        string | null;
-  victima:         string | null;
-  delito:          string | null;
-  sala:            string | null;
-  juzgado:         string | null;
+  imputado: string | null;
+  victima: string | null;
+  delito: string | null;
+  sala: string | null;
+  juzgado: string | null;
 }
 
-export interface ApiResponseHistorico{
-  data:{
+export interface ApiResponseHistorico {
+  data: {
     historicos: ResultadoBusquedaHistorica[];
     total: number;
-    page:  number;
+    page: number;
     limit: number;
   };
 }
 
 export interface PaginacionHistorico {
   total: number;
-  page:  number;
+  page: number;
   limit: number;
 }
 
@@ -35,7 +35,7 @@ export interface PagedResultHistorico {
   paginacion: PaginacionHistorico;
 }
 
-export interface SearchFormHistorico{
+export interface SearchFormHistorico {
   expedienteCausa: string | null;
   toca: string | null;
   idSala: string | null;

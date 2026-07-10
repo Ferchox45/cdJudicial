@@ -23,13 +23,22 @@ export class ModalService {
     this.isOpen.set(true);
   }
 
-  error(title: string, message: string)   { this.open({ title, message, type: 'error' }); }
-  success(title: string, message: string) { this.open({ title, message, type: 'success' }); }
+  error(title: string, message: string) {
+    this.open({ title, message, type: 'error' });
+  }
+  success(title: string, message: string) {
+    this.open({ title, message, type: 'success' });
+  }
   info(title: string, message: string, confirmText?: string, cancelText?: string) {
     this.open({ title, message, type: 'info', confirmText, cancelText });
   }
 
-  confirm(title: string, message: string, confirmText = 'Aceptar', cancelText = 'Cancelar'): Observable<boolean> {
+  confirm(
+    title: string,
+    message: string,
+    confirmText = 'Aceptar',
+    cancelText = 'Cancelar',
+  ): Observable<boolean> {
     this.open({ title, message, type: 'info', confirmText, cancelText });
     return this.confirmResult.asObservable();
   }
@@ -46,5 +55,7 @@ export class ModalService {
     this.isOpen.set(false);
   }
 
-  close(): void { this.isOpen.set(false); }
+  close(): void {
+    this.isOpen.set(false);
+  }
 }

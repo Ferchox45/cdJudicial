@@ -11,9 +11,7 @@ describe('permisosGuard', () => {
     };
 
     TestBed.configureTestingModule({
-      providers: [
-        { provide: SessionStateService, useValue: sessionSpy },
-      ],
+      providers: [{ provide: SessionStateService, useValue: sessionSpy }],
     });
   };
 

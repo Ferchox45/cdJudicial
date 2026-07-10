@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActionSidebarComponent, SidebarAction } from '../../../shared/components/action-sidebar/action-sidebar.component';
+import {
+  ActionSidebarComponent,
+  SidebarAction,
+} from '../../../shared/components/action-sidebar/action-sidebar.component';
 import { TablaReutilizableComponent } from '../../../shared/components/table-reutilizable/tablaReutilizable.component';
 import { TablaColumna } from '../../../shared/components/table-reutilizable/models/tabla-columna.model';
 import { TurnarFacade } from '../facades/turnar.facade';
@@ -10,12 +13,7 @@ import { SessionStateService } from '../../permisos/services/session-state.servi
   selector: 'app-turnar',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ActionSidebarComponent,
-    TablaReutilizableComponent,
-  ],
+  imports: [CommonModule, FormsModule, ActionSidebarComponent, TablaReutilizableComponent],
   templateUrl: './turnar.component.html',
 })
 export class TurnarComponent {
@@ -53,7 +51,13 @@ export class TurnarComponent {
       { field: 'folioApelacion', label: 'Folio Apelación', visible: true },
       { field: 'nomenclatura', label: 'Nomenclatura', visible: true },
       { field: 'cargoOrigen', label: 'Quién te lo turnó', visible: true },
-      { field: 'fechaRecibe', label: 'Fecha de recepción', visible: true, type: 'date', dateFormat: 'dd/MM/yyyy HH:mm' },
+      {
+        field: 'fechaRecibe',
+        label: 'Fecha de recepción',
+        visible: true,
+        type: 'date',
+        dateFormat: 'dd/MM/yyyy HH:mm',
+      },
       { field: 'cargoDestino', label: 'Cargo destino', visible: true },
       { field: 'seleccionado', label: 'Seleccionar', visible: true, type: 'checkbox' },
     ];

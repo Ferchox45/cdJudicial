@@ -4,8 +4,8 @@ export const PERMISOS_ROUTES: Routes = [
   {
     path: 'seleccion-permisos',
     loadComponent: () =>
-      import(
-        './components/seleccion-permisos/seleccion-permisos.component'
-      ).then((m) => m.SeleccionPermisosComponent),
+      import('./components/seleccion-permisos/seleccion-permisos.component').then(
+        (m) => m.SeleccionPermisosComponent,
+      ),
   },
 ];

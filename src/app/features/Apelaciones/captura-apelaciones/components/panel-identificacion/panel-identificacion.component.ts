@@ -22,7 +22,6 @@ import { SpinnerComponent } from '../../../../../shared/components/spinner/spinn
   templateUrl: './panel-identificacion.component.html',
 })
 export class PanelIdentificacionComponent implements OnInit {
-
   protected catalogosFacade = inject(CatalogosFacade);
   private destroyRef = inject(DestroyRef);
 
@@ -41,13 +40,14 @@ export class PanelIdentificacionComponent implements OnInit {
     const form = this.form();
     this.catalogosFacade.escucharMunicipio(form);
     this.catalogosFacade.escucharApelacion(form);
-    form.get('materiaId')?.valueChanges
-      .pipe(
-        filter(id => !!id),
+    form
+      .get('materiaId')
+      ?.valueChanges.pipe(
+        filter((id) => !!id),
         distinctUntilChanged(),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(id => {
+      .subscribe((id) => {
         this.catalogosFacade.cargar(form, id);
       });
   }

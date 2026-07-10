@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, input, computed, ElementRef, viewChild, effect } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  computed,
+  ElementRef,
+  viewChild,
+  effect,
+} from '@angular/core';
 import { ChartSlice } from '../../models/estadisticas';
 import { drawDona, getDonaImageBase64 } from './utils/dona.painter';
 import { getChartColor } from './utils/grafica-colors';
@@ -10,14 +18,13 @@ import { getChartColor } from './utils/grafica-colors';
   templateUrl: './graficaPlana.component.html',
 })
 export class GraficaTotalesComponent {
-
-  chartData  = input<ChartSlice[] | undefined>();
+  chartData = input<ChartSlice[] | undefined>();
   chartTitle = input<string | undefined>();
 
   readonly chartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('chartCanvas');
 
   readonly slices = computed(() => this.chartData() ?? []);
-  readonly total  = computed(() => this.slices().reduce((s, c) => s + c.value, 0));
+  readonly total = computed(() => this.slices().reduce((s, c) => s + c.value, 0));
 
   // Expuesto al template para los badges de leyenda
   getColor = getChartColor;
