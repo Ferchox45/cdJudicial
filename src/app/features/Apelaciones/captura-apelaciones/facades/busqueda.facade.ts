@@ -121,6 +121,7 @@ export class BusquedaFacade {
     this.folioOficialia.set(null);
     this.sala.set(null);
     this.importadoNS.set(null);
+    this.apelacionId.set(null);
     this.onNuevo?.();
   }
 

@@ -184,12 +184,16 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy, OnUnsaved
     this.grd.onExito = () => {
       this.guardando.set(false);
       if (this.bus.apelacionId()) {
+        const idGuardado = this.bus.apelacionId();
         this.modal.success('Éxito', 'Apelación guardada correctamente.');
         this.bus.resetNuevo(this.form);
+        this.bus.apelacionId.set(idGuardado);
         this.form.reset();
         this.limpiarEstadoCaptura();
       } else {
         this.mostrarModalAnexos.set(true);
+        this.form.markAsPristine();
+        this.limpiarEstadoCaptura();
         const materiaActual = this.esIndigena ? 6 : 5;
         this.actualizarFolioTentativo(materiaActual);
       }
@@ -311,6 +315,8 @@ export class CapturaApelacionesComponent implements OnInit, OnDestroy, OnUnsaved
       nuevo: () => {
         this.bus.resetNuevo(this.form);
         this.form.reset();
+        this.certBase64.set('');
+        this.mostrarCertificacion.set(false);
         this.contextoService.clearSearchState();
       },
       guardar: () => {
